@@ -101,14 +101,18 @@ void EodDataStockExFetcher::start()
 void EodDataStockExFetcher::onRequestFinished()
 {
     QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
+    int rc = -1;
 
     if (!reply)
-    {
         emit itemOut(ErrorItem("wrong sender in onRequestFinished"));
-        return;
+    else if (reply->error() != QNetworkReply::NoError)
+        emit itemOut(ErrorItem(reply->errorString()));
+    else
+    {
+        processData(reply->readAll());
+        rc = 0;
     }
-    processData(reply->readAll());
 
     reply->deleteLater();
-    emit finished(0);
+    emit finished(rc);
 }

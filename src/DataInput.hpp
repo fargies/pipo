@@ -24,25 +24,26 @@
  **
  **/
 
-#ifndef STDOUTPIPE_HPP
-#define STDOUTPIPE_HPP
+#ifndef DATAINPUT_HPP
+#define DATAINPUT_HPP
 
 #include <QObject>
+#include <QByteArray>
 
-#include "Pipe.hpp"
+#include "InputPipe.hpp"
 
-class StdoutPipe : public Pipe
+class DataInput : public InputPipe
 {
     Q_OBJECT
-    Q_CLASSINFO("PipeName", "Stdout")
-
 public:
-    StdoutPipe(bool indent = false, QObject *parent = 0);
+    DataInput();
 
-    virtual void itemIn(const Item &item);
+    void add(const QByteArray &data);
 
 protected:
-    bool m_isIndent;
+    int findJsonObjectEnd(const QByteArray &jsonData);
+
+    QByteArray m_buffer;
 };
 
-#endif // STDOUTPIPE_HPP
+#endif // DATAINPUT_HPP

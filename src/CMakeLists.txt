@@ -5,17 +5,19 @@ set(pipo_SRCS
     Pipe.cpp
     Item.cpp ErrorItem.cpp
     InputPipe.cpp
-    StdoutPipe.cpp
+    StdioOut.cpp
     EodDataStockExFetcher.cpp
-    HtmlTidy.cpp)
+    HtmlTidy.cpp
+    DataInput.cpp)
 
 set(pipo_HEADERS
     Pipe.hpp
     Item.hpp ErrorItem.hpp
     InputPipe.hpp
-    StdoutPipe.hpp
+    StdioOut.hpp
     EodDataStockExFetcher.hpp
-    HtmlTidy.hpp)
+    HtmlTidy.hpp
+    DataInput.hpp)
 
 
 include(${QT_USE_FILE})

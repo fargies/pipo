@@ -33,6 +33,7 @@ class Item : public QJsonObject
 {
 public:
     Item();
+    Item(const QJsonObject &other);
 };
 
 #endif // ITEM_HPP

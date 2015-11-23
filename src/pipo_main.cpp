@@ -27,18 +27,19 @@
 #include <QCoreApplication>
 
 #include "EodDataStockExFetcher.hpp"
-#include "StdoutPipe.hpp"
+#include "StdioOut.hpp"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
     EodDataStockExFetcher fetcher;
-    StdoutPipe pipe;
-
-    fetcher.next(pipe).start();
+    StdioOut pipe;
 
     QObject::connect(&pipe, SIGNAL(finished(int)),
                      &app, SLOT(quit()));
+
+    fetcher.next(pipe).start();
+
     return app.exec();
 }

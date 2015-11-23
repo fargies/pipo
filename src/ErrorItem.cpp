@@ -50,5 +50,5 @@ QString ErrorItem::errorString() const
 
 void ErrorItem::setErrorString(const QString &error)
 {
-    this->operator[](error) = error;
+    this->operator[]("errorString") = error;
 }

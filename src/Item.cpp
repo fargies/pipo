@@ -28,6 +28,10 @@
 
 Item::Item()
 {
+}
 
+Item::Item(const QJsonObject &other) :
+    QJsonObject(other)
+{
 }
 

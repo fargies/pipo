@@ -24,16 +24,36 @@
  **
  **/
 
-#include "InputPipe.hpp"
+#include <QJsonDocument>
 
-InputPipe::InputPipe(QObject *parent) :
-    Pipe(parent)
+#include <unistd.h>
+
+#include "StdioOut.hpp"
+#include "ErrorItem.hpp"
+
+StdioOut::StdioOut(bool indent, QObject *parent) :
+    Pipe(parent),
+    m_isIndent(indent)
 {
-
 }
 
-InputPipe &InputPipe::next(Pipe &pipe)
+void StdioOut::itemIn(const Item &item)
 {
-    Pipe::next(pipe);
-    return *this;
+    const QByteArray msg(
+                QJsonDocument(item).toJson(
+                    m_isIndent ? QJsonDocument::Indented :
+                                 QJsonDocument::Compact));
+
+    if (ErrorItem::isErrorItem(item))
+    {
+        write(2, msg.constData(), msg.size());
+        write(2, "\n", 1);
+    }
+    else
+    {
+        write(1, msg.constData(), msg.size());
+        write(1, "\n", 1);
+    }
+
+    emit itemOut(item);
 }
