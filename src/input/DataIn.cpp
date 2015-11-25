@@ -27,15 +27,16 @@
 #include <QJsonDocument>
 #include <QJsonParseError>
 
-#include "DataInput.hpp"
+#include "DataIn.hpp"
 #include "ErrorItem.hpp"
 
-DataInput::DataInput()
+DataIn::DataIn(QObject *parent) :
+    InputPipe(parent)
 {
     m_buffer.reserve(4096);
 }
 
-void DataInput::add(const QByteArray &data)
+void DataIn::add(const QByteArray &data)
 {
     m_buffer.append(data);
 
@@ -53,13 +54,13 @@ void DataInput::add(const QByteArray &data)
                 emit itemOut(ErrorItem(error.errorString()));
         }
         else if (!doc.isObject())
-            emit itemOut(ErrorItem("JSon object must be messages"));
+            emit itemOut(ErrorItem("not a json Object"));
         else
             emit itemOut(Item(doc.object()));
     }
 }
 
-int DataInput::findJsonObjectEnd(const QByteArray &jsonData)
+int DataIn::findJsonObjectEnd(const QByteArray &jsonData)
 {
     const char* pos = jsonData.constData();
     const char* end = pos + jsonData.length();

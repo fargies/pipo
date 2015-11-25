@@ -24,19 +24,19 @@
  **
  **/
 
-#ifndef DATAINPUT_HPP
-#define DATAINPUT_HPP
+#ifndef DATAIN_HPP
+#define DATAIN_HPP
 
 #include <QObject>
 #include <QByteArray>
 
 #include "InputPipe.hpp"
 
-class DataInput : public InputPipe
+class DataIn : public InputPipe
 {
     Q_OBJECT
 public:
-    DataInput();
+    DataIn(QObject *parent = 0);
 
     void add(const QByteArray &data);
 
@@ -46,4 +46,4 @@ protected:
     QByteArray m_buffer;
 };
 
-#endif // DATAINPUT_HPP
+#endif // DATAIN_HPP

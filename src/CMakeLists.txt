@@ -1,23 +1,40 @@
 
-include_directories(${TIDY_INCLUDE_DIRS})
+include_directories(
+    ${TIDY_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/input
+    ${CMAKE_CURRENT_SOURCE_DIR}/input/fetcher
+    ${CMAKE_CURRENT_SOURCE_DIR}/output
+    ${CMAKE_CURRENT_SOURCE_DIR}/utils
+    )
 
 set(pipo_SRCS
-    Pipe.cpp
-    Item.cpp ErrorItem.cpp
+    Pipe.cpp Item.cpp ErrorItem.cpp
     InputPipe.cpp
-    StdioOut.cpp
-    EodDataStockExFetcher.cpp
-    HtmlTidy.cpp
-    DataInput.cpp)
+
+    output/StdioOut.cpp
+
+    input/StdioIn.cpp
+    input/FileIn.cpp
+    input/DataIn.cpp
+
+    input/fetcher/EodDataStockExFetcher.cpp
+    utils/HtmlTidy.cpp
+    )
 
 set(pipo_HEADERS
-    Pipe.hpp
-    Item.hpp ErrorItem.hpp
+    Pipe.hpp Item.hpp ErrorItem.hpp
     InputPipe.hpp
-    StdioOut.hpp
-    EodDataStockExFetcher.hpp
-    HtmlTidy.hpp
-    DataInput.hpp)
+
+    output/StdioOut.hpp
+
+    input/StdioIn.hpp
+    input/FileIn.hpp
+    input/DataIn.hpp
+
+    input/fetcher/EodDataStockExFetcher.hpp
+    utils/HtmlTidy.hpp
+    )
 
 
 include(${QT_USE_FILE})
