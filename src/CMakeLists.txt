@@ -1,6 +1,7 @@
 
 include_directories(
     ${TIDY_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/input
     ${CMAKE_CURRENT_SOURCE_DIR}/input/fetcher
@@ -11,6 +12,7 @@ include_directories(
 set(pipo_SRCS
     Pipe.cpp Item.cpp ErrorItem.cpp
     InputPipe.cpp
+    PipeBuilder.cpp PipeBuilderParseCtx.cpp
 
     output/StdioOut.cpp
 
@@ -25,6 +27,7 @@ set(pipo_SRCS
 set(pipo_HEADERS
     Pipe.hpp Item.hpp ErrorItem.hpp
     InputPipe.hpp
+    PipeBuilder.hpp PipeBuilderParseCtx.hpp
 
     output/StdioOut.hpp
 
@@ -39,8 +42,32 @@ set(pipo_HEADERS
 
 include(${QT_USE_FILE})
 
+find_package(BISON REQUIRED)
+find_package(FLEX REQUIRED)
+
+add_info_files(PipeBuilderParser.y PipeBuilderLexer.l)
+
+if(PARSER_DEBUG)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPIPO_YYDEBUG -DYYERROR_VERBOSE")
+    set(BISON_DEBUG_FLAGS "-t")
+endif(PARSER_DEBUG)
+
+bison_target(PipeBuilderParser
+    PipeBuilderParser.y
+    ${CMAKE_CURRENT_BINARY_DIR}/PipeBuilderParser.cpp
+    COMPILE_FLAGS "-d ${BISON_DEBUG_FLAGS}")
+
+flex_target(PipeBuilderScanner
+    PipeBuilderLexer.l
+    ${CMAKE_CURRENT_BINARY_DIR}/PipeBuilderScanner.cpp
+    COMPILE_FLAGS "-d")
+add_flex_bison_dependency(PipeBuilderScanner PipeBuilderParser)
+
 add_library(libpipo SHARED
-    ${pipo_SRCS} ${pipo_HEADERS})
+    ${pipo_SRCS} ${pipo_HEADERS}
+    ${BISON_PipeBuilderParser_OUTPUTS}
+    ${FLEX_PipeBuilderScanner_OUTPUTS}
+    )
 
 qt_use_modules(libpipo Core Network XmlPatterns)
 target_link_libraries(libpipo ${TIDY_LIBRARIES})

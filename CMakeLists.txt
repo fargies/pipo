@@ -19,6 +19,7 @@ set(CMAKE_AUTOMOC True)
 
 option(TESTS "Compile and run unit tests" OFF)
 option(COVERAGE "Enable code coverage" OFF)
+option(PARSER_DEBUG "Enable parser debugging" OFF)
 
 include(Dependencies)
 include(AddInfoFiles)

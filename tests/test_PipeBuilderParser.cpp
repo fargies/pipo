@@ -19,35 +19,43 @@
  **
  **
  **
- **        Created on: 11/25/2015
+ **        Created on: 11/28/2015
  **   Original Author: fargie_s
  **
  **/
 
-#ifndef FILEIN_HPP
-#define FILEIN_HPP
+#include <QDebug>
 
-#include <QObject>
-#include <QFile>
+#include <cppunit/TestFixture.h>
+#include <cppunit/extensions/HelperMacros.h>
 
-#include "DataIn.hpp"
+#include "PipeBuilderParser.hpp"
+#include "PipeBuilder.hpp"
+#include "test_helpers.hpp"
 
-class FileIn : public DataIn
+
+class PipeBuilderParserTest : public CppUnit::TestFixture
 {
-    Q_OBJECT
-public:
-    Q_INVOKABLE
-    explicit FileIn(const QString &file, QObject *parent = 0);
-
-public slots:
-    void start();
-
-protected slots:
-    void dataReady();
+    CPPUNIT_TEST_SUITE(PipeBuilderParserTest);
+    CPPUNIT_TEST(simple);
+    CPPUNIT_TEST_SUITE_END();
 
 protected:
-    QFile m_in;
-    QByteArray m_buff;
+    void simple()
+    {
+        PipeBuilder builder;
+        QStringList pipes;
+        pipes << "StdioIn"
+              << "StdioIn | StdioOut"
+              << "StdioIn()|StdioOut()";
+
+        foreach (const QString &pipeText, pipes)
+        {
+            InputPipe *in = builder.parsePipe(pipeText);
+            CPPUNIT_ASSERT_MESSAGE(qPrintable(builder.errorString()), in);
+            delete in;
+        }
+    }
 };
 
-#endif // FILEIN_HPP
+CPPUNIT_TEST_SUITE_REGISTRATION(PipeBuilderParserTest);

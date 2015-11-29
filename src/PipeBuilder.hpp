@@ -24,30 +24,36 @@
  **
  **/
 
-#ifndef FILEIN_HPP
-#define FILEIN_HPP
+#ifndef PIPEBUILDER_HPP
+#define PIPEBUILDER_HPP
 
 #include <QObject>
-#include <QFile>
 
-#include "DataIn.hpp"
+#include "InputPipe.hpp"
 
-class FileIn : public DataIn
+class PipeBuilder : public QObject
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE
-    explicit FileIn(const QString &file, QObject *parent = 0);
+    explicit PipeBuilder(QObject *parent = 0);
 
-public slots:
-    void start();
+    InputPipe *parsePipe(const QString &text);
 
-protected slots:
-    void dataReady();
+    InputPipe *createInputPipe(
+            const QString &pipeName,
+            const QVariantList &args = QVariantList());
+
+    Pipe *createPipe(
+            const QString &pipeName,
+            const QVariantList &args = QVariantList());
+
+    inline const QString &errorString() const
+    { return m_errorString; }
 
 protected:
-    QFile m_in;
-    QByteArray m_buff;
+    QObject *createObject(const QMetaObject *meta, const QVariantList &args);
+
+    QString m_errorString;
 };
 
-#endif // FILEIN_HPP
+#endif // PIPEBUILDER_HPP

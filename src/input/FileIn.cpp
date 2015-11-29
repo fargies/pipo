@@ -67,3 +67,5 @@ void FileIn::dataReady()
         emit finished(0);
     }
 }
+
+PIPE_REGISTRATION(FileIn)

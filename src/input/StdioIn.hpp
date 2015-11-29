@@ -37,6 +37,7 @@ class StdioIn : public DataIn
 {
     Q_OBJECT
 public:
+    Q_INVOKABLE
     explicit StdioIn(QObject *parent = 0);
 
 public slots:

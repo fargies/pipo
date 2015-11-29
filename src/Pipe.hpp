@@ -28,6 +28,7 @@
 #define PIPE_HPP
 
 #include <QObject>
+#include <QMetaType>
 
 #include "Item.hpp"
 
@@ -50,5 +51,25 @@ protected slots:
 protected:
     int m_connCount;
 };
+
+template <typename tPipe>
+class PipeRegistration
+{
+public:
+    PipeRegistration();
+};
+
+template <typename tPipe>
+PipeRegistration<tPipe>::PipeRegistration()
+{
+    qRegisterMetaType<tPipe*>();
+}
+
+/** @cond */
+#define __TASK_JOIN_STR1(s1, s2) s1##s2
+#define __TASK_JOIN_STR(s1, s2) __TASK_JOIN_STR1(s1, s2)
+/** @endcond */
+#define PIPE_REGISTRATION(tPipe) \
+    static PipeRegistration<tPipe> __TASK_JOIN_STR(s_reg, __LINE__);
 
 #endif // PIPE_HPP

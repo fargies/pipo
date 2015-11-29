@@ -57,3 +57,5 @@ void StdioOut::itemIn(const Item &item)
 
     emit itemOut(item);
 }
+
+PIPE_REGISTRATION(StdioOut)

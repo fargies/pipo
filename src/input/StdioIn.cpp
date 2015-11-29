@@ -81,3 +81,4 @@ void StdioIn::dataReady()
     }
 }
 
+PIPE_REGISTRATION(StdioIn)

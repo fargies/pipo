@@ -19,31 +19,60 @@
  **
  **
  **
- **        Created on: 11/22/2015
+ **        Created on: 11/27/2015
  **   Original Author: fargie_s
  **
  **/
 
-#ifndef STDIOOUT_HPP
-#define STDIOOUT_HPP
+#ifndef PIPEBUILDERPARSECTX_HPP
+#define PIPEBUILDERPARSECTX_HPP
 
-#include <QObject>
+#include <QString>
+#include <QVariantList>
+#include <QDebug>
 
 #include "Pipe.hpp"
+#include "InputPipe.hpp"
 
-class StdioOut : public Pipe
+#ifndef YY_TYPEDEF_YY_SCANNER_T
+#define YY_TYPEDEF_YY_SCANNER_T
+typedef void* yyscan_t;
+#endif
+
+class PipeBuilder;
+
+class PipeBuilderParseCtx
 {
-    Q_OBJECT
-    Q_CLASSINFO("PipeName", "Stdout")
-
 public:
-    Q_INVOKABLE
-    StdioOut(bool indent = false, QObject *parent = 0);
+    PipeBuilderParseCtx(PipeBuilder &builder);
+    ~PipeBuilderParseCtx();
 
-    virtual void itemIn(const Item &item);
+    InputPipe *parse(const QString &string);
+
+    inline yyscan_t scaninfo() const
+    { return m_scan; }
+
+    bool addPipe(const QString &pipeName);
+    bool addInputPipe(const QString &pipeName);
+
+    void addArg(const QString &arg);
+
+    void addQuotedArg(const QString &arg);
+
+    void delPipe();
+
+    inline const QString &errorString() const
+    { return m_errorString; }
+
+    inline const QVariantList &args() const
+    { return m_args; }
 
 protected:
-    bool m_isIndent;
+    PipeBuilder &m_builder;
+    yyscan_t m_scan;
+    QVariantList m_args;
+    QList<Pipe *> m_pipes;
+    QString m_errorString;
 };
 
-#endif // STDIOOUT_HPP
+#endif // PIPEBUILDERPARSECTX_HPP

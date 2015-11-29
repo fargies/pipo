@@ -25,21 +25,35 @@
  **/
 
 #include <QCoreApplication>
+#include <QMetaType>
+#include <QDebug>
 
 #include "EodDataStockExFetcher.hpp"
 #include "StdioOut.hpp"
+#include "StdioIn.hpp"
+#include "PipeBuilder.hpp"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
-    EodDataStockExFetcher fetcher;
-    StdioOut pipe;
+    if (app.arguments().size() <= 1)
+    {
+        qWarning() << "[usage]:"
+                      << qPrintable(app.arguments().at(0)) << "\"pipe\"";
+        return 1;
+    }
 
-    QObject::connect(&pipe, SIGNAL(finished(int)),
+    PipeBuilder builder;
+    InputPipe *in = builder.parsePipe(app.arguments().at(1));
+    if (!in)
+    {
+        qWarning() << qPrintable(builder.errorString());
+        return 1;
+    }
+    in->start();
+    QObject::connect(in, SIGNAL(finished(int)),
                      &app, SLOT(quit()));
-
-    fetcher.next(pipe).start();
 
     return app.exec();
 }
