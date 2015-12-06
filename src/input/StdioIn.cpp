@@ -37,6 +37,11 @@ StdioIn::StdioIn(QObject *parent) :
 {
 }
 
+QString StdioIn::usage(const QString &usage)
+{
+    return usage + "\nStdioIn -> { * }\n";
+}
+
 void StdioIn::start()
 {
     m_buff.reserve(BUFF_SIZE);

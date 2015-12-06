@@ -19,37 +19,51 @@
  **
  **
  **
- **        Created on: 11/22/2015
+ **        Created on: 12/1/2015
  **   Original Author: fargie_s
  **
  **/
 
-#include "Item.hpp"
-#include "ErrorItem.hpp"
+#ifndef SIGNALWAITER_HPP
+#define SIGNALWAITER_HPP
 
-Item::Item()
+#include <QObject>
+#include <QPointer>
+#include <QMutex>
+#include <QWaitCondition>
+
+/**
+ * @brief The SignalWaiter class waits for signals to occur
+ */
+class SignalWaiter : public QObject
 {
-}
+    Q_OBJECT
 
-Item::Item(const QJsonObject &other) :
-    QJsonObject(other)
-{
-}
+public:
+    SignalWaiter(QObject *obj, const char *sig);
 
-bool Item::isErrorItem() const
-{
-    return ErrorItem::isErrorItem(*this);
-}
+    /**
+     * @brief wait for the signal to be thrown
+     * @param[in] timeout in msecs.
+     * @return true if the signal was caught.
+     */
+    bool wait(unsigned long timeout);
 
-bool Item::isUsageItem() const
-{
-    return contains("usage");
-}
+    /**
+     * @brief clear the signal counter
+     */
+    void reset();
 
-Item Item::usageItem(const QString &usage)
-{
-    Item item;
-    item.insert("usage", usage);
-    return item;
-}
+protected Q_SLOTS:
+    void wake();
 
+protected:
+    QPointer<QObject> m_obj;
+    int m_count;
+    QMutex m_lock;
+    QWaitCondition m_cond;
+
+    Q_DISABLE_COPY(SignalWaiter)
+};
+
+#endif // SIGNALWAITER_HPP

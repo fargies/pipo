@@ -32,20 +32,61 @@
 
 #include "Item.hpp"
 
+/**
+ * @brief The core Pipe class
+ */
 class Pipe : public QObject
 {
     Q_OBJECT
 public:
     explicit Pipe(QObject *parent = 0);
 
+    /**
+     * @brief hook in next part of the PipeLine
+     *
+     * @param[in,out] pipe next pipe object
+     * @return *this
+     */
     Pipe &next(Pipe &pipe);
 
+    /**
+     * @brief display pipe usage
+     *
+     * @param[in,out] usage usage request used as an output.
+     *
+     * @details
+     * The "usage" field of Item will be filled with this Pipe's usage, if the
+     * item was not empty data will be appended.
+     */
+    virtual QString usage(const QString &usage);
+
 signals:
+    /**
+     * @brief signal emitted whenever an item has been processed by this Pipe
+     * @param item the generated output
+     */
     void itemOut(const Item &item);
+
+    /**
+     * @brief signal emitted whenever processing is totally finished on this Pipe
+     * @param status the final status
+     */
     void finished(int status);
 
 protected slots:
-    virtual void itemIn(const Item &item);
+    /**
+     * @brief process an incoming item
+     * @param[in] item incoming item to be processed
+     * @return
+     *  - true if the incoming item has been processed
+     *  - false otherwise
+     */
+    virtual bool itemIn(const Item &item);
+
+    /**
+     * @brief parent pipe finished handler
+     * @param[in] status parent pipe's status
+     */
     virtual void onPrevFinished(int status);
 
 protected:

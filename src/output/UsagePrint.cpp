@@ -19,37 +19,28 @@
  **
  **
  **
- **        Created on: 11/22/2015
+ **        Created on: 12/5/2015
  **   Original Author: fargie_s
  **
  **/
 
-#include "Item.hpp"
-#include "ErrorItem.hpp"
+#include <unistd.h>
 
-Item::Item()
+#include "UsagePrint.hpp"
+
+UsagePrint::UsagePrint(QObject *parent) :
+    Pipe(parent)
 {
 }
 
-Item::Item(const QJsonObject &other) :
-    QJsonObject(other)
+bool UsagePrint::itemIn(const Item &item)
 {
+    if (item.isUsageItem())
+    {
+        const QString usage(item.value("usage").toString());
+        write(2, qPrintable(usage), usage.size());
+    }
+    emit itemOut(item);
 }
 
-bool Item::isErrorItem() const
-{
-    return ErrorItem::isErrorItem(*this);
-}
-
-bool Item::isUsageItem() const
-{
-    return contains("usage");
-}
-
-Item Item::usageItem(const QString &usage)
-{
-    Item item;
-    item.insert("usage", usage);
-    return item;
-}
-
+PIPE_REGISTRATION(UsagePrint)

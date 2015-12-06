@@ -34,13 +34,13 @@
 class StdioOut : public Pipe
 {
     Q_OBJECT
-    Q_CLASSINFO("PipeName", "Stdout")
-
 public:
     Q_INVOKABLE
     StdioOut(bool indent = false, QObject *parent = 0);
 
-    virtual void itemIn(const Item &item);
+    bool itemIn(const Item &item);
+
+    QString usage(const QString &usage);
 
 protected:
     bool m_isIndent;

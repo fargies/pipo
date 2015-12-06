@@ -52,3 +52,9 @@ void ErrorItem::setErrorString(const QString &error)
 {
     this->operator[]("errorString") = error;
 }
+
+ErrorItem &ErrorItem::arg(const QString &arg)
+{
+    setErrorString(errorString().arg(arg));
+    return *this;
+}

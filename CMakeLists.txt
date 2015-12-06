@@ -39,6 +39,8 @@ endif (NOT MSVC)
 configure_file("config.h.in" "config.h")
 configure_file("version.h.in" "version.h")
 
+add_info_files(TODO)
+
 add_subdirectory(src)
 add_subdirectory(tests)
 add_subdirectory(doc)

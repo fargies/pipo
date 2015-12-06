@@ -19,37 +19,45 @@
  **
  **
  **
- **        Created on: 11/22/2015
+ **        Created on: 11/30/2015
  **   Original Author: fargie_s
  **
  **/
 
-#include "Item.hpp"
-#include "ErrorItem.hpp"
+#include <QDebug>
 
-Item::Item()
-{
-}
+#include <cppunit/TestFixture.h>
+#include <cppunit/extensions/HelperMacros.h>
 
-Item::Item(const QJsonObject &other) :
-    QJsonObject(other)
-{
-}
+#include "ProxyTester.hpp"
+#include "StdioOut.hpp"
+#include "test_helpers.hpp"
+#include "SignalWaiter.hpp"
 
-bool Item::isErrorItem() const
-{
-    return ErrorItem::isErrorItem(*this);
-}
+using namespace testHelpers;
 
-bool Item::isUsageItem() const
+class ProxyTesterTest : public CppUnit::TestFixture
 {
-    return contains("usage");
-}
+    CPPUNIT_TEST_SUITE(ProxyTesterTest);
+    CPPUNIT_TEST(simple);
+    CPPUNIT_TEST_SUITE_END();
 
-Item Item::usageItem(const QString &usage)
-{
-    Item item;
-    item.insert("usage", usage);
-    return item;
-}
+protected:
+    void simple()
+    {
+        ProxyTester tester;
+        StdioOut out;
+        tester.next(out);//"203.81.67.86"
+
+        Item item;
+        item.insert("hostName", "89.235.174.160");//209.124.106.140");
+        item.insert("port", 8080);//3128); // https ?
+
+        SignalWaiter waiter(&tester, SIGNAL(itemOut(Item)));
+        tester.itemIn(item);
+        CPPUNIT_ASSERT(waiter.wait(35000));
+    }
+};
+
+CPPUNIT_TEST_SUITE_REGISTRATION(ProxyTesterTest);
 

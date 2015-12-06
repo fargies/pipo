@@ -19,37 +19,36 @@
  **
  **
  **
- **        Created on: 11/22/2015
+ **        Created on: 12/5/2015
  **   Original Author: fargie_s
  **
  **/
 
+#ifndef ITEMQUEUE_HPP
+#define ITEMQUEUE_HPP
+
+#include <QObject>
+#include <QList>
+
+#include "Pipe.hpp"
 #include "Item.hpp"
-#include "ErrorItem.hpp"
 
-Item::Item()
+class ItemQueue : public Pipe
 {
-}
+    Q_OBJECT
+public:
+    Q_INVOKABLE
+    ItemQueue(QObject *parent = 0);
 
-Item::Item(const QJsonObject &other) :
-    QJsonObject(other)
-{
-}
+    bool itemIn(const Item &item);
 
-bool Item::isErrorItem() const
-{
-    return ErrorItem::isErrorItem(*this);
-}
+    QString usage(const QString &usage);
 
-bool Item::isUsageItem() const
-{
-    return contains("usage");
-}
+    inline const QList<Item> &items()
+    { return m_items; }
 
-Item Item::usageItem(const QString &usage)
-{
-    Item item;
-    item.insert("usage", usage);
-    return item;
-}
+protected:
+    QList<Item> m_items;
+};
 
+#endif // ITEMQUEUE_HPP

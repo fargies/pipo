@@ -34,59 +34,6 @@
 
 namespace testHelpers {
 
-SignalWaiter::SignalWaiter(
-        QObject *obj,
-        const char *sig) :
-    m_obj(obj),
-    m_count(0)
-{
-    connect(obj, sig,
-            this, SLOT(wake()));
-}
-
-bool SignalWaiter::wait(unsigned long timeout)
-{
-    QMutexLocker l(&m_lock);
-
-    if (m_count > 0)
-        return true;
-    else if (!m_obj)
-    {
-        qWarning("[SignalWaiter]: object has already been destroyed");
-        return false;
-    }
-    else if (m_obj->thread() == thread())
-    {
-        QTimer t;
-        t.setSingleShot(true);
-        t.start(timeout);
-
-        while ((m_count == 0) && t.isActive())
-        {
-            l.unlock();
-            QCoreApplication::processEvents(QEventLoop::AllEvents |
-                    QEventLoop::WaitForMoreEvents, 100);
-            QCoreApplication::sendPostedEvents(0, QEvent::DeferredDelete);
-            l.relock();
-        }
-    }
-    else
-        m_cond.wait(&m_lock, timeout);
-    return m_count > 0;
-}
-
-void SignalWaiter::wake()
-{
-    QMutexLocker l(&m_lock);
-    ++m_count;
-    m_cond.wakeAll();
-}
-
-void SignalWaiter::reset()
-{
-    m_count = 0;
-}
-
 EventFilter::EventFilter(QObject *subject) :
     m_subject(subject)
 {

@@ -19,37 +19,59 @@
  **
  **
  **
- **        Created on: 11/25/2015
+ **        Created on: 12/3/2015
  **   Original Author: fargie_s
  **
  **/
 
-#ifndef FILEIN_HPP
-#define FILEIN_HPP
+#ifndef XQUERYFETCHER_HPP
+#define XQUERYFETCHER_HPP
 
 #include <QObject>
-#include <QFile>
+#include <QNetworkAccessManager>
 
-#include "DataIn.hpp"
+#include "InputPipe.hpp"
 
-class FileIn : public DataIn
+/**
+ * @brief Generate data according to the given XQuery request
+ */
+class XQueryFetcher : public InputPipe
 {
     Q_OBJECT
 public:
+
+    /**
+     * @brief XQueryFetcher
+     * @param[in] url the url where to do the request
+     * @param[in] query the main query
+     * @param[in] subQueries information to extract
+     * @param[in] parent parent QObject
+     */
     Q_INVOKABLE
-    explicit FileIn(const QString &file, QObject *parent = 0);
+    XQueryFetcher(const QString &url,
+                  const QString &query,
+                  const QJsonObject &subQueries,
+                  QObject *parent = 0);
+
+    inline const QString &url() const
+    { return m_url; }
+    void setUrl(const QString &url);
 
     QString usage(const QString &usage);
 
-public slots:
     void start();
 
 protected slots:
-    void dataReady();
+    void onRequestFinished();
 
 protected:
-    QFile m_in;
-    QByteArray m_buff;
+    bool processData(const QByteArray &data);
+
+protected:
+    QString m_url;
+    QString m_query;
+    QJsonObject m_subQueries;
+    QNetworkAccessManager m_mgr;
 };
 
-#endif // FILEIN_HPP
+#endif // XQUERYFETCHER_HPP

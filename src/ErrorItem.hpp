@@ -39,6 +39,17 @@ public:
 
     QString errorString() const;
     void setErrorString(const QString &error);
+
+    /**
+     * @brief resolve a %[1-9] argument in the errorString
+     * @param[in] arg the string to be inserted
+     * @return the errorItem
+     *
+     * @details this method simplifies the following writing :
+     * ErrorItem(QString("my error %1").arg("42"))
+     * -> ErrorItem("my error %1").arg("42")
+     */
+    ErrorItem &arg(const QString &arg);
 };
 
 #endif // ERRORITEM_HPP

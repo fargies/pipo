@@ -6,6 +6,11 @@ link_directories(
     )
 include_directories(
     ${CMAKE_SOURCE_DIR}/src
+    ${CMAKE_SOURCE_DIR}/src/filter
+    ${CMAKE_SOURCE_DIR}/src/output
+    ${CMAKE_SOURCE_DIR}/src/input
+    ${CMAKE_SOURCE_DIR}/src/input/fetcher
+    ${CMAKE_SOURCE_DIR}/src/utils
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/src
     ${CMAKE_BINARY_DIR}/tests
@@ -20,8 +25,13 @@ add_library(testHelper SHARED
 target_link_libraries(testHelper ${CPPUNIT_LIBRARIES} ${QT_LIBRARIES})
 
 set(test_SRCS
-#    test_PipeBuilderScanner.cpp
+    stub_HTTPServer.cpp stub_HTTPServer.hpp
+
+    test_PipeBuilderScanner.cpp
     test_PipeBuilderParser.cpp
+    test_ProxyTester.cpp
+    test_XQueryFetcher.cpp
+    test_HTMLToXML.cpp
     )
 
 add_executable(test_all ${test_SRCS})

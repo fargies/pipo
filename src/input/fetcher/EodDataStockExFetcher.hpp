@@ -36,6 +36,7 @@ class EodDataStockExFetcher : public InputPipe
 {
     Q_OBJECT
 public:
+    Q_INVOKABLE
     EodDataStockExFetcher(QObject *parent = 0);
 
     inline const QString &url() const

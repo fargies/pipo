@@ -1,0 +1,4 @@
+Find a way to hook on last Pipe finished signal
+XQuery fetcher with sub-queries
+HTTPSFetcher to tests SSL support on given proxy
+Set properties using config

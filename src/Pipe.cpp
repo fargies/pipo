@@ -24,7 +24,11 @@
  **
  **/
 
+#include <QMetaObject>
+
 #include "Pipe.hpp"
+#include "ErrorItem.hpp"
+#include "Item.hpp"
 
 Pipe::Pipe(QObject *parent) : QObject(parent)
 {
@@ -41,13 +45,26 @@ Pipe &Pipe::next(Pipe &pipe)
     return *this;
 }
 
-void Pipe::itemIn(const Item &/*item*/)
+QString Pipe::usage(const QString &usage)
 {
+    emit itemOut(ErrorItem("No usage for: %1")
+                 .arg(this->metaObject()->className()));
+    return usage;
+}
+
+bool Pipe::itemIn(const Item &item)
+{
+    if (item.isErrorItem())
+        emit itemOut(item);
+    else if (item.contains("usage"))
+        emit itemOut(Item::usageItem(usage(item.value("usage").toString())));
+    else
+        return false;
+    return true;
 }
 
 void Pipe::onPrevFinished(int status)
 {
-    if (--m_connCount)
+    if (--m_connCount == 0)
         emit finished(status);
 }
-

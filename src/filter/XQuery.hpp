@@ -19,37 +19,36 @@
  **
  **
  **
- **        Created on: 11/22/2015
+ **        Created on: 12/3/2015
  **   Original Author: fargie_s
  **
  **/
 
-#include "Item.hpp"
-#include "ErrorItem.hpp"
+#ifndef XQUERY_HPP
+#define XQUERY_HPP
 
-Item::Item()
+#include "Pipe.hpp"
+
+class QNetworkReply;
+
+class XQuery : public Pipe
 {
-}
+    Q_OBJECT
+    Q_PROPERTY(bool trim READ trim WRITE setTrim)
+public:
+    Q_INVOKABLE
+    XQuery(QObject *parent = 0);
 
-Item::Item(const QJsonObject &other) :
-    QJsonObject(other)
-{
-}
+    virtual bool itemIn(const Item &item);
 
-bool Item::isErrorItem() const
-{
-    return ErrorItem::isErrorItem(*this);
-}
+    QString usage(const QString &usage);
 
-bool Item::isUsageItem() const
-{
-    return contains("usage");
-}
+    inline bool trim() const
+    { return m_trim; }
+    void setTrim(bool value);
 
-Item Item::usageItem(const QString &usage)
-{
-    Item item;
-    item.insert("usage", usage);
-    return item;
-}
+protected:
+    bool m_trim; //!< trim retrieved values
+};
 
+#endif // XQUERY_HPP

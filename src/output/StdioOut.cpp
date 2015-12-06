@@ -37,14 +37,18 @@ StdioOut::StdioOut(bool indent, QObject *parent) :
 {
 }
 
-void StdioOut::itemIn(const Item &item)
+bool StdioOut::itemIn(const Item &item)
 {
+    Item outItem(item);
+    if (outItem.isUsageItem())
+        outItem.insert("usage", usage(outItem.value("usage").toString()));
+
     const QByteArray msg(
-                QJsonDocument(item).toJson(
+                QJsonDocument(outItem).toJson(
                     m_isIndent ? QJsonDocument::Indented :
                                  QJsonDocument::Compact));
 
-    if (ErrorItem::isErrorItem(item))
+    if (ErrorItem::isErrorItem(outItem))
     {
         write(2, msg.constData(), msg.size());
         write(2, "\n", 1);
@@ -55,7 +59,14 @@ void StdioOut::itemIn(const Item &item)
         write(1, "\n", 1);
     }
 
-    emit itemOut(item);
+    emit itemOut(outItem);
+    return true;
+}
+
+QString StdioOut::usage(const QString &usage)
+{
+    return usage + "\n{ * } -> StdioOut -> { * }\n";
+
 }
 
 PIPE_REGISTRATION(StdioOut)

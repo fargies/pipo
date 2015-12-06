@@ -35,40 +35,6 @@
 
 namespace testHelpers {
 
-/**
- * @brief The SignalWaiter class waits for signals to occur
- */
-class SignalWaiter : public QObject
-{
-    Q_OBJECT
-
-public:
-    SignalWaiter(QObject *obj, const char *sig);
-
-    /**
-     * @brief wait for the signal to be thrown
-     * @param[in] timeout in msecs.
-     * @return true if the signal was caught.
-     */
-    bool wait(unsigned long timeout);
-
-    /**
-     * @brief clear the signal counter
-     */
-    void reset();
-
-protected Q_SLOTS:
-    void wake();
-
-protected:
-    QPointer<QObject> m_obj;
-    int m_count;
-    QMutex m_lock;
-    QWaitCondition m_cond;
-
-    Q_DISABLE_COPY(SignalWaiter)
-};
-
 class EventFilter : public QObject
 {
     Q_OBJECT

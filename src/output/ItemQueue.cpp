@@ -19,37 +19,29 @@
  **
  **
  **
- **        Created on: 11/22/2015
+ **        Created on: 12/5/2015
  **   Original Author: fargie_s
  **
  **/
 
-#include "Item.hpp"
-#include "ErrorItem.hpp"
+#include "ItemQueue.hpp"
 
-Item::Item()
+ItemQueue::ItemQueue(QObject *parent) :
+    Pipe(parent)
 {
 }
 
-Item::Item(const QJsonObject &other) :
-    QJsonObject(other)
+bool ItemQueue::itemIn(const Item &item)
 {
+    m_items.append(item);
+
+    if (!Pipe::itemIn(item))
+        emit itemOut(item);
 }
 
-bool Item::isErrorItem() const
+QString ItemQueue::usage(const QString &usage)
 {
-    return ErrorItem::isErrorItem(*this);
+    return usage + "\n{ * } -> ItemQueue -> { * }\n";
 }
 
-bool Item::isUsageItem() const
-{
-    return contains("usage");
-}
-
-Item Item::usageItem(const QString &usage)
-{
-    Item item;
-    item.insert("usage", usage);
-    return item;
-}
-
+PIPE_REGISTRATION(ItemQueue)

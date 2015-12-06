@@ -35,6 +35,11 @@ FileIn::FileIn(const QString &fileName, QObject *parent) :
     m_in.setFileName(fileName);
 }
 
+QString FileIn::usage(const QString &usage)
+{
+    return usage + "\nFileIn(\"fileName\") -> { * }";
+}
+
 
 void FileIn::start()
 {

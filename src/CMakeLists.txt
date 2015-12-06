@@ -15,13 +15,23 @@ set(pipo_SRCS
     PipeBuilder.cpp PipeBuilderParseCtx.cpp
 
     output/StdioOut.cpp
+    output/UsagePrint.cpp
+    output/ItemQueue.cpp
 
     input/StdioIn.cpp
     input/FileIn.cpp
     input/DataIn.cpp
 
     input/fetcher/EodDataStockExFetcher.cpp
+    input/fetcher/XQueryFetcher.cpp
+    input/fetcher/HTMLFetcher.cpp
+
+    filter/ProxyTester.cpp
+    filter/XQuery.cpp
+    filter/HTMLToXML.cpp
+
     utils/HtmlTidy.cpp
+    utils/SignalWaiter.cpp
     )
 
 set(pipo_HEADERS
@@ -30,13 +40,23 @@ set(pipo_HEADERS
     PipeBuilder.hpp PipeBuilderParseCtx.hpp
 
     output/StdioOut.hpp
+    output/UsagePrint.hpp
+    output/ItemQueue.hpp
 
     input/StdioIn.hpp
     input/FileIn.hpp
     input/DataIn.hpp
 
     input/fetcher/EodDataStockExFetcher.hpp
-    utils/HtmlTidy.hpp
+    input/fetcher/XQueryFetcher.hpp
+    input/fetcher/HTMLFetcher.hpp
+
+    filter/ProxyTester.hpp
+    filter/XQuery.hpp
+    filter/HTMLToXML.hpp
+
+    utils/HtmlTidy.hpp utils/HttpCodes.hpp
+    utils/SignalWaiter.hpp
     )
 
 

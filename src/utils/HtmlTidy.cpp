@@ -51,6 +51,8 @@ QString HtmlTidy::tidyfy(const QString &data)
     if (rc >= 0)
       rc = tidyOptSetBool(tdoc, TidyQuoteNbsp, no);
     if (rc >= 0)
+      rc = tidyOptSetBool(tdoc, TidyQuiet, yes);
+    if (rc >= 0)
       rc = tidySetInCharEncoding(tdoc, "utf8");
     if (rc >= 0)
       rc = tidySetOutCharEncoding(tdoc, "utf8");

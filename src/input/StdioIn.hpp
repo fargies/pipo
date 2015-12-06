@@ -40,6 +40,8 @@ public:
     Q_INVOKABLE
     explicit StdioIn(QObject *parent = 0);
 
+    QString usage(const QString &usage);
+
 public slots:
     void start();
 

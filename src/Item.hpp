@@ -34,6 +34,11 @@ class Item : public QJsonObject
 public:
     Item();
     Item(const QJsonObject &other);
+
+    bool isErrorItem() const;
+    bool isUsageItem() const;
+
+    static Item usageItem(const QString &usage);
 };
 
 #endif // ITEM_HPP

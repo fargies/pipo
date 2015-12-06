@@ -19,37 +19,24 @@
  **
  **
  **
- **        Created on: 11/22/2015
+ **        Created on: 12/5/2015
  **   Original Author: fargie_s
  **
  **/
 
-#include "Item.hpp"
-#include "ErrorItem.hpp"
+#ifndef USAGEPRINT_HPP
+#define USAGEPRINT_HPP
 
-Item::Item()
+#include "Pipe.hpp"
+
+class UsagePrint : public Pipe
 {
-}
+    Q_OBJECT
+public:
+    Q_INVOKABLE
+    UsagePrint(QObject *parent = 0);
 
-Item::Item(const QJsonObject &other) :
-    QJsonObject(other)
-{
-}
+    bool itemIn(const Item &item);
+};
 
-bool Item::isErrorItem() const
-{
-    return ErrorItem::isErrorItem(*this);
-}
-
-bool Item::isUsageItem() const
-{
-    return contains("usage");
-}
-
-Item Item::usageItem(const QString &usage)
-{
-    Item item;
-    item.insert("usage", usage);
-    return item;
-}
-
+#endif // USAGEPRINT_HPP

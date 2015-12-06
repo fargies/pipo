@@ -19,37 +19,43 @@
  **
  **
  **
- **        Created on: 11/22/2015
+ **        Created on: 12/4/2015
  **   Original Author: fargie_s
  **
  **/
 
-#include "Item.hpp"
-#include "ErrorItem.hpp"
+#ifndef HTMLToXML_HPP
+#define HTMLToXML_HPP
 
-Item::Item()
+#include <QObject>
+#include <QRegularExpression>
+
+#include "Pipe.hpp"
+
+class HTMLToXML : public Pipe
 {
-}
+    Q_OBJECT
+    Q_PROPERTY(bool noNamespaces READ noNamespaces WRITE setNoNamespaces)
+public:
+    Q_INVOKABLE
+    HTMLToXML(QObject *parent = 0);
 
-Item::Item(const QJsonObject &other) :
-    QJsonObject(other)
-{
-}
+    bool itemIn(const Item &item);
 
-bool Item::isErrorItem() const
-{
-    return ErrorItem::isErrorItem(*this);
-}
+    QString usage(const QString &usage);
 
-bool Item::isUsageItem() const
-{
-    return contains("usage");
-}
+    inline bool noNamespaces() const
+    { return m_noNs; }
+    void setNoNamespaces(bool value);
 
-Item Item::usageItem(const QString &usage)
-{
-    Item item;
-    item.insert("usage", usage);
-    return item;
-}
+    static QString tidyfy(const QString &data);
 
+protected:
+    void removeNs(QString &xml);
+
+protected:
+    bool m_noNs;
+    QRegularExpression m_nsReg;
+};
+
+#endif // HTMLTIDY_HPP

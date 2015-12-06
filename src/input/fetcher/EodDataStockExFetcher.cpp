@@ -52,7 +52,7 @@ bool EodDataStockExFetcher::processData(const QByteArray &data)
     QString html = HtmlTidy::tidyfy(QString(data));
     if (html.isEmpty())
     {
-        emit itemOut(ErrorItem("Failed to parse html content"));
+        emit itemOut(ErrorItem("failed to parse html content"));
         return false;
     }
     QXmlNamePool namePool;
@@ -116,3 +116,5 @@ void EodDataStockExFetcher::onRequestFinished()
     reply->deleteLater();
     emit finished(rc);
 }
+
+PIPE_REGISTRATION(EodDataStockExFetcher)

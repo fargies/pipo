@@ -19,37 +19,60 @@
  **
  **
  **
- **        Created on: 11/25/2015
+ **        Created on: 12/5/2015
  **   Original Author: fargie_s
  **
  **/
 
-#ifndef FILEIN_HPP
-#define FILEIN_HPP
+#ifndef HTMLFETCHER_HPP
+#define HTMLFETCHER_HPP
 
 #include <QObject>
-#include <QFile>
+#include <QNetworkAccessManager>
+#include <QByteArray>
 
-#include "DataIn.hpp"
+#include "InputPipe.hpp"
+#include "Item.hpp"
 
-class FileIn : public DataIn
+class HTMLFetcher : public InputPipe
 {
     Q_OBJECT
+    Q_PROPERTY(bool async READ isAsync WRITE setAsync)
+    Q_PROPERTY(QString url READ url WRITE setUrl)
 public:
     Q_INVOKABLE
-    explicit FileIn(const QString &file, QObject *parent = 0);
+    HTMLFetcher(QObject *parent = 0);
+
+    Q_INVOKABLE
+    HTMLFetcher(const QString &url, QObject *parent = 0);
 
     QString usage(const QString &usage);
 
-public slots:
+    bool itemIn(const Item &item);
+
     void start();
 
+    inline const QString &url() const
+    { return m_url; }
+    void setUrl(const QString &url);
+
+    inline bool isAsync() const
+    { return m_async; }
+    void setAsync(bool value);
+
 protected slots:
-    void dataReady();
+    void onRequestFinished();
+    void onPrevFinished(int status);
 
 protected:
-    QFile m_in;
-    QByteArray m_buff;
+    void processReply(QNetworkReply *reply);
+    void processData(const Item &item, const QByteArray &data);
+
+protected:
+    QString m_url;
+    QNetworkAccessManager m_manager;
+    int m_pendingCount;
+    bool m_async;
 };
 
-#endif // FILEIN_HPP
+#endif // HTMLFETCHER_HPP
