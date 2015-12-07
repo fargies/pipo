@@ -86,7 +86,6 @@ bool ProxyTester::itemIn(const Item &item)
 
     const int port = jsonPort.isString() ? jsonPort.toString().toInt() : jsonPort.toInt(-1);
     QNetworkProxy::ProxyType type = proxyType(item.value("type").toString("http"));
-qDebug() << "here" << hostName << port;
 
     if (Pipe::itemIn(item))
         return true;

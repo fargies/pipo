@@ -7,6 +7,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/input/fetcher
     ${CMAKE_CURRENT_SOURCE_DIR}/output
     ${CMAKE_CURRENT_SOURCE_DIR}/utils
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/qt-mustache
     )
 
 set(pipo_SRCS
@@ -29,9 +30,12 @@ set(pipo_SRCS
     filter/ProxyTester.cpp
     filter/XQuery.cpp
     filter/HTMLToXML.cpp
+    filter/Mustache.cpp
 
     utils/HtmlTidy.cpp
     utils/SignalWaiter.cpp
+
+    vendor/qt-mustache/mustache.cpp
     )
 
 set(pipo_HEADERS
@@ -54,11 +58,17 @@ set(pipo_HEADERS
     filter/ProxyTester.hpp
     filter/XQuery.hpp
     filter/HTMLToXML.hpp
+    filter/Mustache.hpp
 
     utils/HtmlTidy.hpp utils/HttpCodes.hpp
     utils/SignalWaiter.hpp
+
+    vendor/qt-mustache/mustache.h
     )
 
+add_info_files(
+    vendor/qt-mustache/README.md
+    )
 
 include(${QT_USE_FILE})
 

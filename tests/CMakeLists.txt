@@ -32,6 +32,7 @@ set(test_SRCS
     test_ProxyTester.cpp
     test_XQueryFetcher.cpp
     test_HTMLToXML.cpp
+    test_Mustache.cpp
     )
 
 add_executable(test_all ${test_SRCS})
