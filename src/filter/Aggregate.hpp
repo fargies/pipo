@@ -19,31 +19,39 @@
  **
  **
  **
- **        Created on: 11/22/2015
+ **        Created on: 12/7/2015
  **   Original Author: fargie_s
  **
  **/
 
-#ifndef STDIOOUT_HPP
-#define STDIOOUT_HPP
+#ifndef AGGREGATE_HPP
+#define AGGREGATE_HPP
 
 #include <QObject>
+#include <QJsonArray>
 
 #include "Pipe.hpp"
+#include "Item.hpp"
 
-class StdioOut : public Pipe
+class Aggregate : public Pipe
 {
     Q_OBJECT
 public:
     Q_INVOKABLE
-    StdioOut(bool indent = true, QObject *parent = 0);
+    Aggregate(QObject *parent = 0);
 
     bool itemIn(const Item &item);
 
     QString usage(const QString &usage);
 
+    inline const QJsonArray &items() const
+    { return m_items; }
+
+protected slots:
+    void onPrevFinished(int status);
+
 protected:
-    bool m_isIndent;
+    QJsonArray m_items;
 };
 
-#endif // STDIOOUT_HPP
+#endif // AGGREGATE_HPP

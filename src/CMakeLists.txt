@@ -22,6 +22,7 @@ set(pipo_SRCS
     input/StdioIn.cpp
     input/FileIn.cpp
     input/DataIn.cpp
+    input/ManualIn.cpp
 
     input/fetcher/EodDataStockExFetcher.cpp
     input/fetcher/XQueryFetcher.cpp
@@ -31,6 +32,7 @@ set(pipo_SRCS
     filter/XQuery.cpp
     filter/HTMLToXML.cpp
     filter/Mustache.cpp
+    filter/Aggregate.cpp
 
     utils/HtmlTidy.cpp
     utils/SignalWaiter.cpp
@@ -50,6 +52,7 @@ set(pipo_HEADERS
     input/StdioIn.hpp
     input/FileIn.hpp
     input/DataIn.hpp
+    input/ManualIn.hpp
 
     input/fetcher/EodDataStockExFetcher.hpp
     input/fetcher/XQueryFetcher.hpp
@@ -59,6 +62,7 @@ set(pipo_HEADERS
     filter/XQuery.hpp
     filter/HTMLToXML.hpp
     filter/Mustache.hpp
+    filter/Aggregate.hpp
 
     utils/HtmlTidy.hpp utils/HttpCodes.hpp
     utils/SignalWaiter.hpp

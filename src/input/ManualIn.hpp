@@ -19,31 +19,33 @@
  **
  **
  **
- **        Created on: 11/22/2015
+ **        Created on: 12/8/2015
  **   Original Author: fargie_s
  **
  **/
 
-#ifndef STDIOOUT_HPP
-#define STDIOOUT_HPP
+#ifndef MANUALIN_HPP
+#define MANUALIN_HPP
 
 #include <QObject>
 
-#include "Pipe.hpp"
+#include "DataIn.hpp"
 
-class StdioOut : public Pipe
+class ManualIn : public DataIn
 {
     Q_OBJECT
 public:
     Q_INVOKABLE
-    StdioOut(bool indent = true, QObject *parent = 0);
+    ManualIn(QObject *parent = 0);
 
     bool itemIn(const Item &item);
 
     QString usage(const QString &usage);
 
-protected:
-    bool m_isIndent;
+    void end();
+
+public slots:
+    void start();
 };
 
-#endif // STDIOOUT_HPP
+#endif // MANUALIN_HPP

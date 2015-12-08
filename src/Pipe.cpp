@@ -30,7 +30,9 @@
 #include "ErrorItem.hpp"
 #include "Item.hpp"
 
-Pipe::Pipe(QObject *parent) : QObject(parent)
+Pipe::Pipe(QObject *parent) :
+    QObject(parent),
+    m_connCount(0)
 {
 
 }
