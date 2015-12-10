@@ -36,11 +36,19 @@ set(test_SRCS
     test_Aggregate.cpp
     )
 
-add_executable(test_all ${test_SRCS})
-target_link_libraries(test_all testHelper libpipo)
-qt_use_modules(test_all Core)
+set(test_manual_SRCS
+    test_MailOut.cpp
+    )
 
-add_test(test_all ${CMAKE_CURRENT_BINARY_DIR}/test_all)
+add_executable(test_auto ${test_SRCS})
+target_link_libraries(test_auto testHelper libpipo)
+qt_use_modules(test_auto Core)
+
+add_executable(test_manual ${test_manual_SRCS})
+target_link_libraries(test_manual testHelper libpipo)
+qt_use_modules(test_manual Core)
+
+add_test(test_auto ${CMAKE_CURRENT_BINARY_DIR}/test_auto)
 
 endif(TESTS)
 

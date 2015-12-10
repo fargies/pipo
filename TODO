@@ -1,4 +1,11 @@
-Find a way to hook on last Pipe finished signal
-XQuery fetcher with sub-queries
-HTTPSFetcher to tests SSL support on given proxy
-Set properties using config
+- Find a way to hook on last Pipe finished signal
+- HTTPSFetcher to tests SSL support on given proxy
+- Set properties using config
+- Implement a nicer usage
+- Write a README
+- Work with real unix shell pipes
+
+Pipes to be written :
+    - UDPOut, MCastOut, SqliteOut, FileOut, RSSFeedOut, MailOut, SyslogOut
+    - RSSFeedIn
+    - Rename, Match, SqliteQuery, Timestamp

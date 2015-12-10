@@ -33,6 +33,9 @@
 #include "Pipe.hpp"
 #include "Item.hpp"
 
+/*
+ * TODO: add some maxItem property and emit itemOut whenever this property is reached
+ */
 class Aggregate : public Pipe
 {
     Q_OBJECT

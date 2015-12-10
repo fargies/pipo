@@ -18,6 +18,7 @@ set(pipo_SRCS
     output/StdioOut.cpp
     output/UsagePrint.cpp
     output/ItemQueue.cpp
+    output/MailOut.cpp
 
     input/StdioIn.cpp
     input/FileIn.cpp
@@ -48,6 +49,7 @@ set(pipo_HEADERS
     output/StdioOut.hpp
     output/UsagePrint.hpp
     output/ItemQueue.hpp
+    output/MailOut.cpp
 
     input/StdioIn.hpp
     input/FileIn.hpp
