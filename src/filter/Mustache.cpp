@@ -48,7 +48,7 @@ bool Mustache::itemIn(const Item &item)
     if (Pipe::itemIn(item))
         return true;
 
-    Item out(item);
+    Item out(setConfigProperties(item));
 
     /* handle mustache variables */
     QJsonValue jsonVal(out.take("mustacheVars"));
@@ -82,7 +82,8 @@ bool Mustache::itemIn(const Item &item)
     else if (!tpl.isEmpty())
         mustacheOut(tpl, out);
 
-    emit itemOut(out);
+    if (!out.isEmpty())
+        emit itemOut(out);
 }
 
 QString Mustache::usage(const QString &usage)
@@ -143,3 +144,5 @@ void Mustache::mustacheOut(const QString &tpl, Item &out)
         }
     }
 }
+
+PIPE_REGISTRATION(Mustache)

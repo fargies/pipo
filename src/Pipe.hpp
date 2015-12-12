@@ -60,6 +60,13 @@ public:
      */
     virtual QString usage(const QString &usage);
 
+    /**
+     * @brief set pipe config properties using Item
+     * @param[in] item an item that might contain configuration
+     * @return item with configuration parts removed
+     */
+    Item setConfigProperties(const Item &item);
+
 signals:
     /**
      * @brief signal emitted whenever an item has been processed by this Pipe

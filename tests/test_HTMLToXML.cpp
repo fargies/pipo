@@ -33,6 +33,7 @@
 #include "test_helpers.hpp"
 #include "SignalWaiter.hpp"
 #include "ItemQueue.hpp"
+#include "StdioOut.hpp"
 
 using namespace testHelpers;
 
@@ -41,6 +42,7 @@ class HTMLToXMLTest : public CppUnit::TestFixture
     CPPUNIT_TEST_SUITE(HTMLToXMLTest);
     CPPUNIT_TEST(simple);
     CPPUNIT_TEST(noNamespace);
+    CPPUNIT_TEST(config);
     CPPUNIT_TEST_SUITE_END();
 
 protected:
@@ -89,6 +91,25 @@ protected:
         CPPUNIT_ASSERT(xml.contains("another_ns="));
         CPPUNIT_ASSERT(xml.contains("33:33"));
         CPPUNIT_ASSERT(xml.contains("32:32"));
+    }
+
+    void config()
+    {
+        HTMLToXML conv;
+        StdioOut out;
+        conv.next(out);
+
+        Item item;
+        QJsonObject config;
+        config.insert("noNamespaces", false);
+        item.insert("HTMLToXMLConfig", config);
+
+        SignalWaiter waiter(&conv, SIGNAL(itemOut(Item)));
+
+        CPPUNIT_ASSERT(conv.noNamespaces());
+        conv.itemIn(item);
+        CPPUNIT_ASSERT(!waiter.wait(100));
+        CPPUNIT_ASSERT(!conv.noNamespaces());
     }
 };
 

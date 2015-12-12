@@ -25,6 +25,7 @@
  **/
 
 #include <QMetaObject>
+#include <QVariant>
 
 #include "Pipe.hpp"
 #include "ErrorItem.hpp"
@@ -52,6 +53,48 @@ QString Pipe::usage(const QString &usage)
     emit itemOut(ErrorItem("No usage for: %1")
                  .arg(this->metaObject()->className()));
     return usage;
+}
+
+static Item setConfigPropertiesHelper(
+        const Item &item,
+        QObject *object,
+        const QMetaObject *metaObject)
+{
+    if (!metaObject)
+        return item;
+    const QMetaObject *parent = metaObject->superClass();
+    Item out = item;
+
+    if (parent && (parent != &Pipe::staticMetaObject))
+        out = setConfigPropertiesHelper(out, object, parent); /* parent first */
+
+    QJsonValue config = out.take(
+                QString("%1Config").arg(metaObject->className()));
+    if (!config.isObject())
+        return out;
+
+    QJsonObject configObject(config.toObject());
+    for (QJsonObject::iterator it = configObject.begin();
+         it != configObject.end();
+         )
+    {
+        if (metaObject->indexOfProperty(qPrintable(it.key())) >= 0)
+        {
+            object->setProperty(qPrintable(it.key()), it.value().toVariant());
+            it = configObject.erase(it);
+        }
+        else
+            ++it;
+    }
+    if (!configObject.isEmpty())
+        out.insert(QString("%1Config").arg(metaObject->className()),
+                   configObject);
+    return out;
+}
+
+Item Pipe::setConfigProperties(const Item &item)
+{
+    return setConfigPropertiesHelper(item, this, metaObject());
 }
 
 bool Pipe::itemIn(const Item &item)

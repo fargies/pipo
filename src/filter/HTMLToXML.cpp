@@ -45,12 +45,15 @@ bool HTMLToXML::itemIn(const Item &item)
     if (Pipe::itemIn(item))
         return true;
 
+    Item newItem = setConfigProperties(item);
+    if (newItem.isEmpty())
+        return true;
+
     QString html = item.value("html").toString();
     if (html.isNull())
-        emit itemOut(item);
+        emit itemOut(newItem);
     else
     {
-        Item newItem(item);
         newItem.remove("html");
 
         html = HtmlTidy::tidyfy(html);
