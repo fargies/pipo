@@ -4,8 +4,12 @@
 - Implement a nicer usage
 - Write a README
 - Work with real unix shell pipes
+- Add progress messages ?
 
 Pipes to be written :
     - UDPOut, MCastOut, SqliteOut, FileOut, RSSFeedOut, SyslogOut, MailErrorOut
     - RSSFeedIn
     - Rename, Match, SqliteQuery, Timestamp
+
+Config :
+    - Add instance: idx (to configure only the given instance)

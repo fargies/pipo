@@ -48,7 +48,7 @@ EventFilter::~EventFilter()
 
 bool EventFilter::eventFilter(QObject *object, QEvent *event)
 {
-    qDebug() << "[QEvent]:" << qPrintable(eventName(event->type())) << "->" << object;
+    qWarning() << "[QEvent]:" << qPrintable(eventName(event->type())) << "->" << object;
     return false;
 }
 

@@ -28,10 +28,10 @@
 #include <QMetaType>
 #include <QDebug>
 
-#include "EodDataStockExFetcher.hpp"
 #include "StdioOut.hpp"
 #include "StdioIn.hpp"
 #include "PipeBuilder.hpp"
+#include "SubPipe.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -40,20 +40,18 @@ int main(int argc, char *argv[])
     if (app.arguments().size() <= 1)
     {
         qWarning() << "[usage]:"
-                      << qPrintable(app.arguments().at(0)) << "\"pipe\"";
+                   << qPrintable(app.arguments().at(0)) << "\"pipe\"";
         return 1;
     }
 
-    PipeBuilder builder;
-    InputPipe *in = builder.parsePipe(app.arguments().at(1));
-    if (!in)
+    SubPipe pipe;
+    if (!pipe.setSubPipe(app.arguments().at(1)))
     {
-        qWarning() << qPrintable(builder.errorString());
+        qWarning() << qPrintable(pipe.errorString());
         return 1;
     }
-    in->start();
-    QObject::connect(in, SIGNAL(finished(int)),
-                     &app, SLOT(quit()));
+    pipe.start();
+    QObject::connect(&pipe, &Pipe::finished, &app, &QCoreApplication::quit);
 
     return app.exec();
 }

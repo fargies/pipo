@@ -19,59 +19,48 @@
  **
  **
  **
- **        Created on: 12/3/2015
+ **        Created on: 12/12/2015
  **   Original Author: fargie_s
  **
  **/
 
-#ifndef XQUERYFETCHER_HPP
-#define XQUERYFETCHER_HPP
+#ifndef ZALMOSFETCHER_HPP
+#define ZALMOSFETCHER_HPP
 
 #include <QObject>
 #include <QNetworkAccessManager>
+#include <QByteArray>
+#include <QList>
+#include <QNetworkCookie>
+#include <QNetworkReply>
 
+#include "HTMLFetcher.hpp"
 #include "InputPipe.hpp"
+#include "Item.hpp"
 
-/**
- * @brief Generate data according to the given XQuery request
- */
-class XQueryFetcher : public InputPipe
+class ZalmosFetcher : public HTMLFetcher
 {
     Q_OBJECT
 public:
-
-    /**
-     * @brief XQueryFetcher
-     * @param[in] url the url where to do the request
-     * @param[in] query the main query
-     * @param[in] subQueries information to extract
-     * @param[in] parent parent QObject
-     */
     Q_INVOKABLE
-    XQueryFetcher(const QString &url,
-                  const QString &query,
-                  const QJsonObject &subQueries,
-                  QObject *parent = 0);
+    ZalmosFetcher(QObject *parent = 0);
 
-    inline const QString &url() const
-    { return m_url; }
-    void setUrl(const QString &url);
+    Q_INVOKABLE
+    ZalmosFetcher(const QString &url, QObject *parent = 0);
 
-    QString usage(const QString &usage);
+    bool itemIn(const Item &item);
 
     void start();
 
+    QString usage(const QString &usage);
+
+protected:
+    QNetworkReply *fetchPage(const Item &item, const QList<QNetworkCookie> &cookies);
+
+    bool processReply(QNetworkReply *reply);
+
 protected slots:
-    void onRequestFinished();
-
-protected:
-    bool processData(const QByteArray &data);
-
-protected:
-    QString m_url;
-    QString m_query;
-    QJsonObject m_subQueries;
-    QNetworkAccessManager m_mgr;
+    bool fetchCookiesReply();
 };
 
-#endif // XQUERYFETCHER_HPP
+#endif // ZALMOSFETCHER_HPP

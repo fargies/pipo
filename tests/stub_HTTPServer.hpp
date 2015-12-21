@@ -42,7 +42,7 @@ private slots:
     void discardClient();
 
 protected:
-    void sendFile(const QString &file, QTcpSocket &socket);
+    virtual void handle(const QString &url, QTcpSocket &socket);
     void sendAuthRequired(QTcpSocket &socket);
     void sendForbidden(QTcpSocket &socket);
     bool isAuth() const;

@@ -52,8 +52,9 @@ protected:
         Aggregate aggreg;
         ManualIn in;
         ItemQueue out;
-        in.next(aggreg);
-        aggreg.next(out);
+        in
+        .next(aggreg)
+        .next(out);
 
         in.start();
         for (int i = 0; i < 10; ++i)

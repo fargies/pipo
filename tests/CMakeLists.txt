@@ -29,23 +29,25 @@ set(test_SRCS
 
     test_PipeBuilderScanner.cpp
     test_PipeBuilderParser.cpp
-    test_XQueryFetcher.cpp
+    test_XQuery.cpp
     test_HTMLToXML.cpp
     test_Mustache.cpp
     test_Aggregate.cpp
+    test_HTMLFetcher.cpp
     )
 
 set(test_manual_SRCS
     test_MailOut.cpp
     test_ProxyTester.cpp
+    test_ZalmosFetcher.cpp
     )
 
 add_executable(test_auto ${test_SRCS})
-target_link_libraries(test_auto testHelper libpipo)
+target_link_libraries(test_auto testHelper libpipo ${CPPUNIT_LIBRARIES})
 qt_use_modules(test_auto Core)
 
 add_executable(test_manual ${test_manual_SRCS})
-target_link_libraries(test_manual testHelper libpipo)
+target_link_libraries(test_manual testHelper libpipo ${CPPUNIT_LIBRARIES})
 qt_use_modules(test_manual Core)
 
 add_test(test_auto ${CMAKE_CURRENT_BINARY_DIR}/test_auto)

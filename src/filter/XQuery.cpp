@@ -74,8 +74,8 @@ bool XQuery::itemIn(const Item &item)
                 QString value;
                 QString subQueryStr(subQueries.value(key).toString());
 
-                if (!subQueryStr.startsWith('.'))
-                    subQueryStr.prepend('.');
+                if (!subQueryStr.startsWith("./"))
+                    subQueryStr.prepend("./");
 
                 subQuery.setFocus(xmlNode);
                 subQuery.setQuery(subQueryStr);

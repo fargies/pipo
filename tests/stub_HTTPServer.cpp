@@ -85,7 +85,7 @@ void HTTPServerStub::readClient()
                     if (auth_found = authExp.exactMatch(hdrline))
                     {
                         if (authExp.cap(1) == m_auth_data)
-                            sendFile(tokens[1], *socket);
+                            handle(tokens[1], *socket);
                         else
                             sendAuthRequired(*socket);
                         break;
@@ -97,7 +97,7 @@ void HTTPServerStub::readClient()
                     sendForbidden(*socket);
             }
             else
-                sendFile(tokens[1], *socket);
+                handle(tokens[1], *socket);
         }
         socket->close();
 
@@ -108,13 +108,13 @@ void HTTPServerStub::readClient()
     }
 }
 
-void HTTPServerStub::sendFile(const QString &file, QTcpSocket &socket)
+void HTTPServerStub::handle(const QString &url, QTcpSocket &socket)
 {
     QTextStream os(&socket);
     os.setAutoDetectUnicode(true);
 
     QMap<QString, QString>::const_iterator it =
-        m_data.find(file);
+        m_data.find(url);
 
     if (it != m_data.end())
     {
@@ -131,14 +131,14 @@ void HTTPServerStub::sendFile(const QString &file, QTcpSocket &socket)
         {
             qWarning("[HTTPServerStub]: Failed to open file: %s",
                     qPrintable(it.value()));
-            QString msg = "<h1>Failed to open \"" + file + "\"</h1>\n";
+            QString msg = "<h1>Failed to open \"" + url + "\"</h1>\n";
             os << HTTP_404 << HTTP_LENGTH << msg.length() << CRLF CRLF << msg;
         }
     }
     else
     {
         qWarning("[HTTPServerStub]: No such file: %s",
-                qPrintable(file));
+                qPrintable(url));
         os << HTTP_404 << HTTP_LENGTH << HTTP_404_MSG_LEN << CRLF CRLF
             << HTTP_404_MSG;
     }

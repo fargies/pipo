@@ -35,12 +35,11 @@ PipeBuilder::PipeBuilder(QObject *parent) : QObject(parent)
 
 }
 
-InputPipe *PipeBuilder::parsePipe(const QString &text)
+QList<Pipe *> PipeBuilder::parsePipe(const QString &text)
 {
     PipeBuilderParseCtx ctx(*this);
-    InputPipe *inPipe = ctx.parse(text);
-    if (!inPipe)
-        m_errorString = ctx.errorString();
+    QList<Pipe *> inPipe = ctx.parse(text);
+    m_errorString = ctx.errorString();
     return inPipe;
 }
 

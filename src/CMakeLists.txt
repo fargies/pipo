@@ -5,6 +5,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/input
     ${CMAKE_CURRENT_SOURCE_DIR}/input/fetcher
+    ${CMAKE_CURRENT_SOURCE_DIR}/filter
     ${CMAKE_CURRENT_SOURCE_DIR}/output
     ${CMAKE_CURRENT_SOURCE_DIR}/utils
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/qt-mustache
@@ -25,15 +26,15 @@ set(pipo_SRCS
     input/DataIn.cpp
     input/ManualIn.cpp
 
-    input/fetcher/EodDataStockExFetcher.cpp
-    input/fetcher/XQueryFetcher.cpp
     input/fetcher/HTMLFetcher.cpp
+    input/fetcher/ZalmosFetcher.cpp
 
     filter/ProxyTester.cpp
     filter/XQuery.cpp
     filter/HTMLToXML.cpp
     filter/Mustache.cpp
     filter/Aggregate.cpp
+    filter/SubPipe.cpp
 
     utils/HtmlTidy.cpp
     utils/SignalWaiter.cpp
@@ -56,15 +57,15 @@ set(pipo_HEADERS
     input/DataIn.hpp
     input/ManualIn.hpp
 
-    input/fetcher/EodDataStockExFetcher.hpp
-    input/fetcher/XQueryFetcher.hpp
     input/fetcher/HTMLFetcher.hpp
+    input/fetcher/ZalmosFetcher.hpp
 
     filter/ProxyTester.hpp
     filter/XQuery.hpp
     filter/HTMLToXML.hpp
     filter/Mustache.hpp
     filter/Aggregate.hpp
+    filter/SubPipe.hpp
 
     utils/HtmlTidy.hpp utils/HttpCodes.hpp
     utils/SignalWaiter.hpp

@@ -39,7 +39,7 @@ public:
 
     using Pipe::next;
 
-    InputPipe &next(Pipe &pipe);
+    Pipe &next(Pipe &pipe);
 
 public slots:
     virtual void start() = 0;

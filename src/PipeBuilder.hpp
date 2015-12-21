@@ -28,6 +28,7 @@
 #define PIPEBUILDER_HPP
 
 #include <QObject>
+#include <QVariantList>
 
 #include "InputPipe.hpp"
 
@@ -37,7 +38,7 @@ class PipeBuilder : public QObject
 public:
     explicit PipeBuilder(QObject *parent = 0);
 
-    InputPipe *parsePipe(const QString &text);
+    QList<Pipe *> parsePipe(const QString &text);
 
     InputPipe *createInputPipe(
             const QString &pipeName,

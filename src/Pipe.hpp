@@ -47,7 +47,7 @@ public:
      * @param[in,out] pipe next pipe object
      * @return *this
      */
-    Pipe &next(Pipe &pipe);
+    virtual Pipe &next(Pipe &pipe);
 
     /**
      * @brief display pipe usage
@@ -98,6 +98,8 @@ protected slots:
 
 protected:
     int m_connCount;
+
+    friend class SubPipe;
 };
 
 template <typename tPipe>

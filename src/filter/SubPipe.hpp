@@ -17,44 +17,51 @@
  **    misrepresented as being the original software.
  ** 3. This notice may not be removed or altered from any source distribution.
  **
+ ** SubPipe.hpp
  **
- **
- **        Created on: 11/22/2015
+ **        Created on: 12/21/2015
  **   Original Author: fargie_s
  **
  **/
 
-#ifndef EODDATASTOCKEXFETCHER_HPP
-#define EODDATASTOCKEXFETCHER_HPP
+#ifndef SUBPIPE_HPP
+#define SUBPIPE_HPP
 
 #include <QObject>
-#include <QNetworkAccessManager>
 
 #include "InputPipe.hpp"
 
-class EodDataStockExFetcher : public InputPipe
+class SubPipe : public InputPipe
 {
     Q_OBJECT
+    Q_PROPERTY(QString subPipe READ subPipe WRITE setSubPipe)
 public:
     Q_INVOKABLE
-    EodDataStockExFetcher(QObject *parent = 0);
+    SubPipe(QObject *parent = 0);
 
-    inline const QString &url() const
-    { return m_eodDataUrl; }
+    inline const QString &subPipe() const
+    { return m_subPipe; }
+    bool setSubPipe(const QString &subPipe);
+    void clearSubPipe();
 
-    void setUrl(const QString &url);
+    bool itemIn(const Item &item);
+
+    QString usage(const QString &usage);
+
+    Pipe &next(Pipe &pipe);
 
     void start();
 
+    inline const QString &errorString() const
+    { return m_errorString; }
+
 protected slots:
-    void onRequestFinished();
+    void onPrevFinished(int status);
 
 protected:
-    bool processData(const QByteArray &data);
-
-protected:
-    QString m_eodDataUrl;
-    QNetworkAccessManager m_mgr;
+    QString m_subPipe;
+    QList<Pipe *> m_pipe;
+    QString m_errorString;
 };
 
-#endif // EODDATASTOCKEXFETCHER_HPP
+#endif // SUBPIPE_HPP

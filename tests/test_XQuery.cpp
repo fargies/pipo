@@ -31,17 +31,22 @@
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "XQueryFetcher.hpp"
+#include "XQuery.hpp"
+#include "HTMLFetcher.hpp"
+#include "HTMLToXML.hpp"
 #include "StdioOut.hpp"
+#include "ItemQueue.hpp"
 #include "test_helpers.hpp"
 #include "stub_HTTPServer.hpp"
 #include "SignalWaiter.hpp"
 
+#include "test_helpers_stddump.hpp"
+
 using namespace testHelpers;
 
-class XQueryFetcherTest : public CppUnit::TestFixture
+class XQueryTest : public CppUnit::TestFixture
 {
-    CPPUNIT_TEST_SUITE(XQueryFetcherTest);
+    CPPUNIT_TEST_SUITE(XQueryTest);
     CPPUNIT_TEST(simple);
     CPPUNIT_TEST_SUITE_END();
 
@@ -52,13 +57,25 @@ protected:
         QTemporaryFile tempFile;
 
         QJsonObject subQuery;
-        subQuery.insert("value", "text()");
-        subQuery.insert("param", "@param/string()");
-        XQueryFetcher fetcher(server.baseUri() + "/test",
-                              "//div[contains(@id,'catchme')]/div",
-                              subQuery);
+        subQuery.insert("value", "/text()");
+        subQuery.insert("param", "/@param/string()");
+
+        Item item;
+        item["url"] = server.baseUri() + "/test";
+        item["subQueries"] = subQuery;
+        item["query"] = "//div[contains(@id,'catchme')]/div";
+
+        HTMLFetcher fetcher;
+        HTMLToXML convert;
+        XQuery query;
+        ItemQueue queue;
         StdioOut out;
-        fetcher.next(out);
+
+        fetcher
+                .next(convert)
+                .next(query)
+                .next(queue)
+                .next(out);
 
         tempFile.open();
         QTextStream tempStream(&tempFile);
@@ -69,10 +86,16 @@ protected:
         tempStream.flush();
         server.add("/test", tempFile.fileName());
 
-        SignalWaiter waiter(&fetcher, SIGNAL(itemOut(Item)));
-        fetcher.start();
+        SignalWaiter waiter(&out, SIGNAL(itemOut(Item)));
+        fetcher.itemIn(item);
         CPPUNIT_ASSERT(waiter.wait(1000));
+
+        CPPUNIT_ASSERT(!queue.items().isEmpty());
+        item = queue.items().first();
+
+        CPPUNIT_ASSERT_EQUAL(QString("value str"), item.value("value").toString());
+        CPPUNIT_ASSERT_EQUAL(QString("42"), item.value("param").toString());
     }
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION(XQueryFetcherTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(XQueryTest);

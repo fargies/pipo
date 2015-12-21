@@ -60,4 +60,3 @@ protected:
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(ProxyTesterTest);
-

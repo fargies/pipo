@@ -46,17 +46,8 @@ static void print_token_value (FILE *, int, YYSTYPE);
 %%
 
 pipes:
-  inpipe
+  pipe
 | pipes PIPESEP pipe
-;
-
-inpipe:
-STRING args
-{
-    if (!pp->addInputPipe(QLatin1String($<sval>1)))
-        YYERROR;
-    free($<sval>1);
-}
 ;
 
 pipe:

@@ -26,6 +26,7 @@
 
 #include <QNetworkReply>
 #include <QNetworkRequest>
+#include <QFile>
 
 #include "HTMLFetcher.hpp"
 #include "HttpCodes.hpp"
@@ -36,14 +37,14 @@
 
 HTMLFetcher::HTMLFetcher(QObject *parent) :
     InputPipe(parent),
-    m_async(false)
+    m_pendingCount(0)
 {
 }
 
 HTMLFetcher::HTMLFetcher(const QString &url, QObject *parent) :
     InputPipe(parent),
     m_url(url),
-    m_async(false)
+    m_pendingCount(0)
 {
 }
 
@@ -55,59 +56,59 @@ QString HTMLFetcher::usage(const QString &usage)
 
 bool HTMLFetcher::itemIn(const Item &item)
 {
-    const QString url = item.value("url").toString();
-
     if (Pipe::itemIn(item))
         return true;
-    else if (url.isEmpty())
-        emit itemOut(item);
+
+    Item outItem = setConfigProperties(item);
+    const QString url = outItem.take("url").toString();
+    if (url.isEmpty())
+    {
+        if (!outItem.isEmpty())
+            emit itemOut(outItem);
+    }
     else
     {
         QNetworkRequest request;
         request.setUrl(url);
         request.setRawHeader("User-Agent", "Pipo 1.0");
 
+        QString outFile = outItem.take("htmlOutFile").toString(m_outFile);
+        if (!outFile.isEmpty())
+        {
+            QFile file(outFile);
+            if (!file.open(QIODevice::Truncate | QIODevice::WriteOnly))
+            {
+                emit itemOut(ErrorItem("failed to open htmlOutFile: %1")
+                             .arg(file.errorString()));
+                return true;
+            }
+            file.close();
+        }
+        else
+            outItem.remove("html");
+
         m_pendingCount++;
 
         QNetworkReply *reply = m_manager.get(request);
-        reply->setProperty("requestItem", item);
+        reply->setProperty("requestItem", outItem);
+        if (!outFile.isEmpty())
+            reply->setProperty("htmlOutFile", outFile);
+        reply->setReadBufferSize(4096 * 1024);
 
-        if (m_async)
-        {
-            connect(reply, SIGNAL(finished()),
-                    this, SLOT(onRequestFinished()));
-        }
-        else
-        {
-            SignalWaiter waiter(reply, SIGNAL(finished()));
-            while (!reply->isFinished() && !waiter.wait(NET_TIMEOUT))
-                emit itemOut(ErrorItem("request is slow on %1").arg(url));
-            processReply(reply);
-            reply->deleteLater();
-
-            if (!--m_pendingCount && !m_connCount)
-                emit finished(0);
-        }
+        connect(reply, &QNetworkReply::downloadProgress,
+                this, &HTMLFetcher::onReadyRead);
+        connect(reply, &QNetworkReply::finished,
+                this, &HTMLFetcher::onReadyRead);
     }
     return true;
 }
 
 void HTMLFetcher::start()
 {
-    QNetworkRequest request;
-    request.setUrl(m_url);
-    request.setRawHeader("User-Agent", "Pipo 1.0");
-
-    m_pendingCount++;
-
     Item item;
     item.insert("url", m_url);
 
-    QNetworkReply *reply = m_manager.get(request);
-    reply->setProperty("requestItem", item);
-
-    connect(reply, SIGNAL(finished()),
-            this, SLOT(onRequestFinished()));
+    itemIn(item);
 }
 
 void HTMLFetcher::setUrl(const QString &url)
@@ -115,25 +116,31 @@ void HTMLFetcher::setUrl(const QString &url)
     m_url = url;
 }
 
-void HTMLFetcher::setAsync(bool value)
+void HTMLFetcher::setOutFile(const QString &outFile)
 {
-    m_async = value;
+    m_outFile = outFile;
 }
 
-void HTMLFetcher::onRequestFinished()
+void HTMLFetcher::onReadyRead()
 {
+    bool pending = false;
     QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
 
-    if (!reply)
-        emit itemOut(ErrorItem("internal error in HTMLFetcher"));
-    else
+    if (reply)
     {
-        processReply(reply);
-        reply->deleteLater();
+        pending = processReply(reply);
+        if (!pending)
+            reply->deleteLater();
     }
-    if (!--m_pendingCount && !m_connCount)
-        emit finished(0);
+    else
+        emit itemOut(ErrorItem("internal error in %1")
+                     .arg(metaObject()->className()));
 
+    if (!pending)
+    {
+        if (!--m_pendingCount && !m_connCount)
+            emit finished(0);
+    }
 }
 
 void HTMLFetcher::onPrevFinished(int status)
@@ -142,30 +149,76 @@ void HTMLFetcher::onPrevFinished(int status)
         emit finished(status);
 }
 
-void HTMLFetcher::processReply(QNetworkReply *reply)
+bool HTMLFetcher::processReply(QNetworkReply *reply)
 {
-    const Item item(reply->property("requestItem").toJsonObject());
-
     if (reply->error() != QNetworkReply::NoError)
+    {
         emit itemOut(ErrorItem("network request failed for '%1': %2")
                      .arg(reply->url().toString()).arg(reply->errorString()));
-    else
-    {
-        int httpStatus = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-        if (httpStatus == HTTP_OK)
-            processData(item, reply->readAll());
-        else
-            emit itemOut(ErrorItem(QString("failed with status: %1").arg(httpStatus)));
+        return false;
     }
+    int httpStatus = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+
+    if (httpStatus != HTTP_OK)
+    {
+        emit itemOut(ErrorItem(QString("failed with status: %1").arg(httpStatus)));
+        return false;
+    }
+
+    Item item(reply->property("requestItem").toJsonObject());
+    bool pending = false;
+
+    qint64 size = reply->header(QNetworkRequest::ContentLengthHeader).toULongLong();
+    qint64 fetched = processData(reply->property("htmlOutFile").toString(),
+                                 reply->read(reply->bytesAvailable()), item);
+    if (size > 0)
+    {
+        if (fetched >= size)
+            sendItemOut(item);
+        else if (reply->isFinished())
+            emit itemOut(ErrorItem("missing data, Content-Length: %1 < %2")
+                         .arg(QString::number(fetched))
+                         .arg(QString::number(size)));
+        else
+            pending = true;
+    }
+    else if (reply->isFinished())
+        sendItemOut(item);
+    else
+        pending = true;
+
+    if (pending)
+        reply->setProperty("requestItem", item);
+    else
+        reply->disconnect(this);
+    return pending;
 }
 
-void HTMLFetcher::processData(const Item &item, const QByteArray &data)
+qint64 HTMLFetcher::processData(const QString &outFile, const QByteArray &data, Item &item)
 {
-    Item out(item);
-    out.remove("url");
+    qint64 size;
 
-    out.insert("html", QString(data));
-    emit itemOut(out);
+    if (!outFile.isEmpty())
+    {
+        QFile file(outFile);
+        file.open(QIODevice::Append | QIODevice::WriteOnly);
+        file.write(data);
+        size = file.size();
+        file.close();
+    }
+    else
+    {
+        const QString html = item.value("html").toString();
+        item.insert("html", html + QString(data));
+        size = html.size() + data.size();
+    }
+    return size;
+}
+
+void HTMLFetcher::sendItemOut(Item &item)
+{
+    if (!item.isEmpty())
+        emit itemOut(item);
 }
 
 PIPE_REGISTRATION(HTMLFetcher)

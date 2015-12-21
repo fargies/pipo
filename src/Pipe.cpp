@@ -44,8 +44,8 @@ Pipe &Pipe::next(Pipe &pipe)
             &pipe, &Pipe::itemIn);
     connect(this, &Pipe::finished,
             &pipe, &Pipe::onPrevFinished);
-    m_connCount++;
-    return *this;
+    pipe.m_connCount++;
+    return pipe;
 }
 
 QString Pipe::usage(const QString &usage)

@@ -42,7 +42,7 @@ PipeBuilderParseCtx::~PipeBuilderParseCtx()
     yylex_destroy(m_scan);
 }
 
-InputPipe *PipeBuilderParseCtx::parse(const QString &string)
+QList<Pipe *> PipeBuilderParseCtx::parse(const QString &string)
 {
 #ifdef PIPO_YYDEBUG
     yydebug = 1;
@@ -55,14 +55,14 @@ InputPipe *PipeBuilderParseCtx::parse(const QString &string)
     yypop_buffer_state(m_scan);
     if (rc == 0)
     {
-        Pipe *p = m_pipes.first();
-        m_pipes.clear();
-        return static_cast<InputPipe *>(p);
+        QList<Pipe *> ret;
+        ret.swap(m_pipes);
+        return ret;
     }
     else
     {
         delPipe();
-        return 0;
+        return QList<Pipe *>();
     }
 }
 

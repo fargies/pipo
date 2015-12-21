@@ -32,8 +32,8 @@ InputPipe::InputPipe(QObject *parent) :
 
 }
 
-InputPipe &InputPipe::next(Pipe &pipe)
+Pipe &InputPipe::next(Pipe &pipe)
 {
     Pipe::next(pipe);
-    return *this;
+    return pipe;
 }

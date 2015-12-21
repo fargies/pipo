@@ -47,7 +47,7 @@ public:
     PipeBuilderParseCtx(PipeBuilder &builder);
     ~PipeBuilderParseCtx();
 
-    InputPipe *parse(const QString &string);
+    QList<Pipe *> parse(const QString &string);
 
     inline yyscan_t scaninfo() const
     { return m_scan; }

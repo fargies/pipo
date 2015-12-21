@@ -51,9 +51,10 @@ protected:
 
         foreach (const QString &pipeText, pipes)
         {
-            InputPipe *in = builder.parsePipe(pipeText);
-            CPPUNIT_ASSERT_MESSAGE(qPrintable(builder.errorString()), in);
-            delete in;
+            QList<Pipe *> in = builder.parsePipe(pipeText);
+            CPPUNIT_ASSERT_MESSAGE(qPrintable(builder.errorString()), !in.isEmpty());
+            foreach (Pipe *p, in)
+                p->deleteLater();
         }
     }
 };

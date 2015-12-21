@@ -37,8 +37,8 @@
 class HTMLFetcher : public InputPipe
 {
     Q_OBJECT
-    Q_PROPERTY(bool async READ isAsync WRITE setAsync)
     Q_PROPERTY(QString url READ url WRITE setUrl)
+    Q_PROPERTY(QString outFile READ outFile WRITE setOutFile)
 public:
     Q_INVOKABLE
     HTMLFetcher(QObject *parent = 0);
@@ -56,23 +56,24 @@ public:
     { return m_url; }
     void setUrl(const QString &url);
 
-    inline bool isAsync() const
-    { return m_async; }
-    void setAsync(bool value);
+    inline const QString &outFile() const
+    { return m_outFile; }
+    void setOutFile(const QString &outFile);
 
 protected slots:
-    void onRequestFinished();
+    void onReadyRead();
     void onPrevFinished(int status);
 
 protected:
-    void processReply(QNetworkReply *reply);
-    void processData(const Item &item, const QByteArray &data);
+    virtual bool processReply(QNetworkReply *reply);
+    qint64 processData(const QString &outFile, const QByteArray &data, Item &item);
+    void sendItemOut(Item &item);
 
 protected:
     QString m_url;
+    QString m_outFile;
     QNetworkAccessManager m_manager;
     int m_pendingCount;
-    bool m_async;
 };
 
 #endif // HTMLFETCHER_HPP
