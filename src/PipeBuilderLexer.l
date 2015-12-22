@@ -1,7 +1,5 @@
 %option noyywrap nodefault yylineno reentrant bison-bridge
 
-%option header-file="PipeBuilderScanner.hpp"
-
 %{
 #include "PipeBuilderParseCtx.hpp"
 #include "PipeBuilderParser.hpp"

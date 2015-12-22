@@ -97,7 +97,8 @@ bison_target(PipeBuilderParser
 flex_target(PipeBuilderScanner
     PipeBuilderLexer.l
     ${CMAKE_CURRENT_BINARY_DIR}/PipeBuilderScanner.cpp
-    COMPILE_FLAGS "-d")
+    COMPILE_FLAGS
+    "-d --header-file=${CMAKE_CURRENT_BINARY_DIR}/PipeBuilderScanner.hpp")
 add_flex_bison_dependency(PipeBuilderScanner PipeBuilderParser)
 
 add_library(libpipo SHARED
