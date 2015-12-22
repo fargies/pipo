@@ -1,8 +1,11 @@
 
-%pure-parser
+%require "2.7.1"
+%define api.pure
 
 %parse-param { PipeBuilderParseCtx *pp }
 %lex-param   { yyscan_t *YYLEX_PARAM }
+
+%defines
 
 %union
 {
