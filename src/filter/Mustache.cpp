@@ -120,7 +120,11 @@ void Mustache::setMustacheTemplate(const QString &tpl)
 
 QString Mustache::mustache(const QString &tpl, const Item &context)
 {
+#if QT_VERSION >= 0x050500
     return Mstch::renderTemplate(tpl, context.toVariantHash());
+#else
+    return Mstch::renderTemplate(tpl, context.toVariantMap());
+#endif
 }
 
 void Mustache::mustacheOut(const QString &tpl, Item &out)

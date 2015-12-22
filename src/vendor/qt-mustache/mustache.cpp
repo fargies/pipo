@@ -21,11 +21,18 @@
 
 using namespace Mstch;
 
-QString Mstch::renderTemplate(const QString& templateString, const QVariantHash& args)
+QString Mstch::renderTemplate(const QString& templateString, const QVariantHash &args)
 {
 	Mstch::QtVariantContext context(args);
 	Mstch::Renderer renderer;
 	return renderer.render(templateString, &context);
+}
+
+QString Mstch::renderTemplate(const QString& templateString, const QVariantMap &args)
+{
+    Mstch::QtVariantContext context(args);
+    Mstch::Renderer renderer;
+    return renderer.render(templateString, &context);
 }
 
 QString escapeHtml(const QString& input)
