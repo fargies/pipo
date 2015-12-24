@@ -75,10 +75,16 @@ void SubPipe::clearSubPipe()
 
 bool SubPipe::itemIn(const Item &item)
 {
-    if (Pipe::itemIn(item))
+    if (item.isErrorItem())
+    {
+        emit itemOut(item);
         return true;
+    }
 
     Item outItem = setConfigProperties(item);
+    if (item.contains("usage"))
+        outItem << Item::Value("usage", usage(item.value("usage").toString()));
+
     QString pipe = outItem.take("pipe").toString();
     if (!pipe.isNull()) /* empty pipe is still a correct value */
     {

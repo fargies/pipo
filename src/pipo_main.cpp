@@ -27,31 +27,57 @@
 #include <QCoreApplication>
 #include <QMetaType>
 #include <QDebug>
+#include <QCommandLineParser>
 
 #include "StdioOut.hpp"
 #include "StdioIn.hpp"
 #include "PipeBuilder.hpp"
 #include "SubPipe.hpp"
+#include "ItemQueue.hpp"
+
+#include "version.h"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
+    app.setApplicationVersion(VERSION);
+    app.setApplicationName("pipo");
 
-    if (app.arguments().size() <= 1)
-    {
-        qWarning() << "[usage]:"
-                   << qPrintable(app.arguments().at(0)) << "\"pipe\"";
-        return 1;
-    }
+    QCommandLineParser parser;
+    parser.setApplicationDescription("Pipo data pipe tool");
+    parser.addHelpOption();
+    parser.addVersionOption();
+
+    QCommandLineOption usage(QStringList() << "u" << "usage",
+                             QCoreApplication::translate("args", "display pipe's usage"));
+    parser.addOption(usage);
+    parser.addPositionalArgument("pipe", QCoreApplication::translate("args", "pipe expression"), "StdioIn|SubPipe|StdioOut...");
+
+    parser.process(app);
 
     SubPipe pipe;
-    if (!pipe.setSubPipe(app.arguments().at(1)))
+    QString pipeExpr;
+    if (parser.positionalArguments().isEmpty())
+        pipeExpr = "StdioIn|SubPipe|StdioOut";
+    else
+        pipeExpr =parser.positionalArguments().first();
+    if (!pipe.setSubPipe(pipeExpr))
     {
         qWarning() << qPrintable(pipe.errorString());
         return 1;
     }
-    pipe.start();
-    QObject::connect(&pipe, &Pipe::finished, &app, &QCoreApplication::quit);
+
+    QObject::connect(&pipe, &Pipe::finished, &app, &QCoreApplication::quit, Qt::QueuedConnection);
+    if (parser.isSet(usage))
+    {
+        ItemQueue queue;
+        pipe.next(queue);
+        pipe.itemIn(Item() << Item::Value("usage", ""));
+        qWarning() << qPrintable(queue.items().first().value("usage").toString());
+        emit pipe.finished(0);
+    }
+    else
+        pipe.start();
 
     return app.exec();
 }

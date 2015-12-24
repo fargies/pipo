@@ -59,10 +59,10 @@ bool Rename::itemIn(const Item &item)
 
 QString Rename::usage(const QString &usage)
 {
-    return usage +
-            "\n{ \"RenameConfig\" : { \"renames\" : { \"var\", \"newName\" } -> Rename\n"
-            "\n{ \"var\" : * } -> Rename -> { \"newName\" : * }\n"
-            "\n{ \"var\" : *, \"renames\" : { \"var\", \"newName\" } } -> Rename -> { \"newName\" : * }\n";
+    return usage + "\n"
+            "{ \"RenameConfig\" : { \"renames\" : { \"var\", \"newName\" } -> Rename\n"
+            "{ \"var\" : * } -> Rename -> { \"newName\" : * }\n"
+            "{ \"var\" : *, \"renames\" : { \"var\", \"newName\" } } -> Rename -> { \"newName\" : * }\n";
 }
 
 void Rename::setRenames(const QJsonObject &renames)

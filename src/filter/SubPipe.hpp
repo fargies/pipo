@@ -55,6 +55,9 @@ public:
     inline const QString &errorString() const
     { return m_errorString; }
 
+    const QList<Pipe *> &pipe() const
+    { return m_pipe; }
+
 protected slots:
     void onPrevFinished(int status);
 
