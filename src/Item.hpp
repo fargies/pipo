@@ -28,6 +28,9 @@
 #define ITEM_HPP
 
 #include <QJsonObject>
+#include <QPair>
+#include <QString>
+#include <QJsonValue>
 
 class Item : public QJsonObject
 {
@@ -39,6 +42,10 @@ public:
     bool isUsageItem() const;
 
     static Item usageItem(const QString &usage);
+
+    typedef QPair<QString, QJsonValue> Value;
+
+    Item &operator <<(const QPair<QString, QJsonValue> &value);
 };
 
 #endif // ITEM_HPP

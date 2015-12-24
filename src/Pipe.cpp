@@ -80,8 +80,10 @@ static Item setConfigPropertiesHelper(
     {
         if (metaObject->indexOfProperty(qPrintable(it.key())) >= 0)
         {
-            object->setProperty(qPrintable(it.key()), QVariant(it.value()));
-            it = configObject.erase(it);
+            if (object->setProperty(qPrintable(it.key()), QVariant(it.value())))
+                it = configObject.erase(it);
+            else
+                ++it;
         }
         else
             ++it;

@@ -38,6 +38,8 @@ bool SubPipe::setSubPipe(const QString &subPipe)
     if (subPipe != m_subPipe)
     {
         clearSubPipe();
+        if (subPipe.isEmpty())
+            return true;
 
         /* connect last to finished signal */
         PipeBuilder builder;
@@ -49,11 +51,15 @@ bool SubPipe::setSubPipe(const QString &subPipe)
         {
             connect(m_pipe.last(), &Pipe::finished,
                     this, &Pipe::finished);
+            connect(m_pipe.last(), &Pipe::itemOut,
+                    this, &Pipe::itemOut);
             m_pipe.first()->m_connCount = m_connCount;
             m_subPipe = subPipe;
         }
-    }
     return !m_pipe.isEmpty();
+    }
+    else
+        return true;
 }
 
 void SubPipe::clearSubPipe()

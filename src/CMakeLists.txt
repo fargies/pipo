@@ -35,6 +35,8 @@ set(pipo_SRCS
     filter/Mustache.cpp
     filter/Aggregate.cpp
     filter/SubPipe.cpp
+    filter/Rename.cpp
+    filter/Match.cpp
 
     utils/HtmlTidy.cpp
     utils/SignalWaiter.cpp
@@ -66,6 +68,8 @@ set(pipo_HEADERS
     filter/Mustache.hpp
     filter/Aggregate.hpp
     filter/SubPipe.hpp
+    filter/Rename.hpp
+    filter/Match.hpp
 
     utils/HtmlTidy.hpp utils/HttpCodes.hpp
     utils/SignalWaiter.hpp

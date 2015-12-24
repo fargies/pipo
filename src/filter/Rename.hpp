@@ -1,4 +1,4 @@
-/**
+/*
  ** Copyright (C) 2015 fargie_s
  **
  ** This software is provided 'as-is', without any express or implied
@@ -16,60 +16,42 @@
  ** 2. Altered source versions must be plainly marked as such, and must not be
  **    misrepresented as being the original software.
  ** 3. This notice may not be removed or altered from any source distribution.
+ ** Rename.hpp
  **
+ **        Created on: 22 Dec 2015
+ **   Original Author: Sylvain Fargier <fargier.sylvain@free.fr>
  **
- **
- **        Created on: 12/6/2015
- **   Original Author: fargie_s
- **
- **/
+ */
 
-#ifndef MUSTACHE_HPP
-#define MUSTACHE_HPP
+#ifndef RENAME_HPP
+#define RENAME_HPP
 
 #include <QObject>
+#include <QHash>
 #include <QString>
 
 #include "Pipe.hpp"
 
-class Mustache : public Pipe
+class Rename : public Pipe
 {
     Q_OBJECT
-    Q_PROPERTY(QString mustacheFile READ mustacheFile WRITE setMustacheFile)
-    Q_PROPERTY(QString mustacheTemplate READ mustacheTemplate WRITE setMustacheTemplate)
-    Q_PROPERTY(QString outFile READ outFile WRITE setOutFile)
+    Q_PROPERTY(QJsonObject renames READ renames WRITE setRenames)
 public:
     Q_INVOKABLE
-    explicit Mustache(QObject *parent = 0);
+    explicit Rename(QObject *parent = 0);
 
-    Q_INVOKABLE
-    explicit Mustache(const QString &mustacheFile, QObject *parent = 0);
+    typedef QJsonObject NamesMap;
 
     bool itemIn(const Item &item);
 
     QString usage(const QString &usage);
 
-    inline QString mustacheFile() const
-    { return m_mstchFile; }
-    void setMustacheFile(const QString &fileName);
-
-    inline QString outFile() const
-    { return m_outFile; }
-    void setOutFile(const QString &outFile);
-
-    inline QString mustacheTemplate() const
-    { return m_mstchTemplate; }
-    void setMustacheTemplate(const QString &tpl);
-
-    QString mustache(const QString &tpl, const Item &context);
+    inline const QJsonObject &renames() const
+    { return m_renames; }
+    void setRenames(const QJsonObject &renames);
 
 protected:
-    void mustacheOut(const QString &tpl, Item &out);
-
-protected:
-    QString m_mstchFile;
-    QString m_outFile;
-    QString m_mstchTemplate;
+    QJsonObject m_renames;
 };
 
-#endif // MUSTACHE_HPP
+#endif // RENAME_HPP

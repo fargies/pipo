@@ -1,4 +1,3 @@
-- Find a way to hook on last Pipe finished signal
 - HTTPSFetcher to tests SSL support on given proxy
 - Set properties using config
 - Implement a nicer usage
@@ -9,7 +8,8 @@
 Pipes to be written :
     - UDPOut, MCastOut, SqliteOut, FileOut, RSSFeedOut, SyslogOut, MailErrorOut
     - RSSFeedIn
-    - Rename, Match, SqliteQuery, Timestamp
+    - Replace, SqliteQuery, Timestamp
 
 Config :
     - Add instance: idx (to configure only the given instance)
+

@@ -34,6 +34,9 @@ set(test_SRCS
     test_Mustache.cpp
     test_Aggregate.cpp
     test_HTMLFetcher.cpp
+    test_SubPipe.cpp
+    test_Rename.cpp
+    test_Match.cpp
     )
 
 set(test_manual_SRCS

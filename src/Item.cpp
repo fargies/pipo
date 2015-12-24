@@ -53,3 +53,9 @@ Item Item::usageItem(const QString &usage)
     return item;
 }
 
+Item &Item::operator <<(const QPair<QString, QJsonValue> &value)
+{
+    insert(value.first, value.second);
+    return *this;
+}
+
