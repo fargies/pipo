@@ -67,6 +67,9 @@ public:
      */
     Item setConfigProperties(const Item &item);
 
+    typedef QList<const QMetaObject *> Registry;
+    static QList<const QMetaObject *> registry;
+
 signals:
     /**
      * @brief signal emitted whenever an item has been processed by this Pipe
@@ -113,6 +116,7 @@ template <typename tPipe>
 PipeRegistration<tPipe>::PipeRegistration()
 {
     qRegisterMetaType<tPipe*>();
+    Pipe::registry.append(&tPipe::staticMetaObject);
 }
 
 /** @cond */

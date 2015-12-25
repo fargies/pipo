@@ -24,6 +24,8 @@
  **
  */
 
+#include <QDebug>
+
 #include "Rename.hpp"
 
 Rename::Rename(QObject *parent) :

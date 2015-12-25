@@ -31,6 +31,8 @@
 #include "ErrorItem.hpp"
 #include "Item.hpp"
 
+QList<const QMetaObject *> Pipe::registry;
+
 Pipe::Pipe(QObject *parent) :
     QObject(parent),
     m_connCount(0)

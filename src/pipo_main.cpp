@@ -28,6 +28,9 @@
 #include <QMetaType>
 #include <QDebug>
 #include <QCommandLineParser>
+#include <QFileInfo>
+#include <QFile>
+#include <QMetaObject>
 
 #include "StdioOut.hpp"
 #include "StdioIn.hpp"
@@ -37,11 +40,24 @@
 
 #include "version.h"
 
+static int generateLinks()
+{
+    for (Pipe::Registry::const_iterator it = Pipe::registry.constBegin();
+         it != Pipe::registry.constEnd();
+         ++it)
+    {
+        QFile::link(qApp->applicationFilePath(),
+                    QString("%1/%2").arg(qApp->applicationDirPath(), (*it)->className()));
+    }
+}
+
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
     app.setApplicationVersion(VERSION);
     app.setApplicationName("pipo");
+
+    QString appletName = QFileInfo(app.arguments().at(0)).fileName();
 
     QCommandLineParser parser;
     parser.setApplicationDescription("Pipo data pipe tool");
@@ -51,16 +67,28 @@ int main(int argc, char *argv[])
     QCommandLineOption usage(QStringList() << "u" << "usage",
                              QCoreApplication::translate("args", "display pipe's usage"));
     parser.addOption(usage);
+
+    QCommandLineOption links("generate-links",
+                             QCoreApplication::translate("args", "generate symlinks"));
+    parser.addOption(links);
+
     parser.addPositionalArgument("pipe", QCoreApplication::translate("args", "pipe expression"), "StdioIn|SubPipe|StdioOut...");
 
     parser.process(app);
 
+    if (parser.isSet(links))
+        return generateLinks();
+
     SubPipe pipe;
     QString pipeExpr;
-    if (parser.positionalArguments().isEmpty())
+    if (appletName != app.applicationName())
+        pipeExpr = QString("StdioIn|%1 %2|StdioOut")
+                .arg(appletName,
+                     parser.positionalArguments().join(' '));
+    else if (parser.positionalArguments().isEmpty())
         pipeExpr = "StdioIn|SubPipe|StdioOut";
     else
-        pipeExpr =parser.positionalArguments().first();
+        pipeExpr = parser.positionalArguments().first();
     if (!pipe.setSubPipe(pipeExpr))
     {
         qWarning() << qPrintable(pipe.errorString());
