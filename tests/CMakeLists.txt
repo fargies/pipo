@@ -37,6 +37,7 @@ set(test_SRCS
     test_SubPipe.cpp
     test_Rename.cpp
     test_Match.cpp
+    test_JSExpr.cpp
     )
 
 set(test_manual_SRCS

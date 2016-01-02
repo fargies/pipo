@@ -32,6 +32,8 @@
 #include <QFile>
 #include <QMetaObject>
 
+#include <stdio.h>
+
 #include "StdioOut.hpp"
 #include "StdioIn.hpp"
 #include "PipeBuilder.hpp"
@@ -49,6 +51,18 @@ static int generateLinks()
         QFile::link(qApp->applicationFilePath(),
                     QString("%1/%2").arg(qApp->applicationDirPath(), (*it)->className()));
     }
+    return 0;
+}
+
+static int listPipes()
+{
+    for (Pipe::Registry::const_iterator it = Pipe::registry.constBegin();
+         it != Pipe::registry.constEnd();
+         ++it)
+    {
+        puts(qPrintable((*it)->className()));
+    }
+    return 0;
 }
 
 int main(int argc, char *argv[])
@@ -72,12 +86,18 @@ int main(int argc, char *argv[])
                              QCoreApplication::translate("args", "generate symlinks"));
     parser.addOption(links);
 
+    QCommandLineOption listPipesOpt("list-pipes",
+                             QCoreApplication::translate("args", "list available pipes"));
+    parser.addOption(listPipesOpt);
+
     parser.addPositionalArgument("pipe", QCoreApplication::translate("args", "pipe expression"), "StdioIn|SubPipe|StdioOut...");
 
     parser.process(app);
 
     if (parser.isSet(links))
         return generateLinks();
+    else if (parser.isSet(listPipesOpt))
+        return listPipes();
 
     SubPipe pipe;
     QString pipeExpr;

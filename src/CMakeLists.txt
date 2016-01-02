@@ -38,9 +38,11 @@ set(pipo_SRCS
     filter/SubPipe.cpp
     filter/Rename.cpp
     filter/Match.cpp
+    filter/JSExpr.cpp
 
     utils/HtmlTidy.cpp
     utils/SignalWaiter.cpp
+    utils/JsonUtils.cpp
 
     vendor/qt-mustache/mustache.cpp
     )
@@ -71,9 +73,11 @@ set(pipo_HEADERS
     filter/SubPipe.hpp
     filter/Rename.hpp
     filter/Match.hpp
+    filter/JSExpr.hpp
 
     utils/HtmlTidy.hpp utils/HttpCodes.hpp
     utils/SignalWaiter.hpp
+    utils/JsonUtils.hpp
 
     vendor/qt-mustache/mustache.h
     )
@@ -112,7 +116,7 @@ add_library(libpipo SHARED
     ${FLEX_PipeBuilderScanner_OUTPUTS}
     )
 
-qt_use_modules(libpipo Core Network XmlPatterns)
+qt_use_modules(libpipo Core Network XmlPatterns Qml)
 target_link_libraries(libpipo ${TIDY_LIBRARIES})
 set_target_properties(libpipo PROPERTIES
     PUBLIC_HEADER "${pipo_HEADERS}"

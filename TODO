@@ -2,7 +2,6 @@
 - Set properties using config
 - Implement a nicer usage
 - Write a README
-- Work with real unix shell pipes
 - Add progress messages ?
 
 Pipes to be written :
