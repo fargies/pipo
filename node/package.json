@@ -9,10 +9,16 @@
   "author": "Sylvain Fargier",
   "license": "BSD-2-Clause",
   "devDependencies": {
-    "mocha": "^3.1.2"
+    "istanbul": "^0.4.5",
+    "mocha": "^3.2.0",
+    "tmp": "0.0.31"
   },
   "dependencies": {
+    "dashdash": "^1.14.1",
+    "htmltidy": "0.0.6",
     "lodash": "^4.16.6",
+    "mustache": "^2.3.0",
+    "q": "^1.4.1",
     "request": "^2.78.0"
   }
 }

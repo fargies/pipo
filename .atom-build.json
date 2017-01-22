@@ -1,0 +1,22 @@
+{
+  "targets": {
+    "mocha": {
+      "cmd": "node_modules/.bin/istanbul",
+      "name": "mocha",
+      "args": [ "cover", "node_modules/.bin/_mocha", "tests" ],
+      "sh": false,
+      "cwd": "{PROJECT_PATH}/node",
+      "env": {
+      },
+      "errorMatch": [
+        "(?<file>[\\/0-9a-zA-Z\\._]+):(?<line>\\d+):(?<col>\\d+):\\s+error:\\s+(?<message>.+)"
+      ],
+      "warningMatch": [
+        "(?<file>[\\/0-9a-zA-Z\\._]+):(?<line>\\d+):(?<col>\\d+):\\s+warning:\\s+(?<message>.+)",
+        "\\s+\\d+\\. (?<file>[\\/0-9a-zA-Z\\._]+):(?<line>\\d+)\\s+-\\s(?<message>.+)"
+      ],
+      "keymap": "ctrl-b",
+      "atomCommandName": "build: mocha"
+    }
+  }
+}

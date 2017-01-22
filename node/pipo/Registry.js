@@ -31,6 +31,10 @@ module.exports = new class Registry {
     this.pipes = {};
   }
 
+  get(elt) {
+    return this.pipes[elt];
+  }
+
   add() {
     if (arguments.length < 1) {
       throw Error('invalid arguments');

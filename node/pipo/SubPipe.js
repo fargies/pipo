@@ -26,7 +26,8 @@
 const
   _ = require('lodash'),
   PipeElement = require('./PipeElement'),
-  Registry = require('./Registry');
+  Registry = require('./Registry'),
+  debug = require('debug')('pipo:sub');
 
 class SubPipe extends PipeElement {
   constructor() {
@@ -56,6 +57,10 @@ class SubPipe extends PipeElement {
     if (last) {
       last.on('item', (item) => { this.emit('item', item); });
       last.on('end', (status) => { this.emit('end', status); });
+    }
+    if (debug.enabled) {
+      debug('new subPipe: ' + _.map(this.pipe, function(elt) {
+        return _.get(elt, 'constructor.name'); }).join('|'));
     }
   }
 

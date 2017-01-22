@@ -23,6 +23,8 @@
 **
 */
 
+const debug = require('debug')('pipo:in');
+
 const PipeElement = require('./PipeElement');
 
 module.exports = class DataIn extends PipeElement {
@@ -41,7 +43,6 @@ module.exports = class DataIn extends PipeElement {
     }
   }
   _append(buffer) {
-    var j = 0;
     var inString = false;
     var ret = false;
     for (var i = 0; i < buffer.length; ++i) {
@@ -83,7 +84,7 @@ module.exports = class DataIn extends PipeElement {
           this.sz = 0;
           return;
         }
-        var c = String.fromCharCode(this.buffer[pos++]);
+        let c = String.fromCharCode(this.buffer[pos++]);
         if (c === '{') {
           blockStart = '{';
           blockEnd = '}';
@@ -97,7 +98,7 @@ module.exports = class DataIn extends PipeElement {
       var depth;
       var inString = false;
       for (depth = 1; depth > 0 && pos <= this.sz; ) {
-        c = String.fromCharCode(this.buffer[pos++]);
+        let c = String.fromCharCode(this.buffer[pos++]);
         if (c === '\\') {
           ++pos;
         } else if (c === '"') {
@@ -114,6 +115,7 @@ module.exports = class DataIn extends PipeElement {
         var ret = this.buffer.slice(start, pos++);
         try {
           ret = JSON.parse(ret.toString());
+          debug('new item: ' + JSON.stringify(ret));
           this.emit('item', ret);
         }
         catch (err)

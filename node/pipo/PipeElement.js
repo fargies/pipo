@@ -25,10 +25,12 @@
 
 const
   _ = require('lodash'),
-  EventEmitter = require('events');
+  EventEmitter = require('events'),
+  debug = require('debug')('pipo:elt');
 
 class PipeElement extends EventEmitter {
   onItem(item) {
+    debug(`${this.constructor.name}.onItem`);
     var configName = this.constructor.name + 'Config';
     var config = item[configName];
     delete item[configName];
@@ -43,6 +45,10 @@ class PipeElement extends EventEmitter {
         this.setConfig(config);
       }
     }
+  }
+
+  setName(name) {
+    this.name = name;
   }
 
   setConfig(config) {

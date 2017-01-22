@@ -25,9 +25,16 @@
 
 module.exports = {
   Registry: require('./Registry'),
+  get: function(elt) { return module.exports.Registry.get(elt); },
+
   StdIn: require('./Stdin'),
   StdOut: require('./Stdout'),
   SubPipe: require('./SubPipe'),
   Aggregate: require('./Aggregate'),
-  HTMLFetcher: require('./input/HTMLFetcher')
+  HTMLFetcher: require('./input/HTMLFetcher'),
+
+  HTMLToXML: require('./filter/HTMLToXML'),
+  XQuery: require('./filter/XQuery'),
+
+  Mustache: require('./output/Mustache')
 };

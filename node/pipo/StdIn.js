@@ -26,14 +26,18 @@
 const
   _ = require('lodash'),
   DataIn = require('./DataIn'),
-  Registry = require('./Registry');
+  Registry = require('./Registry'),
+  debug = require('debug')('pipo:in');
 
 class StdIn extends DataIn {
   constructor(fd) {
     super();
     this.fd = _.defaultTo(fd, process.stdin);
 
-    this.fd.on('data', (chunk) => { this.add(chunk); });
+    this.fd.on('data', (chunk) => {
+      debug(`chunk: ${chunk.length} bytes`);
+      this.add(chunk);
+    });
     this.fd.on('end', () => { this.end(0); });
   }
 }

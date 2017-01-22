@@ -52,14 +52,14 @@ class HTMLFetcher extends PipeElement {
           } else if (response.statusCode !== 200) {
             this.error(`invalid reply: ${response.statusCode}`);
           } else {
-            this.emit('item', { html: body });
+            delete item.url;
+            item.html = body;
+            this.emit('item', item);
           }
         });
       }
-      delete item.url;
-    }
-    if (!_.isEmpty(item)) {
-      this.emit(item);
+    } else if (!_.isEmpty(item)) {
+      this.emit('item', item);
     }
   }
 }

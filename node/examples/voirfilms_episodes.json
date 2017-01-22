@@ -1,0 +1,12 @@
+{
+  "pipe": "HTMLFetcher|HTMLToXML|XQuery|Mustache",
+  "url": "http://www.voirfilms.co/vikings-saison-1-413.htm",
+  "query": "//div[@id='episodeliste']//div[contains(@class, 'description')]//a",
+  "subQueries": {
+      "href": "/@href",
+      "title": "/@title"
+  },
+  "MustacheConfig": {
+    "mustacheTemplate": "http://www.voirfilms.co/{{href}}"
+  }
+}
