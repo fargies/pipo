@@ -1,0 +1,25 @@
+before_script:
+  - apt-get update -qq && apt-get install -y -qq nodejs npm
+  - which nodejs
+
+stages:
+  - build
+  - test
+
+build:
+  stage: build
+  script:
+    - cd node
+    - npm install
+  artifacts:
+    paths:
+      - node/node_modules/
+
+test:
+  stage: test
+  script:
+    - cd node
+    - node_modules/.bin/istanbul cover node_modules/.bin/_mocha tests
+  dependencies:
+    - build
+
