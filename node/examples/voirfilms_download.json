@@ -1,0 +1,12 @@
+{
+  "pipe": "HTMLFetcher|HTMLToXML|XQuery|Aggregate|Mustache|Null",
+  "url": "http://www.voirfilms.co/vikings-saison-1-episode-2-85571.htm",
+  "query": "//div[contains(@class, 'link_list')]//li[contains(@class, 'seme')]/a",
+  "subQueries": {
+      "href": "/@href"
+  },
+  "MustacheConfig": {
+    "mustacheTemplate": "{{#items}}{{{href}}}\n{{/items}}",
+    "outFile": "stdout"
+  }
+}

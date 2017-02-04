@@ -18,42 +18,20 @@
 **    misrepresented as being the original software.
 ** 3. This notice may not be removed or altered from any source distribution.
 **
-** Created on: 2016-11-05T18:01:36+01:00
-**     Author: Sylvain Fargier <fargie_s> <fargier.sylvain@free.fr>
-**
+** Created on: 2017-01-29T23:06:45+01:00
+**     Author: Fargier Sylvain <fargie_s> <fargier.sylvain@free.fr>
 */
-
-const 
-  _ = require('lodash');
 
 const
   PipeElement = require('./PipeElement'),
   Registry = require('./Registry');
 
-class Aggregate extends PipeElement {
-  constructor() {
-    super();
-    this.items = [];
-  }
-
-  onItem(item) {
-    var config = this.takeConfig(item);
-    if (config) {
-      this.emit('item', config);
-    }
-    if (!_.isEmpty(item)) {
-      this.items.push(item);
-    }
-  }
-
-  end(status) {
-    if (this.items.length !== 0) {
-      this.emit('item', { 'items' : this.items });
-    }
-    super.end(status);
+class Null extends PipeElement {
+  onItem() {
+    /* does nothing, on purpose */
   }
 }
 
-Registry.add('Aggregate', Aggregate);
+Registry.add('Null', Null);
 
-module.exports = Aggregate;
+module.exports = Null;

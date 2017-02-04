@@ -41,15 +41,15 @@ class XQuery extends PipeElement {
 
   onItem(item) {
     super.onItem(item);
-
     if ('xml' in item) {
       let query = _.defaultTo(item.query, this.query);
-      let subQueries = _.defaultTo(item.subQueries, this.subQueries);
+      let subQueries = _.clone(_.defaultTo(item.subQueries, this.subQueries));
       let xml = item.xml;
 
       delete item.xml;
       delete item.query;
       delete item.subQueries;
+
       if (!_.isEmpty(item)) {
         this.emit('item', item);
       }

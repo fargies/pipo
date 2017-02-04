@@ -27,14 +27,24 @@ module.exports = {
   Registry: require('./Registry'),
   get: function(elt) { return module.exports.Registry.get(elt); },
 
-  StdIn: require('./Stdin'),
-  StdOut: require('./Stdout'),
+  PipeElement: require('./PipeElement'),
+  StdIn: require('./StdIn'),
+  StdOut: require('./StdOut'),
+  Null: require('./Null'),
+  Rename: require('./Rename'),
   SubPipe: require('./SubPipe'),
   Aggregate: require('./Aggregate'),
+  Duplicate: require('./Duplicate'),
+
   HTMLFetcher: require('./input/HTMLFetcher'),
+
+  ListDir: require('./files/ListDir'),
+  RenameFile: require('./files/RenameFile'),
 
   HTMLToXML: require('./filter/HTMLToXML'),
   XQuery: require('./filter/XQuery'),
+  ReFilter: require('./filter/ReFilter'),
+  Replace: require('./filter/Replace'),
 
   Mustache: require('./output/Mustache')
 };

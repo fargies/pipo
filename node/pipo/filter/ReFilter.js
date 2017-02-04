@@ -18,42 +18,54 @@
 **    misrepresented as being the original software.
 ** 3. This notice may not be removed or altered from any source distribution.
 **
-** Created on: 2016-11-05T18:01:36+01:00
-**     Author: Sylvain Fargier <fargie_s> <fargier.sylvain@free.fr>
-**
+** Created on: 2017-02-04T09:40:45+01:00
+**     Author: Fargier Sylvain <fargie_s> <fargier.sylvain@free.fr>
 */
 
-const 
-  _ = require('lodash');
 
 const
-  PipeElement = require('./PipeElement'),
-  Registry = require('./Registry');
+  _ = require('lodash'),
+  PipeElement = require('../PipeElement'),
+  Registry = require('../Registry');
 
-class Aggregate extends PipeElement {
+function testRe(item, re, name) {
+  return _.has(item, name) && _.toString(item[name]).match(re);
+}
+
+class ReFilter extends PipeElement {
   constructor() {
     super();
-    this.items = [];
+    this.filter = {};
   }
 
   onItem(item) {
+    super.onItem(item);
     var config = this.takeConfig(item);
     if (config) {
       this.emit('item', config);
     }
-    if (!_.isEmpty(item)) {
-      this.items.push(item);
+
+    if (!_.isEmpty(item) && _.every(this.filter, testRe.bind(null, item))) {
+      this.emit('item', item);
     }
   }
 
-  end(status) {
-    if (this.items.length !== 0) {
-      this.emit('item', { 'items' : this.items });
+  setFilter(filter) {
+    try {
+      this.filter = _.mapValues(filter, function(re) {
+        if (_.isArray(re)) {
+          return new RegExp(re[0], re[1]);
+        } else {
+          return new RegExp(re);
+        }
+      });
     }
-    super.end(status);
+    catch(e) {
+      this.error(e);
+    }
   }
 }
 
-Registry.add('Aggregate', Aggregate);
+Registry.add('ReFilter', ReFilter);
 
-module.exports = Aggregate;
+module.exports = ReFilter;

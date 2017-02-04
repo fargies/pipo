@@ -60,7 +60,7 @@ module.exports = class DataIn extends PipeElement {
         if (this.sz >= this.buffer.length) {
           this._resize();
         }
-        this.buffer[this.sz++] = buffer[i++];
+        this.buffer[this.sz++] = buffer[++i];
       } else if (c === 0x22 /* '"' */) {
         inString = !inString;
       }

@@ -27,6 +27,7 @@ const
   _ = require('lodash'),
   mstch = require('mustache'),
   fs = require('fs'),
+  process = require('process'),
   debug = require('debug')('pipo:out'),
   PipeElement = require('../PipeElement'),
   Registry = require('../Registry');
@@ -77,12 +78,23 @@ class Mustache extends PipeElement {
     let outFile = _.defaultTo(item.mustacheOutFile, this.outFile);
     let data = mstch.render(tpl, item);
     delete item.mustacheOutFile;
+    let writeFunc;
+
+    if (outFile === "stdout") {
+      writeFunc = process.stdout.write.bind(process.stdout);
+    } else if (outFile === "stderr") {
+      writeFunc = process.stderr.write.bind(process.stderr);
+    } else {
+      writeFunc = fs.writeFile.bind(null, outFile);
+    }
 
     if (_.isEmpty(outFile)) {
       item.mustacheOut = data;
     } else {
-      fs.writeFile(outFile, data, (err) => {
-        this.error(`failed to open moustache out file ${outFile}: ${err}`);
+      writeFunc(data, null, (err) => {
+        if (err) {
+          this.error(`failed to open moustache out file ${outFile}: ${err}`);
+        }
       });
     }
   }

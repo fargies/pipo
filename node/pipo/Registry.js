@@ -51,4 +51,8 @@ module.exports = new class Registry {
       throw Error(`invalid argument type: ${typeof(arg)}`);
     }
   }
+
+  remove(element) {
+    _.unset(this.pipes, element);
+  }
 }();

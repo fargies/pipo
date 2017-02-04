@@ -41,10 +41,17 @@ class HTMLFetcher extends PipeElement {
     if ('url' in item) {
       let outFile = _.defaultTo(item.outFile, this.outFile);
 
+      this.ref();
       if (outFile) {
         request.get(item.url)
-        .on('error', (error) => { this.error(error); })
-        .pipe(fs.createWriteStream(outFile));
+        .on('error', (error) => {
+          this.error(error);
+          this.unref();
+        })
+        .pipe(() => {
+          fs.createWriteStream(outFile)
+          .on('close', () => { this.unref(); });
+        });
       } else {
         request.get(item.url, (error, response, body) => {
           if (error) {
@@ -56,6 +63,7 @@ class HTMLFetcher extends PipeElement {
             item.html = body;
             this.emit('item', item);
           }
+          this.unref();
         });
       }
     } else if (!_.isEmpty(item)) {

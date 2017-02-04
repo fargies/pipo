@@ -29,6 +29,11 @@ const
   debug = require('debug')('pipo:elt');
 
 class PipeElement extends EventEmitter {
+  constructor() {
+    super();
+    this._ref = 1; /* initialize refcount */
+  }
+
   onItem(item) {
     debug(`${this.constructor.name}.onItem`);
     var configName = this.constructor.name + 'Config';
@@ -47,6 +52,18 @@ class PipeElement extends EventEmitter {
     }
   }
 
+  takeConfig(item) {
+    var config = {};
+    _.forOwn(item, function(value, key, item) {
+      let name = key.split('#', 2)[0];
+      if (_.endsWith(name, 'Config')) {
+        config[key] = value;
+        delete item[key];
+      }
+    });
+    return (_.isEmpty(config)) ? null : config;
+  }
+
   setName(name) {
     this.name = name;
   }
@@ -61,8 +78,27 @@ class PipeElement extends EventEmitter {
     });
   }
 
+  /**
+   * @brief refcount this item
+   */
+  ref() {
+    return ++this._ref;
+  }
+
+  /**
+   * @brief decref this item
+   * @details may emit the 'end' signal.
+   */
+  unref() {
+    if (--this._ref <= 0) {
+      debug(`${this.constructor.name}.end(${this._status})`);
+      this.emit('end', this._status);
+    }
+  }
+
   end(status) {
-    this.emit('end', status);
+    this._status = status;
+    this.unref();
   }
 
   error(message) {
