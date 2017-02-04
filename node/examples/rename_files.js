@@ -1,5 +1,5 @@
 {
-  "pipe": "ListDir|ReFilter|Duplicate|Replace|RenameFile",
+  "pipe": "ListDir|ReFilter|Duplicate|Replace|RenameFile|Null",
   "dir": "/mnt/storage/down/jd/Downloads",
   "ListDirConfig": {
     "fullPath": true
@@ -15,7 +15,7 @@
   "ReplaceConfig": {
     "property": "dest",
     "pattern": [ "\\[WwW\\.VoirFilms\\.co\\]-", "i" ],
-    "newSubstr": "" 
+    "newSubstr": ""
     }
   }
 }

@@ -24,6 +24,7 @@
 
 const
   _ = require('lodash'),
+  utils = require('../utils'),
   PipeElement = require('../PipeElement'),
   Registry = require('../Registry');
 
@@ -31,26 +32,30 @@ const
 class Replace extends PipeElement {
   constructor() {
     super();
-    this.patterns = {};
+    this.property = null;
+    this.pattern = null;
+    this.newSubstr = null;
   }
 
   onItem(item) {
     super.onItem(item);
 
-    _.forEach(this.patterns, function(repl, name) {
-      if (_.has(item, name)) {
-        item[name] = _.replace(item[name], repl[0], repl[1]);
+    if (!_.isNil(this.property) && !_.isNil(this.pattern) &&
+        !_.isNil(this.newSubstr)) {
+      if (_.has(item, this.property)) {
+        item[this.property] = _.replace(item[this.property], this.pattern,
+          this.newSubstr);
       }
-    });
+    }
+
     if (!_.isEmpty(item)) {
       this.emit('item', item);
     }
   }
 
-  setPatterns(pattern) {
+  setPattern(pattern) {
     try {
-      _.forEach(pattern, function(p) { p[0] = new RegExp(p[0], p[2]); });
-      this.patterns = pattern;
+      this.pattern = utils.getPattern(pattern);
     }
     catch(e) {
       this.error(e);

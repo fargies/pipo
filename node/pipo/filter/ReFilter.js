@@ -25,17 +25,15 @@
 
 const
   _ = require('lodash'),
+  utils = require('../utils'),
   PipeElement = require('../PipeElement'),
   Registry = require('../Registry');
-
-function testRe(item, re, name) {
-  return _.has(item, name) && _.toString(item[name]).match(re);
-}
 
 class ReFilter extends PipeElement {
   constructor() {
     super();
-    this.filter = {};
+    this.property = null;
+    this.pattern = null;
   }
 
   onItem(item) {
@@ -45,22 +43,20 @@ class ReFilter extends PipeElement {
       this.emit('item', config);
     }
 
-    if (!_.isEmpty(item) && _.every(this.filter, testRe.bind(null, item))) {
-      this.emit('item', item);
+    if (!_.isEmpty(item)) {
+      if (_.isNil(this.property) || _.isNil(this.pattern)) {
+        this.emit('item', item);
+      } else if (_.has(item, this.property) &&
+          _.toString(item[this.property]).match(this.pattern)) {
+        this.emit('item', item);
+      }
     }
   }
 
-  setFilter(filter) {
+  setPattern(pattern) {
     try {
-      this.filter = _.mapValues(filter, function(re) {
-        if (_.isArray(re)) {
-          return new RegExp(re[0], re[1]);
-        } else {
-          return new RegExp(re);
-        }
-      });
-    }
-    catch(e) {
+      this.pattern = utils.getPattern(pattern);
+    } catch(e) {
       this.error(e);
     }
   }
