@@ -18,42 +18,39 @@
 **    misrepresented as being the original software.
 ** 3. This notice may not be removed or altered from any source distribution.
 **
-** Created on: 2016-11-05T18:01:36+01:00
-**     Author: Sylvain Fargier <fargie_s> <fargier.sylvain@free.fr>
-**
+** Created on: 2017-01-29T23:43:44+01:00
+**     Author: Fargier Sylvain <fargie_s> <fargier.sylvain@free.fr>
 */
 
-const 
-  _ = require('lodash');
-
 const
+  _ = require('lodash'),
   PipeElement = require('./PipeElement'),
-  Registry = require('./Registry');
+  Registry = require('./Registry'),
+  debug = require('debug')('pipo:base');
 
-class Aggregate extends PipeElement {
+class Duplicate extends PipeElement {
   constructor() {
     super();
-    this.items = [];
+    this.property = null;
+    this.newName = null;
   }
 
   onItem(item) {
-    var config = this.takeConfig(item);
-    if (config) {
-      this.emit('item', config);
-    }
-    if (!_.isEmpty(item)) {
-      this.items.push(item);
-    }
-  }
+    super.onItem(item);
 
-  end(status) {
-    if (this.items.length !== 0) {
-      this.emit('item', { 'items' : this.items });
+    if (!_.isNil(this.property) && !_.isNil(this.newName)) {
+      if (_.has(item, this.property)) {
+        debug(`duplicating "${this.property}" as "${this.newName}"`);
+        item[this.newName] = _.cloneDeep(item[this.property]);
+      }
     }
-    super.end(status);
+
+    if (!_.isEmpty(item)) {
+      this.emit('item', item);
+    }
   }
 }
 
-Registry.add('Aggregate', Aggregate);
+Registry.add('Duplicate', Duplicate);
 
-module.exports = Aggregate;
+module.exports = Duplicate;

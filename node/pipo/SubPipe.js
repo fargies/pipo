@@ -40,23 +40,24 @@ class SubPipe extends PipeElement {
     _.result(_.last(this.pipe), 'removeAllListeners');
     this.pipe = [];
 
-    var last;
     for (var i in elts) {
-      let Elt = Registry.pipes[elts[i]];
-      if (!Elt) {
-        this.error(`Failed to parse element: ${Elt}`);
+      let info = _.split(elts[i], '#');
+      if (!(info[0] in Registry.pipes)) {
+        this.error(`Failed to parse element: ${elts[i]}`);
         return;
       }
+      let Elt = Registry.pipes[info[0]];
       let elt = new Elt();
-      if (last) {
-        last.next(elt);
-      }
+      _.invoke(_.last(this.pipe), 'next', elt);
       this.pipe.push(elt);
-      last = elt;
+      if (info[1]) {
+        elt.setName(info[1]);
+      }
     }
-    if (last) {
-      last.on('item', (item) => { this.emit('item', item); });
-      last.on('end', (status) => { this.emit('end', status); });
+    if (!_.isEmpty(this.pipe)) {
+      _.last(this.pipe)
+      .on('item', (item) => { this.emit('item', item); })
+      .on('end', (status) => { this.emit('end', status); });
     }
     if (debug.enabled) {
       debug('new subPipe: ' + _.map(this.pipe, function(elt) {
@@ -65,6 +66,7 @@ class SubPipe extends PipeElement {
   }
 
   onItem(item) {
+    super.onItem(item);
     if ('pipe' in item) {
       this.setPipe(item.pipe);
       delete item.pipe; // consume it

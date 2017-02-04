@@ -41,6 +41,7 @@ class HTMLToXML extends PipeElement {
   onItem(item) {
     super.onItem(item);
     if ('html' in item) {
+      this.ref();
       HTMLToXML._tidyfy(item)
       .then(HTMLToXML._removeNs)
       .then(
@@ -50,7 +51,8 @@ class HTMLToXML extends PipeElement {
         (err) => {
           this.error(err.toString());
         }
-      );
+      )
+      .finally(this.unref.bind(this));
     } else if (!_.isEmpty(item)) {
       this.emit('item', item);
     }

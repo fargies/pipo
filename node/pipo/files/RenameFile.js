@@ -18,42 +18,43 @@
 **    misrepresented as being the original software.
 ** 3. This notice may not be removed or altered from any source distribution.
 **
-** Created on: 2016-11-05T18:01:36+01:00
-**     Author: Sylvain Fargier <fargie_s> <fargier.sylvain@free.fr>
-**
+** Created on: 2017-02-04T14:47:51+01:00
+**     Author: Fargier Sylvain <fargie_s> <fargier.sylvain@free.fr>
 */
 
-const 
-  _ = require('lodash');
-
 const
-  PipeElement = require('./PipeElement'),
-  Registry = require('./Registry');
+  _ = require('lodash'),
+  fs = require('fs'),
+  PipeElement = require('../PipeElement'),
+  Registry = require('../Registry'),
+  debug = require('debug')('pipo:files');
 
-class Aggregate extends PipeElement {
-  constructor() {
-    super();
-    this.items = [];
-  }
-
+class RenameFile extends PipeElement {
   onItem(item) {
-    var config = this.takeConfig(item);
-    if (config) {
-      this.emit('item', config);
-    }
-    if (!_.isEmpty(item)) {
-      this.items.push(item);
-    }
-  }
+    super.onItem(item);
 
-  end(status) {
-    if (this.items.length !== 0) {
-      this.emit('item', { 'items' : this.items });
+    if (_.has(item, 'file') && (_.has(item, 'dest'))) {
+
+      debug(`renaming file "${item.file}" as "${item.dest}"`);
+      if (item.file !== item.dest) {
+        this.ref();
+        fs.rename(item.file, item.dest, (err) => {
+          if (err) {
+            this.error(err);
+          }
+          this.unref();
+        });
+      }
+      item.file = item.dest;
+      delete item.dest;
     }
-    super.end(status);
+
+    if (!_.isEmpty(item)) {
+      this.emit('item', item);
+    }
   }
 }
 
-Registry.add('Aggregate', Aggregate);
+Registry.add('RenameFile', RenameFile);
 
-module.exports = Aggregate;
+module.exports = RenameFile;

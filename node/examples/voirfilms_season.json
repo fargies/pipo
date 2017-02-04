@@ -1,0 +1,37 @@
+{
+  "pipe": "SubPipe#season|SubPipe#episodes",
+
+  "SubPipeConfig#season": {
+    "pipe": "HTMLFetcher|HTMLToXML|XQuery#season|Mustache#season|Rename#season"
+  },
+  "XQueryConfig#season": {
+    "query": "//div[@id='episodeliste']//div[contains(@class, 'description')]//a",
+    "subQueries": {
+      "href": "/@href",
+      "title": "/@title"
+    }
+  },
+  "MustacheConfig#season": {
+    "mustacheTemplate": "http://www.voirfilms.co/{{href}}"
+  },
+  "RenameConfig#season": {
+    "property": "mustacheOut",
+    "newName": "url"
+  },
+
+  "SubPipeConfig#episodes": {
+    "pipe": "HTMLFetcher|HTMLToXML|XQuery#episodes|Aggregate|Mustache#episodes|Null"
+  },
+  "XQueryConfig#episodes": {
+    "query": "//div[contains(@class, 'link_list')]//li[contains(@class, 'seme')]/a",
+    "subQueries": {
+      "href": "/@href"
+    }
+  },
+  "MustacheConfig#episodes": {
+    "mustacheTemplate": "{{#items}}{{{href}}}\n{{/items}}",
+    "outFile": "stdout"
+  },
+
+  "url": "http://www.voirfilms.co/the-originals-saison-1-10027.htm"
+}

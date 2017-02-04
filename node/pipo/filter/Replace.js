@@ -18,42 +18,46 @@
 **    misrepresented as being the original software.
 ** 3. This notice may not be removed or altered from any source distribution.
 **
-** Created on: 2016-11-05T18:01:36+01:00
-**     Author: Sylvain Fargier <fargie_s> <fargier.sylvain@free.fr>
-**
+** Created on: 2017-02-04T14:27:13+01:00
+**     Author: Fargier Sylvain <fargie_s> <fargier.sylvain@free.fr>
 */
 
-const 
-  _ = require('lodash');
-
 const
-  PipeElement = require('./PipeElement'),
-  Registry = require('./Registry');
+  _ = require('lodash'),
+  PipeElement = require('../PipeElement'),
+  Registry = require('../Registry');
 
-class Aggregate extends PipeElement {
+
+class Replace extends PipeElement {
   constructor() {
     super();
-    this.items = [];
+    this.patterns = {};
   }
 
   onItem(item) {
-    var config = this.takeConfig(item);
-    if (config) {
-      this.emit('item', config);
-    }
+    super.onItem(item);
+
+    _.forEach(this.patterns, function(repl, name) {
+      if (_.has(item, name)) {
+        item[name] = _.replace(item[name], repl[0], repl[1]);
+      }
+    });
     if (!_.isEmpty(item)) {
-      this.items.push(item);
+      this.emit('item', item);
     }
   }
 
-  end(status) {
-    if (this.items.length !== 0) {
-      this.emit('item', { 'items' : this.items });
+  setPatterns(pattern) {
+    try {
+      _.forEach(pattern, function(p) { p[0] = new RegExp(p[0], p[2]); });
+      this.patterns = pattern;
     }
-    super.end(status);
+    catch(e) {
+      this.error(e);
+    }
   }
 }
 
-Registry.add('Aggregate', Aggregate);
+Registry.add('Replace', Replace);
 
-module.exports = Aggregate;
+module.exports = Replace;
