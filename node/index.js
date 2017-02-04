@@ -57,7 +57,7 @@ var parser = dashdash.createParser({options: options});
 try {
     var opts = parser.parse(process.argv);
 } catch (e) {
-    console.error('foo: error: %s', e.message);
+    console.error('pipo: error: %s', e.message);
     process.exit(1);
 }
 

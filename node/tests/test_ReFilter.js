@@ -24,7 +24,12 @@ describe('ReFilter', function() {
       assert.equal(count, 2);
       done();
     });
-    pipe.setFilter({ name: '^[0-9]+$' });
+    pipe.onItem({
+      'ReFilterConfig': {
+        'property': 'name',
+        'pattern': '^[0-9]+$'
+      }
+    });
 
     pipe.onItem({ "name" : 1234 });
     pipe.onItem({ "name" : 'a1234' });
@@ -41,7 +46,12 @@ describe('ReFilter', function() {
       assert.equal(item.name, '1234');
       done();
     });
-    pipe.setFilter({ name: [ '^[0-9]+$', 'i' ] });
+    pipe.onItem({
+      'ReFilterConfig': {
+        'property': 'name',
+        'pattern': '^[0-9]+$'
+      }
+    });
 
     pipe.onItem({ "name" : 1234 });
   });
@@ -59,8 +69,8 @@ describe('ReFilter', function() {
       done();
     });
 
-    pipe.onItem({ "ReFilterConfig" : { "filter" : { "name" : "(42" } } });
-    pipe.onItem({ "ReFilterConfig" : { "filter" : { "name" : "[42" } } });
+    pipe.onItem({ "ReFilterConfig" : { "pattern" : "(42" } });
+    pipe.onItem({ "ReFilterConfig" : { "pattern" : "[42" } });
     pipe.end(0);
   });
 });

@@ -40,7 +40,8 @@ according to the pipe-element name using "_Config_" as a suffix, ex:
 ```json
 {
   "RenameConfig" : {
-      "renames" : { "var" : "newName" }
+      "property": "var",
+      "newName": "newName"
   }
 }
 ```
@@ -50,7 +51,7 @@ according to the pipe-element name using "_Config_" as a suffix, ex:
 ### Default pipe-elements
 
 Some base pipe-elements MUST be implemented in all frameworks and all language
-supported byt this tool :
+supported by this tool :
 -   _StdIn_ : parse input Json objects on stdin.
 -   _StdOut_ : print Json objects on stdout.
 -   _SubPipe_ : create a child pipeline.
