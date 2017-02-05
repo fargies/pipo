@@ -25,7 +25,9 @@
 
 const
   fs = require('fs'),
+  q = require('q'),
   _ = require('lodash'),
+  debug = require('debug')('pipo:input'),
   request = require('request'),
   PipeElement = require('../PipeElement'),
   Registry = require('../Registry');
@@ -34,38 +36,52 @@ class HTMLFetcher extends PipeElement {
   constructor() {
     super();
     this.outFile = null;
+    this._queue = q();
   }
 
   onItem(item) {
     super.onItem(item);
     if ('url' in item) {
       let outFile = _.defaultTo(item.outFile, this.outFile);
+      let defer = q.defer();
+      let url = item.url;
 
       this.ref();
-      if (outFile) {
-        request.get(item.url)
-        .on('error', (error) => {
-          this.error(error);
+      this._queue = this._queue.finally(() => {
+        debug(`starting request "${url}"`);
+        if (outFile) {
+          request.get(url)
+          .on('error', defer.reject.bind(defer))
+          .pipe(() => {
+            fs.createWriteStream(outFile)
+            .on('close', defer.resolve.bind(defer));
+          });
+        } else {
+          request.get(url, (error, response, body) => {
+            if (error) {
+              defer.reject(error);
+            } else if (response.statusCode !== 200) {
+              defer.reject(`invalid reply: ${response.statusCode}`);
+
+            } else {
+              delete item.url;
+              item.html = body;
+              this.emit('item', item);
+              defer.resolve();
+            }
+          });
+        }
+        return defer.promise;
+      })
+      .then(
+        () => {
+          debug(`request finished for "${url}"`);
           this.unref();
-        })
-        .pipe(() => {
-          fs.createWriteStream(outFile)
-          .on('close', () => { this.unref(); });
+        },
+        (err) => {
+          debug(`request failed for "${url}"`);
+          this.error(err);
         });
-      } else {
-        request.get(item.url, (error, response, body) => {
-          if (error) {
-            this.error(error);
-          } else if (response.statusCode !== 200) {
-            this.error(`invalid reply: ${response.statusCode}`);
-          } else {
-            delete item.url;
-            item.html = body;
-            this.emit('item', item);
-          }
-          this.unref();
-        });
-      }
     } else if (!_.isEmpty(item)) {
       this.emit('item', item);
     }

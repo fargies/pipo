@@ -1,5 +1,17 @@
 {
-  "pipe": "SubPipe#season|SubPipe#episodes",
+  "pipe": "SubPipe#all|SubPipe#season|SubPipe#episodes",
+
+  "SubPipeConfig#all": {
+    "pipe": "HTMLFetcher|HTMLToXML|XQuery#all"
+  },
+  "XQueryConfig#all": {
+    "query": "//div[@id='listedessaisons']//div[contains(@class, 'unepetitesaisons')]//a",
+    "subQueries": {
+      "url": "/@href",
+      "title": "/@title"
+    }
+  },
+
 
   "SubPipeConfig#season": {
     "pipe": "HTMLFetcher|HTMLToXML|XQuery#season|Mustache#season|Rename#season"
@@ -33,5 +45,5 @@
     "outFile": "stdout"
   },
 
-  "url": "http://www.voirfilms.co/the-originals-saison-1-10027.htm"
+  "url": "http://www.voirfilms.co/serie/supernatural-RzYrCmo2.htm"
 }
