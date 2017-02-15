@@ -1,4 +1,6 @@
 # Pipo the  pipe builder
+[![build status](https://gitlab.com/fargie_s/pipo/badges/master/build.svg)](https://gitlab.com/fargie_s/pipo/commits/master)
+[![coverage report](https://gitlab.com/fargie_s/pipo/badges/master/coverage.svg)](https://gitlab.com/fargie_s/pipo/commits/master)
 
 Pipo project is meant to create advanced unix-like pipes.
 
