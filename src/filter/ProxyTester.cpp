@@ -40,7 +40,7 @@
 
 ProxyTester::ProxyTester(QObject *parent) :
     Pipe(parent),
-    m_testServer("http://www.google.fr/"),
+    m_testServer("https://www.google.fr/"),
     m_pendingCount(0),
     m_requestCount(5),
     m_async(false)

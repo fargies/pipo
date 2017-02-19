@@ -104,7 +104,7 @@ public:
 	 * or a QVariantMap.
 	 */
 #if __cplusplus >= 201103L
-	typedef std::function<QString(const QString&, Mustache::Renderer*, Mustache::Context*)> fn_t;
+	typedef std::function<QString(const QString&, Mstch::Renderer*, Mstch::Context*)> fn_t;
 #else
     typedef QString (*fn_t)(const QString&, Mstch::Renderer*, Mstch::Context*);
 #endif
