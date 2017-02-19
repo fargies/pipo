@@ -24,7 +24,10 @@
 */
 
 const
-  _ = require('lodash');
+  _ = require('lodash'),
+  debug = require('debug')('pipo:registry'),
+  fs = require('fs'),
+  PipeElement = require('./PipeElement');
 
 module.exports = new class Registry {
   constructor() {
@@ -50,6 +53,31 @@ module.exports = new class Registry {
     } else {
       throw Error(`invalid argument type: ${typeof(arg)}`);
     }
+  }
+
+  crawl(dir, ignore) {
+    debug(`crawling "${dir}"`);
+    var files = fs.readdirSync(dir);
+    _.forEach(files,  (file) => {
+      if (_.includes(ignore, file)) {
+        return;
+      }
+      let path = dir + '/' + file;
+      let stat = fs.statSync(path);
+      if (stat.isFile() && file.endsWith('.js')) {
+        try {
+          let pipeElt = require(dir + '/' + file);
+          if (pipeElt.prototype instanceof PipeElement) {
+            debug(`registering "${pipeElt.name}"`);
+            this.add(pipeElt.name, pipeElt);
+          }
+        } catch(e) {
+          debug(`failed to register "${file}": ${e}`);
+        }
+      } else if (stat.isDirectory()) {
+        this.crawl(path);
+      }
+    });
   }
 
   remove(element) {

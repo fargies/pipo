@@ -26,7 +26,6 @@
 const
   _ = require('lodash'),
   DataIn = require('./DataIn'),
-  Registry = require('./Registry'),
   debug = require('debug')('pipo:in');
 
 class StdIn extends DataIn {
@@ -41,7 +40,5 @@ class StdIn extends DataIn {
     this.fd.on('end', () => { this.end(0); });
   }
 }
-
-Registry.add('StdIn', StdIn);
 
 module.exports = StdIn;

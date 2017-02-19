@@ -28,8 +28,7 @@ const
   xpath = require('xpath'),
   _ = require('lodash'),
   debug = require('debug')('pipo:filter'),
-  PipeElement = require('../PipeElement'),
-  Registry = require('../Registry');
+  PipeElement = require('../PipeElement');
 
 class XQuery extends PipeElement {
   constructor() {
@@ -97,7 +96,5 @@ class XQuery extends PipeElement {
     }
   }
 }
-
-Registry.add('XQuery', XQuery);
 
 module.exports = XQuery;

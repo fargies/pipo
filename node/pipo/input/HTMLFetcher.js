@@ -29,8 +29,7 @@ const
   _ = require('lodash'),
   debug = require('debug')('pipo:input'),
   request = require('request'),
-  PipeElement = require('../PipeElement'),
-  Registry = require('../Registry');
+  PipeElement = require('../PipeElement');
 
 class HTMLFetcher extends PipeElement {
   constructor() {
@@ -87,7 +86,5 @@ class HTMLFetcher extends PipeElement {
     }
   }
 }
-
-Registry.add('HTMLFetcher', HTMLFetcher);
 
 module.exports = HTMLFetcher;

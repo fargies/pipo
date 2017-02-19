@@ -27,8 +27,7 @@ const
   htmltidy = require('htmltidy'),
   _ = require('lodash'),
   q = require('q'),
-  PipeElement = require('../PipeElement'),
-  Registry = require('../Registry');
+  PipeElement = require('../PipeElement');
 
 const s_nsRe = /<[^\s]+\s+(?:[^\s=>]+="[^"]*"\s+)*[^\s=>]+(:)/g;
 
@@ -95,7 +94,5 @@ class HTMLToXML extends PipeElement {
     return item;
   }
 }
-
-Registry.add('HTMLToXML', HTMLToXML);
 
 module.exports = HTMLToXML;

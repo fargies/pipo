@@ -25,8 +25,7 @@
 const
   _ = require('lodash'),
   utils = require('../utils'),
-  PipeElement = require('../PipeElement'),
-  Registry = require('../Registry');
+  PipeElement = require('../PipeElement');
 
 
 class Replace extends PipeElement {
@@ -62,7 +61,5 @@ class Replace extends PipeElement {
     }
   }
 }
-
-Registry.add('Replace', Replace);
 
 module.exports = Replace;

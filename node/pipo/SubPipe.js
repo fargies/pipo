@@ -88,6 +88,4 @@ class SubPipe extends PipeElement {
   }
 }
 
-Registry.add('SubPipe', SubPipe);
-
 module.exports = SubPipe;

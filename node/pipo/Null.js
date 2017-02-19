@@ -23,15 +23,12 @@
 */
 
 const
-  PipeElement = require('./PipeElement'),
-  Registry = require('./Registry');
+  PipeElement = require('./PipeElement');
 
 class Null extends PipeElement {
   onItem() {
     /* does nothing, on purpose */
   }
 }
-
-Registry.add('Null', Null);
 
 module.exports = Null;

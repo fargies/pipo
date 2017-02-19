@@ -29,8 +29,7 @@ const
   fs = require('fs'),
   process = require('process'),
   debug = require('debug')('pipo:out'),
-  PipeElement = require('../PipeElement'),
-  Registry = require('../Registry');
+  PipeElement = require('../PipeElement');
 
 class Mustache extends PipeElement {
   constructor() {
@@ -99,7 +98,5 @@ class Mustache extends PipeElement {
     }
   }
 }
-
-Registry.add('Mustache', Mustache);
 
 module.exports = Mustache;

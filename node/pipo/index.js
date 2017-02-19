@@ -23,28 +23,19 @@
 **
 */
 
+const
+  _ = require('lodash'),
+  Registry = require('./Registry');
+
+Registry.crawl(__dirname, [
+  'utils', 'PipeElement.js', 'Registry.js', 'DataIn.js' ]);
+
+
 module.exports = {
-  Registry: require('./Registry'),
-  get: function(elt) { return module.exports.Registry.get(elt); },
+  Registry: Registry,
+  get: function(elt) { return Registry.get(elt); },
 
-  PipeElement: require('./PipeElement'),
-  StdIn: require('./StdIn'),
-  StdOut: require('./StdOut'),
-  Null: require('./Null'),
-  Rename: require('./Rename'),
-  SubPipe: require('./SubPipe'),
-  Aggregate: require('./Aggregate'),
-  Duplicate: require('./Duplicate'),
-
-  HTMLFetcher: require('./input/HTMLFetcher'),
-
-  ListDir: require('./files/ListDir'),
-  RenameFile: require('./files/RenameFile'),
-
-  HTMLToXML: require('./filter/HTMLToXML'),
-  XQuery: require('./filter/XQuery'),
-  ReFilter: require('./filter/ReFilter'),
-  Replace: require('./filter/Replace'),
-
-  Mustache: require('./output/Mustache')
+  PipeElement: require('./PipeElement')
 };
+
+_.assign(module.exports, Registry.pipes);

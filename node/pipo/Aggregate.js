@@ -23,12 +23,11 @@
 **
 */
 
-const 
+const
   _ = require('lodash');
 
 const
-  PipeElement = require('./PipeElement'),
-  Registry = require('./Registry');
+  PipeElement = require('./PipeElement');
 
 class Aggregate extends PipeElement {
   constructor() {
@@ -53,7 +52,5 @@ class Aggregate extends PipeElement {
     super.end(status);
   }
 }
-
-Registry.add('Aggregate', Aggregate);
 
 module.exports = Aggregate;
