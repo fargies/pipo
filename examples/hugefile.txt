@@ -1,4 +1,0 @@
-{
-    "url" : "http://142.4.214.205/VMs/Ubuntu/15.04/VirtualBox_-_Ubuntu-15.05-64bit-Desktop_VDI-%5bVirtualBoxImages.com%5d.rar",
-    "htmlOutFile" : "/tmp/pwet.bin"
-}

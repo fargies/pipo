@@ -1,7 +1,0 @@
-{
-    "pipe" : "Mustache|StdioOut",
-    "MustacheConfig" : {
-        "mustacheFile" : "proxychains.conf.in",
-        "outFile" : "proxychains.conf"
-    }
-}

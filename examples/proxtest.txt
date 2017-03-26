@@ -1,9 +1,0 @@
-{
-    "pipe" : "HTMLFetcher|HTMLToXML|XQuery|ProxyTester|StdioOut",
-    "url" : "http://sslproxies.org",
-    "query" : "//table[@id='proxylisttable']/tbody/tr",
-    "subQueries" : {
-        "hostName" : "/td[1]/text()",
-        "port" : "/td[2]/text()"
-    }
-}
