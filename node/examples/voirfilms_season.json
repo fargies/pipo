@@ -1,5 +1,5 @@
 {
-  "pipe": "SubPipe#season|SubPipe#episodes",
+  "pipe": "SubPipe#episodes",
 
   "SubPipeConfig#season": {
     "pipe": "HTMLFetcher|HTMLToXML|XQuery#season|Mustache#season|Rename#season"
@@ -33,5 +33,5 @@
     "outFile": "stdout"
   },
 
-  "url": "http://www.voirfilms.co/the-originals-saison-1-10027.htm"
+  "url": "http://www.voirfilms.co/marvels-iron-fist-saison-1-episode-4-205859.htm"
 }
