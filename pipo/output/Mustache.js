@@ -50,9 +50,16 @@ class Mustache extends PipeElement {
       return;
     }
 
-    _.forIn(item.mustacheVars || this.mustacheVars, function(value, key) {
-      item[key] = mstch.render(value, item);
-    });
+    var mustacheVars = item.mustacheVars || this.mustacheVars;
+    if (_.isArray(mustacheVars)) {
+      _.forEach(mustacheVars, function(value) {
+        item[value] = mstch.render(item[value], item);
+      });
+    } else {
+      _.forIn(mustacheVars, function(value, key) {
+        item[key] = mstch.render(value, item);
+      });
+    }
     delete item.mustacheVars;
     debug(item);
 

@@ -52,21 +52,13 @@ describe('StdIn', function() {
       });
     });
 
-    it('finishes', function(done) {
+    it('parse several objects and finishes', function(done) {
       stdin.on('end', () => {
-        assert.equal(items.length, 3);
+        assert.equal(items.length, 5);
         done();
       });
+      pass.write('{ "data" : 1 }{"data": 42}');
       pass.end();
     });
-  });
-
-  it('parse several objects and finishes', function(done) {
-    stdin.on('end', () => {
-      assert.equal(items.length, 5);
-      done();
-    });
-    pass.write('{ "data" : 1 }{"data": 42}');
-    pass.end();
   });
 });

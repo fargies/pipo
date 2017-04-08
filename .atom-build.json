@@ -9,7 +9,8 @@
       "env": {
       },
       "errorMatch": [
-        "(?<file>[\\/0-9a-zA-Z\\._]+):(?<line>\\d+):(?<col>\\d+):\\s+error:\\s+(?<message>.+)"
+        "(?<file>[\\/0-9a-zA-Z\\._]+):(?<line>\\d+):(?<col>\\d+):\\s+error:\\s+(?<message>.+)",
+        "at .* \\((?<file>[\\/0-9a-zA-Z\\._]+):(?<line>\\d+):(?<col>\\d+)\\)"
       ],
       "warningMatch": [
         "(?<file>[\\/0-9a-zA-Z\\._]+):(?<line>\\d+):(?<col>\\d+):\\s+warning:\\s+(?<message>.+)",
