@@ -26,8 +26,9 @@
 const
   fs = require('fs'),
   q = require('q'),
+  url = require('url'),
   _ = require('lodash'),
-  debug = require('debug')('pipo:input'),
+  debug = require('debug')('pipo:html'),
   request = require('request'),
   PipeElement = require('../PipeElement');
 
@@ -35,6 +36,8 @@ class HTMLFetcher extends PipeElement {
   constructor() {
     super();
     this.outFile = null;
+    this.proxy = null;
+    this.timeout = 10000;
     this._queue = q();
   }
 
@@ -43,20 +46,30 @@ class HTMLFetcher extends PipeElement {
     if ('url' in item) {
       let outFile = _.defaultTo(item.outFile, this.outFile);
       let defer = q.defer();
-      let url = item.url;
+      let proxy = item.proxy || this.proxy;
+      let options = {
+        url: item.url,
+        timeout: this.timeout
+      };
+
+      if (!_.isNil(proxy)) {
+        options.proxy = url.parse(proxy);
+        options.proxy.timeout = this.timeout;
+        options.tunnel = true;
+      }
 
       this.ref();
       this._queue = this._queue.finally(() => {
-        debug(`starting request "${url}"`);
+        debug(`starting request "${options.url}"`);
         if (outFile) {
-          request.get(url)
+          request.get(options)
           .on('error', defer.reject.bind(defer))
           .pipe(() => {
             fs.createWriteStream(outFile)
             .on('close', defer.resolve.bind(defer));
           });
         } else {
-          request.get(url, (error, response, body) => {
+          request.get(options, (error, response, body) => {
             if (error) {
               defer.reject(error);
             } else if (response.statusCode !== 200) {
@@ -74,12 +87,13 @@ class HTMLFetcher extends PipeElement {
       })
       .then(
         () => {
-          debug(`request finished for "${url}"`);
+          debug(`request finished for "${options.url}"`);
           this.unref();
         },
         (err) => {
-          debug(`request failed for "${url}"`);
+          debug(`request failed for "${options.url}"`);
           this.error(err);
+          this.unref();
         });
     } else if (!_.isEmpty(item)) {
       this.emit('item', item);

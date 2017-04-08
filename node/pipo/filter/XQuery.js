@@ -49,10 +49,6 @@ class XQuery extends PipeElement {
       delete item.query;
       delete item.subQueries;
 
-      if (!_.isEmpty(item)) {
-        this.emit('item', item);
-      }
-
       try {
         _.forOwn(subQueries, function(value, key) {
           if (!value.startsWith('./')) {
@@ -84,7 +80,7 @@ class XQuery extends PipeElement {
         debug(`${nodes.length} nodes selected ${nodes}`);
       }
       _.forIn(nodes, (node) => {
-        let out = {};
+        let out = _.cloneDeep(item);
         _.forOwn(subQueries, (value, key) => {
           let ret = value.evaluateString({ node: node });
           out[key] = (this.trim) ? _.trim(ret) : ret;

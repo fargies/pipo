@@ -10,52 +10,73 @@ const
   StdIn = require('../pipo/StdIn');
 
 describe('StdIn', function() {
-  var pass = new stream.PassThrough();
-  var stdin = new StdIn(pass);
-  var items = [];
-  stdin.start();
-  stdin.on("item", (item) => { items.push(item); });
+  describe('parses simple items', function() {
+    var pass = new stream.PassThrough();
+    var stdin = new StdIn(pass);
+    var items = [];
+    stdin.start();
+    stdin.on("item", (item) => { items.push(item); });
 
-  it('parse simple stream', function(done) {
-    stdin.once("item", (item) => {
-      assert.equal(item.data, 1);
-      done();
+    it('parse simple stream', function(done) {
+      stdin.once("item", (item) => {
+        assert.equal(item.data, 1);
+        done();
+      });
+      pass.write('{ "data" : 1 }');
     });
-    pass.write('{ "data" : 1 }');
+
+    it('parse parts', function(done) {
+      var item = "{ \"data\" : 2 }".split('');
+
+      stdin.once("item", (item) => {
+        assert.equal(item.data, 2);
+        done();
+      });
+      item.forEach(function(val) {
+        pass.write(val);
+      });
+    });
+
+    it('parse empty parts', function(done) {
+      var item = "{ \"data\" : 3 }".split(' ');
+
+      stdin.once("item", (item) => {
+        assert.equal(item.data, 3);
+        done();
+      });
+      item.forEach(function(val) {
+        pass.write(val);
+        for (var i = 0; i < 1024; ++i) {
+          pass.write(' ');
+        }
+      });
+    });
+
+    it('finishes', function(done) {
+      stdin.on('end', () => {
+        assert.equal(items.length, 3);
+        done();
+      });
+      pass.end();
+    });
   });
 
-  it('parse parts', function(done) {
-    var item = "{ \"data\" : 2 }".split('');
+  describe('parses two elements', function() {
+    var pass = new stream.PassThrough();
+    var stdin = new StdIn(pass);
+    var items = [];
+    stdin.start();
+    stdin.on("item", (item) => { items.push(item); });
 
-    stdin.once("item", (item) => {
-      assert.equal(item.data, 2);
-      done();
+    it('parses 2 items', function(done) {
+      items = [];
+      stdin.on('end', () => {
+        assert.equal(items.length, 3);
+        done();
+      });
+      pass.write('{}{}');
+      pass.write('{}');
+      pass.end();
     });
-    item.forEach(function(val) {
-      pass.write(val);
-    });
-  });
-
-  it('parse empty parts', function(done) {
-    var item = "{ \"data\" : 3 }".split(' ');
-
-    stdin.once("item", (item) => {
-      assert.equal(item.data, 3);
-      done();
-    });
-    item.forEach(function(val) {
-      pass.write(val);
-      for (var i = 0; i < 1024; ++i) {
-        pass.write(' ');
-      }
-    });
-  });
-
-  it('finishes', function(done) {
-    stdin.on('end', () => {
-      assert.equal(items.length, 3);
-      done();
-    });
-    pass.end();
   });
 });
