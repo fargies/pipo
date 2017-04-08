@@ -1,0 +1,28 @@
+{
+  "pipe": "SubPipe#season|SubPipe#episodes",
+
+  "SubPipeConfig#season": {
+    "pipe": "HTMLFetcher|HTMLToXML|XQuery#season"
+  },
+  "XQueryConfig#season": {
+    "query": "//div[contains(@class, 'keremiya_part')]/a",
+    "subQueries": {
+      "url": "/@href"
+    }
+  },
+
+  "SubPipeConfig#episodes": {
+    "pipe": "HTMLFetcher|HTMLToXML|XQuery#episodes|Aggregate|Mustache#episodes|Null"
+  },
+  "XQueryConfig#episodes": {
+    "query": "//div[contains(@class, 'videosection')]/a",
+    "subQueries": {
+      "href": "/@href"
+    }
+  },
+  "MustacheConfig#episodes": {
+    "mustacheTemplate": "{{#items}}{{{href}}}\n{{/items}}",
+    "outFile": "stdout"
+  }
+}
+{ "url": "http://serie-streaming-vf.org/z-nation-saison-3/" }

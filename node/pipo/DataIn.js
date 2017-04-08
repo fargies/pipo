@@ -112,7 +112,7 @@ module.exports = class DataIn extends PipeElement {
         }
       }
       if (depth === 0) {
-        var ret = this.buffer.slice(start, pos++);
+        var ret = this.buffer.slice(start, pos);
         try {
           ret = JSON.parse(ret.toString());
           debug('new item: ' + JSON.stringify(ret));

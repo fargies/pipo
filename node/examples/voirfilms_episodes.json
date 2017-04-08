@@ -1,6 +1,6 @@
 {
   "pipe": "HTMLFetcher|HTMLToXML|XQuery|Mustache",
-  "url": "http://www.voirfilms.co/vikings-saison-1-413.htm",
+  "url": "http://www.voirfilms.co/sleepy-hollow-saison-3-episode-4-76275.htm",
   "query": "//div[@id='episodeliste']//div[contains(@class, 'description')]//a",
   "subQueries": {
       "href": "/@href",

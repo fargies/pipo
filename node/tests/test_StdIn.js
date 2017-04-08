@@ -61,22 +61,12 @@ describe('StdIn', function() {
     });
   });
 
-  describe('parses two elements', function() {
-    var pass = new stream.PassThrough();
-    var stdin = new StdIn(pass);
-    var items = [];
-    stdin.start();
-    stdin.on("item", (item) => { items.push(item); });
-
-    it('parses 2 items', function(done) {
-      items = [];
-      stdin.on('end', () => {
-        assert.equal(items.length, 3);
-        done();
-      });
-      pass.write('{}{}');
-      pass.write('{}');
-      pass.end();
+  it('parse several objects and finishes', function(done) {
+    stdin.on('end', () => {
+      assert.equal(items.length, 5);
+      done();
     });
+    pass.write('{ "data" : 1 }{"data": 42}');
+    pass.end();
   });
 });
