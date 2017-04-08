@@ -69,7 +69,7 @@ function addPipe(pipeLine, pipe) {
 
 // Use `parser.help()` for formatted options help.
 if (opts.help) {
-  var help = parser.help({includeEnv: true}).trimRight();
+  var help = parser.help({ includeEnv: true }).trimRight();
   console.log('usage: node ./pipo.js [options] [pipe expression]\n' +
               'pipe expression: Elt[#name]|Elt[#name]' +
               'options:\n' +

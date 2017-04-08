@@ -42,8 +42,8 @@ class HTMLToXML extends PipeElement {
     super.onItem(item);
     if ('html' in item) {
       this.ref();
-      HTMLToXML._tidyfy(item)
-      .then(HTMLToXML._removeNs)
+      this._tidyfy(item)
+      .then(this._removeNs.bind(this))
       .then(
         (item) => {
           this.emit('item', item);
@@ -58,7 +58,7 @@ class HTMLToXML extends PipeElement {
     }
   }
 
-  static _tidyfy(item) {
+  _tidyfy(item) {
     var def = q.defer();
     var opts = {
       "output-xml": true,
@@ -80,7 +80,12 @@ class HTMLToXML extends PipeElement {
     });
     return def.promise;
   }
-  static _removeNs(item) {
+
+  _removeNs(item) {
+    if (!this.noNamespaces) {
+      return item;
+    }
+
     var isMatch = true;
     function reMatch(match) {
       isMatch = true;

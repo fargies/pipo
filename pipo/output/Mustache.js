@@ -80,6 +80,9 @@ class Mustache extends PipeElement {
     delete item.mustacheOutFile;
     let writeFunc;
 
+    if (_.isEmpty(data)) {
+      return;
+    }
     if (outFile === "stdout") {
       writeFunc = process.stdout.write.bind(process.stdout);
     } else if (outFile === "stderr") {
