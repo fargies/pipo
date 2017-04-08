@@ -1,8 +1,13 @@
 {
-  "pipe": "SubPipe#episodes",
+  "pipe": "SubPipe#season|SubPipe#episodes",
 
   "SubPipeConfig#season": {
-    "pipe": "HTMLFetcher|HTMLToXML|XQuery#season|Mustache#season|Rename#season"
+    "pipe": "Duplicate#season|HTMLFetcher|HTMLToXML|XQuery#season|Mustache#season|Rename#season"
+  },
+  "DuplicateConfig#season": {
+    "property": "url",
+    "newName": "href",
+    "comment": "helps when url is directly an episode"
   },
   "XQueryConfig#season": {
     "query": "//div[@id='episodeliste']//div[contains(@class, 'description')]//a",
@@ -12,7 +17,8 @@
     }
   },
   "MustacheConfig#season": {
-    "mustacheTemplate": "http://www.voirfilms.co/{{href}}"
+    "comment": "handle this with multi-pipe ?",
+    "mustacheTemplate": "http://www.voirfilms.co/{{{href}}}"
   },
   "RenameConfig#season": {
     "property": "mustacheOut",
@@ -31,7 +37,6 @@
   "MustacheConfig#episodes": {
     "mustacheTemplate": "{{#items}}{{{href}}}\n{{/items}}",
     "outFile": "stdout"
-  },
-
-  "url": "http://www.voirfilms.co/marvels-iron-fist-saison-1-episode-4-205859.htm"
+  }
 }
+{ "url": "http://www.voirfilms.co/blade-2011-saison-1-6845.htm" }

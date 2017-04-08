@@ -2,13 +2,21 @@
   "pipe": "SubPipe#season|SubPipe#episodes",
 
   "SubPipeConfig#season": {
-    "pipe": "HTMLFetcher|HTMLToXML|XQuery#season"
+    "pipe": "Duplicate#season|HTMLFetcher|HTMLToXML|XQuery#season|Rename#season"
+  },
+  "DuplicateConfig#season": {
+    "property": "url",
+    "newName": "href"
   },
   "XQueryConfig#season": {
     "query": "//div[contains(@class, 'keremiya_part')]/a",
     "subQueries": {
-      "url": "/@href"
+      "href": "/@href"
     }
+  },
+  "RenameConfig#season": {
+    "property": "href",
+    "newName": "url"
   },
 
   "SubPipeConfig#episodes": {
@@ -25,4 +33,4 @@
     "outFile": "stdout"
   }
 }
-{ "url": "http://serie-streaming-vf.org/z-nation-saison-3/" }
+{ "url": "http://serie-streaming-vf.org/banshee-saison-2/" }
