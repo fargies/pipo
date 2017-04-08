@@ -26,8 +26,7 @@
 const
   _ = require('lodash'),
   utils = require('../utils'),
-  PipeElement = require('../PipeElement'),
-  Registry = require('../Registry');
+  PipeElement = require('../PipeElement');
 
 class ReFilter extends PipeElement {
   constructor() {
@@ -61,7 +60,5 @@ class ReFilter extends PipeElement {
     }
   }
 }
-
-Registry.add('ReFilter', ReFilter);
 
 module.exports = ReFilter;

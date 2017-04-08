@@ -28,13 +28,13 @@ const
   mstch = require('mustache'),
   fs = require('fs'),
   process = require('process'),
-  debug = require('debug')('pipo:out'),
-  PipeElement = require('../PipeElement'),
-  Registry = require('../Registry');
+  debug = require('debug')('pipo:mstch'),
+  PipeElement = require('../PipeElement');
 
 class Mustache extends PipeElement {
   constructor() {
     super();
+    this.mustacheVars = null;
     this.mustacheFile = null;
     this.mustacheTemplate = null;
     this.outFile = null;
@@ -42,11 +42,19 @@ class Mustache extends PipeElement {
 
   onItem(item) {
     super.onItem(item);
+    var config = this.takeConfig(item);
+    if (config) {
+      this.emit('item', config);
+    }
+    if (_.isEmpty(item)) {
+      return;
+    }
 
-    _.forIn(item.mustacheVars, function(value) {
-      item[value] = mstch.render(item[value], item);
+    _.forIn(item.mustacheVars || this.mustacheVars, function(value, key) {
+      item[key] = mstch.render(value, item);
     });
     delete item.mustacheVars;
+    debug(item);
 
     let mstchFile = _.defaultTo(item['mustacheFile'], this.mustacheFile);
     let mstchTpl = _.defaultTo(item['mustacheTemplate'], this.mustacheTemplate);
@@ -102,7 +110,5 @@ class Mustache extends PipeElement {
     }
   }
 }
-
-Registry.add('Mustache', Mustache);
 
 module.exports = Mustache;

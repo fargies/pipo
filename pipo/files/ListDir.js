@@ -26,7 +26,6 @@ const
   _ = require('lodash'),
   fs = require('fs'),
   PipeElement = require('../PipeElement'),
-  Registry = require('../Registry'),
   debug = require('debug')('pipo:files');
 
 class ListDir extends PipeElement {
@@ -80,7 +79,5 @@ class ListDir extends PipeElement {
     }
   }
 }
-
-Registry.add('ListDir', ListDir);
 
 module.exports = ListDir;

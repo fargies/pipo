@@ -28,8 +28,7 @@ const
   xpath = require('xpath'),
   _ = require('lodash'),
   debug = require('debug')('pipo:filter'),
-  PipeElement = require('../PipeElement'),
-  Registry = require('../Registry');
+  PipeElement = require('../PipeElement');
 
 class XQuery extends PipeElement {
   constructor() {
@@ -49,10 +48,6 @@ class XQuery extends PipeElement {
       delete item.xml;
       delete item.query;
       delete item.subQueries;
-
-      if (!_.isEmpty(item)) {
-        this.emit('item', item);
-      }
 
       try {
         _.forOwn(subQueries, function(value, key) {
@@ -85,7 +80,7 @@ class XQuery extends PipeElement {
         debug(`${nodes.length} nodes selected ${nodes}`);
       }
       _.forIn(nodes, (node) => {
-        let out = {};
+        let out = _.cloneDeep(item);
         _.forOwn(subQueries, (value, key) => {
           let ret = value.evaluateString({ node: node });
           out[key] = (this.trim) ? _.trim(ret) : ret;
@@ -97,7 +92,5 @@ class XQuery extends PipeElement {
     }
   }
 }
-
-Registry.add('XQuery', XQuery);
 
 module.exports = XQuery;

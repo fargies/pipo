@@ -25,7 +25,6 @@
 const
   _ = require('lodash'),
   PipeElement = require('./PipeElement'),
-  Registry = require('./Registry'),
   debug = require('debug')('pipo:base');
 
 class Duplicate extends PipeElement {
@@ -50,7 +49,5 @@ class Duplicate extends PipeElement {
     }
   }
 }
-
-Registry.add('Duplicate', Duplicate);
 
 module.exports = Duplicate;

@@ -25,53 +25,80 @@
 
 const
   fs = require('fs'),
+  q = require('q'),
+  url = require('url'),
   _ = require('lodash'),
+  debug = require('debug')('pipo:html'),
   request = require('request'),
-  PipeElement = require('../PipeElement'),
-  Registry = require('../Registry');
+  PipeElement = require('../PipeElement');
 
 class HTMLFetcher extends PipeElement {
   constructor() {
     super();
     this.outFile = null;
+    this.proxy = null;
+    this.timeout = 10000;
+    this._queue = q();
   }
 
   onItem(item) {
     super.onItem(item);
     if ('url' in item) {
       let outFile = _.defaultTo(item.outFile, this.outFile);
+      let defer = q.defer();
+      let proxy = item.proxy || this.proxy;
+      let options = {
+        url: item.url,
+        timeout: this.timeout
+      };
+
+      if (!_.isNil(proxy)) {
+        options.proxy = url.parse(proxy);
+        options.proxy.timeout = this.timeout;
+        options.tunnel = true;
+      }
 
       this.ref();
-      if (outFile) {
-        request.get(item.url)
-        .on('error', (error) => {
-          this.error(error);
+      this._queue = this._queue.finally(() => {
+        debug(`starting request "${options.url}"`);
+        if (outFile) {
+          request.get(options)
+          .on('error', defer.reject.bind(defer))
+          .pipe(() => {
+            fs.createWriteStream(outFile)
+            .on('close', defer.resolve.bind(defer));
+          });
+        } else {
+          request.get(options, (error, response, body) => {
+            if (error) {
+              defer.reject(error);
+            } else if (response.statusCode !== 200) {
+              defer.reject(`invalid reply: ${response.statusCode}`);
+
+            } else {
+              delete item.url;
+              item.html = body;
+              this.emit('item', item);
+              defer.resolve();
+            }
+          });
+        }
+        return defer.promise;
+      })
+      .then(
+        () => {
+          debug(`request finished for "${options.url}"`);
           this.unref();
-        })
-        .pipe(() => {
-          fs.createWriteStream(outFile)
-          .on('close', () => { this.unref(); });
-        });
-      } else {
-        request.get(item.url, (error, response, body) => {
-          if (error) {
-            this.error(error);
-          } else if (response.statusCode !== 200) {
-            this.error(`invalid reply: ${response.statusCode}`);
-          } else {
-            delete item.url;
-            item.html = body;
-            this.emit('item', item);
-          }
+        },
+        (err) => {
+          debug(`request failed for "${options.url}"`);
+          this.error(err);
           this.unref();
         });
-      }
     } else if (!_.isEmpty(item)) {
       this.emit('item', item);
     }
   }
 }
-
-Registry.add('HTMLFetcher', HTMLFetcher);
 
 module.exports = HTMLFetcher;

@@ -25,8 +25,7 @@
 
 const
   _ = require('lodash'),
-  PipeElement = require('./PipeElement'),
-  Registry = require('./Registry');
+  PipeElement = require('./PipeElement');
 
 class StdOut extends PipeElement {
   constructor(fd, indent) {
@@ -41,7 +40,5 @@ class StdOut extends PipeElement {
     this.emit('item', item);
   }
 }
-
-Registry.add('StdOut', StdOut);
 
 module.exports = StdOut;

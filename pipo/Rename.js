@@ -25,7 +25,6 @@
 const
   _ = require('lodash'),
   PipeElement = require('./PipeElement'),
-  Registry = require('./Registry'),
   debug = require('debug')('pipo:rename');
 
 class Rename extends PipeElement {
@@ -51,7 +50,5 @@ class Rename extends PipeElement {
     }
   }
 }
-
-Registry.add('Rename', Rename);
 
 module.exports = Rename;
