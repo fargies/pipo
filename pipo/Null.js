@@ -26,8 +26,16 @@ const
   PipeElement = require('./PipeElement');
 
 class Null extends PipeElement {
-  onItem() {
-    /* does nothing, on purpose */
+  constructor() {
+    super();
+    this.errorOnly = true;
+  }
+
+  onItem(item) {
+    super.onItem(item);
+    if (this.errorOnly && ('errorString' in item)) {
+      this.emit('item', item);
+    }
   }
 }
 
