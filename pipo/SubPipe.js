@@ -37,7 +37,13 @@ class SubPipe extends PipeElement {
 
   setPipe(subPipe) {
     var elts = subPipe.split('|');
-    _.result(_.last(this.pipe), 'removeAllListeners');
+    if (!_.isEmpty(this.pipe)) {
+      _.last(this.pipe).removeAllListeners();
+    }
+    else {
+      /* first subpipe, lets incref */
+      this.ref();
+    }
     this.pipe = [];
 
     for (var i in elts) {
@@ -57,7 +63,7 @@ class SubPipe extends PipeElement {
     if (!_.isEmpty(this.pipe)) {
       _.last(this.pipe)
       .on('item', (item) => { this.emit('item', item); })
-      .on('end', (status) => { this.emit('end', status); });
+      .on('end', (status) => { super.end(status); });
     }
     if (debug.enabled) {
       debug('new subPipe: ' + _.map(this.pipe, function(elt) {
@@ -70,21 +76,17 @@ class SubPipe extends PipeElement {
     if ('pipe' in item) {
       this.setPipe(item.pipe);
       delete item.pipe; // consume it
-      if (_.isEmpty(item)) {
-        return;
-      }
     }
-    var first = this.pipe[0];
-    if (first) {
-      first.onItem(item);
+    if (!_.isEmpty(item) && !_.isEmpty(this.pipe)) {
+      this.pipe[0].onItem(item);
     }
   }
 
   end(status) {
-    var first = this.pipe[0];
-    if (first) {
-      first.end(status);
+    if (!_.isEmpty(this.pipe)) {
+      this.pipe[0].end(status);
     }
+    super.end(status);
   }
 }
 
