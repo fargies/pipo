@@ -20,8 +20,9 @@
     "mustache": "^2.3.0",
     "q": "^1.4.1",
     "request": "^2.79.0",
+    "tunnel-agent": "git+https://github.com/fargies/tunnel-agent.git",
     "xmldom": "^0.1.27",
     "xpath": "0.0.23",
-    "tunnel-agent": "git+https://github.com/fargies/tunnel-agent.git"
+    "yahoo-finance": "^0.3.2"
   }
 }
