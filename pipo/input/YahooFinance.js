@@ -56,7 +56,15 @@ class YahooFinance extends PipeElement {
               } else if (_.isEmpty(quotes)) {
                 this.error('no quotes found');
               } else {
-                this.emit('item', { quotes: quotes });
+                _.forEachRight(quotes, (q) => {
+                  if (_.isNil(q.close)) {
+                    return;
+                  }
+                  if (q.date instanceof Date) {
+                    q.date = q.date.getTime() / 1000;
+                  }
+                  this.emit('item', q);
+                });
               }
               this.unref();
             }

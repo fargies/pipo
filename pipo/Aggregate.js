@@ -32,22 +32,32 @@ const
 class Aggregate extends PipeElement {
   constructor() {
     super();
-    this.items = [];
+    this._items = [];
+    this.property = null;
   }
 
   onItem(item) {
+    super.onItem(item);
     var config = this.takeConfig(item);
     if (config) {
       this.emit('item', config);
     }
     if (!_.isEmpty(item)) {
-      this.items.push(item);
+      if (_.isNil(this.property)) {
+        this._items.push(item);
+      } else if (_.has(item, this.property)) {
+        this._items.push(item[this.property]);
+      }
     }
   }
 
   end(status) {
-    if (this.items.length !== 0) {
-      this.emit('item', { 'items' : this.items });
+    if (this._items.length !== 0) {
+      if (_.isNil(this.property)) {
+        this.emit('item', { "items" : this._items });
+      } else {
+        this.emit('item', { [this.property] : this._items });
+      }
     }
     super.end(status);
   }

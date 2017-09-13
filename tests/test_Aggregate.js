@@ -25,4 +25,20 @@ describe('Aggregate', function() {
     pipe.onItem({ "item" : 2 });
     pipe.end(0);
   });
+
+  it('aggregates properties', function(done) {
+    var pipe = new pipo.Aggregate();
+
+    pipe.on('item', (item) => {
+      assert('val' in item);
+      assert.equal(item.val.length, 2);
+      assert.equal(item.val[0], 1);
+      assert.equal(item.val[1], 2);
+      done();
+    });
+    pipe.onItem({ "AggregateConfig" : { "property" : 'val' } });
+    pipe.onItem({ "val" : 1 });
+    pipe.onItem({ "val" : 2 });
+    pipe.end(0);
+  });
 });

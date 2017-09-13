@@ -25,7 +25,8 @@
 
 const
   _ = require('lodash'),
-  nodemailer = require('nodemailer');
+  nodemailer = require('nodemailer'),
+  PipeElement = require('./PipeElement');
 
 
 class Mailer extends PipeElement {
