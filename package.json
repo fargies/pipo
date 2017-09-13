@@ -4,7 +4,8 @@
   "description": "Pipo the pipe builder",
   "main": "index.js",
   "scripts": {
-    "test": "mocha tests"
+    "test": "mocha tests",
+    "docker:test": "docker run --rm -it -v \"$PWD\":/usr/src/myapp -w /usr/src/myapp node:alpine sh -c 'npm install && npm run test'"
   },
   "author": "Sylvain Fargier",
   "license": "BSD-2-Clause",
