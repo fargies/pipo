@@ -30,9 +30,12 @@ const
   debug = require('debug')('pipo:sub');
 
 class SubPipe extends PipeElement {
-  constructor() {
+  constructor(pipe) {
     super();
     this.pipe = [];
+    if (!_.isNil(pipe)) {
+      this.setPipe(pipe);
+    }
   }
 
   setPipe(subPipe) {

@@ -26,6 +26,7 @@
 const
   _ = require('lodash'),
   utils = require('../utils'),
+  debug = require('debug')('pipo:filter:re'),
   PipeElement = require('../PipeElement');
 
 class ReFilter extends PipeElement {
@@ -47,6 +48,7 @@ class ReFilter extends PipeElement {
         this.emit('item', item);
       } else if (_.has(item, this.property) &&
           _.toString(item[this.property]).match(this.pattern)) {
+        debug('item match on "%s"', this.property);
         this.emit('item', item);
       }
     }
