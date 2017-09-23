@@ -2,14 +2,18 @@
 
 const
   assert = require('assert'),
-  describe = require('mocha').describe,
+  { describe, before } = require('mocha'),
   it = require('mocha').it;
 
 const
   HTMLToXML = require('../pipo').get('HTMLToXML');
 
 describe('HTMLToXML', function() {
-  var pipe = new HTMLToXML();
+  var pipe;
+
+  before(function() {
+    pipe = new HTMLToXML();
+  });
 
   it('simple', function(done) {
     pipe.once('item', function(item) {

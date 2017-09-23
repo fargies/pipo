@@ -27,7 +27,7 @@ const
   utils = require('../utils'),
   PipeElement = require('../PipeElement');
 
-
+// FIXME: rename as StrReplace/StrSubstr ?
 class Replace extends PipeElement {
   constructor() {
     super();

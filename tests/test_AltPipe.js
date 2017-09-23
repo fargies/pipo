@@ -14,7 +14,7 @@ describe('AltPipe', function() {
   it('create an AltPipe', function() {
     var pipe = new pipo.AltPipe();
     pipe.onItem({ "pipe": "StdOut|StdOut" });
-    assert.equal(pipe.pipe.length, 2);
+    assert.equal(pipe._pipe.length, 2);
   });
 
   it('forwards messages', function(done) {

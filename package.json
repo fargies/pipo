@@ -3,8 +3,13 @@
   "version": "1.0.0",
   "description": "Pipo the pipe builder",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com:fargie_s/pipo.git"
+  },
   "scripts": {
     "test": "mocha tests",
+    "test:coverage": "istanbul cover ./node_modules/.bin/_mocha -- tests",
     "docker:test": "docker run --rm -it -v \"$PWD\":/usr/src/myapp -w /usr/src/myapp node:alpine sh -c 'npm install && npm run test'"
   },
   "author": "Sylvain Fargier",
@@ -23,6 +28,8 @@
     "moment": "^2.18.1",
     "mustache": "^2.3.0",
     "nodemailer": "^4.1.0",
+    "pouchdb": "^6.3.4",
+    "pouchdb-find": "^6.3.4",
     "q": "^1.4.1",
     "request": "^2.79.0",
     "tunnel-agent": "git+https://github.com/fargies/tunnel-agent.git",

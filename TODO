@@ -1,5 +1,4 @@
 - HTTPSFetcher to tests SSL support on given proxy
-- Set properties using config
 - Implement a nicer usage
 - Write a README
 - Add progress messages ?
@@ -7,8 +6,12 @@
 Pipes to be written :
     - UDPOut, MCastOut, SqliteOut, FileOut, RSSFeedOut, SyslogOut, MailErrorOut
     - RSSFeedIn
-    - Replace, SqliteQuery, Timestamp
+    - SqliteQuery
 
-Config :
-    - Add instance: idx (to configure only the given instance)
+Add PIPOPATH and .json file searching support in SubPipe
 
+Add ShellEval support
+
+Rename Replace as Substr
+
+Support . and [] in property strings

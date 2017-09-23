@@ -1,4 +1,3 @@
-'use strict';
 /*
 ** Copyright (C) 2016 Sylvain Fargier
 **
@@ -18,21 +17,34 @@
 **    misrepresented as being the original software.
 ** 3. This notice may not be removed or altered from any source distribution.
 **
-** Created on: 2017-04-13T20:30:10+02:00
+** Created on: 2017-09-20T22:57:45+02:00
 **     Author: Sylvain Fargier <fargie_s> <fargier.sylvain@free.fr>
+**
 */
 
 const
   _ = require('lodash'),
-  SubPipe = require('./SubPipe');
+  PipeElement = require('./PipeElement'),
+  debug = require('debug')('pipo:remove');
 
-class AltPipe extends SubPipe {
+class Remove extends PipeElement {
+  constructor() {
+    super();
+    this.property = null;
+  }
+
   onItem(item) {
     super.onItem(item);
-    if (!_.isEmpty(this.pipe) && !_.isEmpty(item)) {
+
+    if (!_.isNil(this.property) && _.has(item, this.property)) {
+      debug('removing "%s"', this.property);
+      delete item[this.property];
+    }
+
+    if (!_.isEmpty(item)) {
       this.emit('item', item);
     }
   }
 }
 
-module.exports = AltPipe;
+module.exports = Remove;

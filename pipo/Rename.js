@@ -39,7 +39,7 @@ class Rename extends PipeElement {
 
     if (!_.isNil(this.property) && !_.isNil(this.newName)) {
       if (_.has(item, this.property)) {
-        debug(`renaming "${this.property}" as "${this.newName}"`);
+        debug('renaming "%s" as "%s"', this.property, this.newName);
         item[this.newName] = item[this.property];
         delete item[this.property];
       }

@@ -18,7 +18,7 @@ m.describe('YahooFinance', function() {
       done();
     });
     pipe.onItem({ symbol: 'SO.PA', from: '2017-06-02', to: '2017-06-02' });
-  }).timeout(10000);
+  }).timeout(30000);
 
   m.it('fails on non existing quote', function(done) {
     var pipe = new pipo.YahooFinance();

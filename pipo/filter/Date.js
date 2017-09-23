@@ -1,4 +1,3 @@
-'use strict';
 /*
 ** Copyright (C) 2016 Sylvain Fargier
 **
@@ -18,21 +17,40 @@
 **    misrepresented as being the original software.
 ** 3. This notice may not be removed or altered from any source distribution.
 **
-** Created on: 2017-04-13T20:30:10+02:00
+** Created on: 2017-09-20T22:21:24+02:00
 **     Author: Sylvain Fargier <fargie_s> <fargier.sylvain@free.fr>
+**
 */
 
 const
   _ = require('lodash'),
-  SubPipe = require('./SubPipe');
+  moment = require('moment'),
+  PipeElement = require('../PipeElement');
 
-class AltPipe extends SubPipe {
+/* Native language parsing dates */
+class Date extends PipeElement {
+  constructor() {
+    super();
+    this.property = null;
+    this.outFormat = null;
+    this.inFormat = null;
+  }
+
   onItem(item) {
     super.onItem(item);
-    if (!_.isEmpty(this.pipe) && !_.isEmpty(item)) {
+    var config = this.takeConfig(item);
+    if (config) {
+      this.emit('item', config);
+    }
+
+    if (!_.isNil(this.property) && _.has(item, this.property)) {
+      item[this.property] = moment(item[this.property], this.inFormat)
+        .format(this.outFormat);
+    }
+    if (!_.isEmpty(item)) {
       this.emit('item', item);
     }
   }
 }
 
-module.exports = AltPipe;
+module.exports = Date;
