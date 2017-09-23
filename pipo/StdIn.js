@@ -32,12 +32,18 @@ class StdIn extends DataIn {
   constructor(fd) {
     super();
     this.fd = _.defaultTo(fd, process.stdin);
+    this.ref(); /* own ref */
 
     this.fd.on('data', (chunk) => {
       debug(`chunk: ${chunk.length} bytes`);
       this.add(chunk);
     });
     this.fd.on('end', () => { this.end(0); });
+  }
+
+  onItem(item) {
+    super.onItem(item);
+    this.emit('item', item);
   }
 }
 

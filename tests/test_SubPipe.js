@@ -15,6 +15,7 @@ describe('SubPipe', function() {
   it('create a subpipe', function() {
     var pipe = new pipo.SubPipe();
     pipe.onItem({ "pipe": "StdOut|StdOut" });
+    pipe.onItem({ "item": 42 });
     assert.equal(pipe._pipe.length, 2);
   });
 
@@ -49,7 +50,7 @@ describe('SubPipe', function() {
       assert('errorString' in item);
       done();
     });
-    pipe.onItem({ "pipe": "Unknown" });
+    pipe.onItem({ "pipe": "Unknown", "item": 42 });
   });
 
   it('handles multiple pipes', function(done) {

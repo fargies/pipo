@@ -129,7 +129,6 @@ class SubPipe extends PipeElement {
 
     this.deletePipe(this._pipe);
     this._pipe = null;
-    this._pipe = this.createPipe(subPipe);
   }
 
   onItem(item) {

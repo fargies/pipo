@@ -13,7 +13,7 @@ describe('AltPipe', function() {
 
   it('create an AltPipe', function() {
     var pipe = new pipo.AltPipe();
-    pipe.onItem({ "pipe": "StdOut|StdOut" });
+    pipe.onItem({ "pipe": "StdOut|StdOut", "item": 42 });
     assert.equal(pipe._pipe.length, 2);
   });
 

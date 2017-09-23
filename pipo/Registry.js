@@ -29,9 +29,14 @@ const
   fs = require('fs'),
   PipeElement = require('./PipeElement');
 
-module.exports = new class Registry {
+class Registry {
   constructor() {
     this.pipes = {};
+  }
+
+  load() {
+    this.crawl(__dirname, [
+      'utils', 'PipeElement.js', 'Registry.js', 'DataIn.js' ]);
   }
 
   get(elt) {
@@ -55,7 +60,7 @@ module.exports = new class Registry {
     }
   }
 
-  crawl(dir, ignore) {
+  crawl(dir, ignore, delay) {
     debug(`crawling "${dir}"`);
     var files = fs.readdirSync(dir);
     _.forEach(files,  (file) => {
@@ -75,7 +80,7 @@ module.exports = new class Registry {
           debug(`failed to register "${file}": ${e}`);
         }
       } else if (stat.isDirectory()) {
-        this.crawl(path);
+        this.crawl(path, ignore, delay);
       }
     });
   }
@@ -83,4 +88,9 @@ module.exports = new class Registry {
   remove(element) {
     _.unset(this.pipes, element);
   }
-}();
+}
+
+const registry = new Registry();
+module.exports = registry;
+
+registry.load();

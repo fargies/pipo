@@ -31,10 +31,15 @@ const
 class PipeElement extends EventEmitter {
   constructor() {
     super();
-    this._ref = 1; /* initialize refcount */
+    this._ref = 0; /* initialize refcount */
+    this._started = false;
   }
 
   onItem(item) {
+    if (!this._started) {
+      this.start();
+    }
+
     debug(`${this.constructor.name}.onItem`);
     var configName = this.constructor.name + 'Config';
     var config = item[configName];
@@ -109,13 +114,22 @@ class PipeElement extends EventEmitter {
     if (cb instanceof PipeElement) {
       this.on('item', function(item) { cb.onItem(item); });
       this.once('end', function(status) { cb.end(status); });
+      cb.ref(); /* increments refcount */
       return cb;
     } else {
       return this.next(new CbPipeElement(cb));
     }
   }
 
-  start() {}
+  start() {
+    if (!this._started) {
+      this._started = true;
+      if (this._ref === 0) {
+        /* direct use, not connected with 'next' -> let's get a ref */
+        this.ref();
+      }
+    }
+  }
 
   usage() {
     return "";

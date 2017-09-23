@@ -27,9 +27,6 @@ const
   _ = require('lodash'),
   Registry = require('./Registry');
 
-Registry.crawl(__dirname, [
-  'utils', 'PipeElement.js', 'Registry.js', 'DataIn.js' ]);
-
 
 module.exports = {
   Registry: Registry,
