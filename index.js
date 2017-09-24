@@ -97,7 +97,7 @@ if (opts.help) {
             if (!(info[0] in pipo.Registry.pipes)) {
               throw `Can\'t find ${info[0]} element`;
             }
-            let pipe = addPipe(pipeLine, new pipo.Registry.pipes[info[0]]());
+            let pipe = addPipe(pipeLine, new pipo[info[0]]());
             if (info[1]) {
               pipe.setName(info[1]);
             }
@@ -124,7 +124,6 @@ if (opts.help) {
     if (debug.enabled) {
       debug('PipeLine: ' + _.map(pipeLine, function(elt) { return _.get(elt, 'constructor.name'); }).join('|'));
     }
-    _.invoke(_.first(pipeLine), 'start');
   })
   .then(() => {
     /* wait for pipe to finish */
@@ -132,6 +131,9 @@ if (opts.help) {
     _.last(pipeLine).on('end', () => {
       timers.clearInterval(timer);
     });
+  })
+  .then(() => {
+    _.invoke(_.first(pipeLine), 'start');
   })
   .done();
 

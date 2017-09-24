@@ -37,6 +37,10 @@ class PipeElement extends EventEmitter {
 
   onItem(item) {
     if (!this._started) {
+      if (this._ref === 0) {
+        /* direct use, not connected with 'next' -> let's get a ref */
+        this.ref();
+      }
       this.start();
     }
 
@@ -125,8 +129,7 @@ class PipeElement extends EventEmitter {
     if (!this._started) {
       this._started = true;
       if (this._ref === 0) {
-        /* direct use, not connected with 'next' -> let's get a ref */
-        this.ref();
+        this.emit('end', 0);
       }
     }
   }

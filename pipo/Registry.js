@@ -27,6 +27,7 @@ const
   _ = require('lodash'),
   debug = require('debug')('pipo:registry'),
   fs = require('fs'),
+  process = require('process'),
   path = require('path');
 
 class Registry {
@@ -36,9 +37,16 @@ class Registry {
 
   findAll() {
     this.crawl(__dirname, {
-      ignore: [ 'utils', 'PipeElement.js', 'Registry.js', 'DataIn.js' ],
+      ignore: [
+        'utils', 'PipeElement.js', 'Registry.js', 'DataIn.js', 'Item.js',
+        'index.js'
+      ],
       preload: false
     });
+    _.forEach([ '/etc/pipo', process.env['HOME'] + '/.pipo' ],
+      (p) => { this.crawl(p, { preload: false }); });
+    _.forEach(_.compact(_.split(process.env['PIPOPATH'], ':')),
+      (p) => { this.crawl(p, { preload: false }); });
   }
 
   get(elt) {
@@ -66,7 +74,7 @@ class Registry {
       }
     }
     else if (file.endsWith('.json')) {
-      let pipeElt = FilePipe.bind(file);
+      let pipeElt = FilePipe.bind(null, file);
       this.add(path.parse(file).name, pipeElt);
       return pipeElt;
     }
@@ -93,7 +101,12 @@ class Registry {
   }
 
   crawl(dir, opts) {
-    debug(`crawling "${dir}"`);
+    if (!fs.existsSync(dir)) {
+      debug('not crawling "%s": no such directory', dir);
+      return;
+    }
+
+    debug('crawling "%s"', dir);
     var files = fs.readdirSync(dir);
     _.forEach(files,  (file) => {
       if (_.includes(_.get(opts, 'ignore'), file)) {
