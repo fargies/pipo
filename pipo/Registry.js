@@ -27,20 +27,52 @@ const
   _ = require('lodash'),
   debug = require('debug')('pipo:registry'),
   fs = require('fs'),
-  PipeElement = require('./PipeElement');
+  path = require('path');
 
 class Registry {
   constructor() {
     this.pipes = {};
   }
 
-  load() {
-    this.crawl(__dirname, [
-      'utils', 'PipeElement.js', 'Registry.js', 'DataIn.js' ]);
+  findAll() {
+    this.crawl(__dirname, {
+      ignore: [ 'utils', 'PipeElement.js', 'Registry.js', 'DataIn.js' ],
+      preload: false
+    });
   }
 
   get(elt) {
-    return this.pipes[elt];
+    var pipe = this.pipes[elt];
+    if (_.isString(pipe)) {
+      pipe = this.load(pipe);
+      if (_.isNil(pipe)) {
+        delete this.pipes[elt];
+      }
+    }
+    return pipe;
+  }
+
+  load(file) {
+    if (file.endsWith('.js')) {
+      try {
+        let pipeElt = require(file);
+        if (pipeElt.prototype instanceof PipeElement) {
+          debug('registering', pipeElt.name);
+          this.add(pipeElt.name, pipeElt);
+        }
+        return pipeElt;
+      } catch(e) {
+        debug('failed to register "%s":', file, e);
+      }
+    }
+    else if (file.endsWith('.json')) {
+      let pipeElt = FilePipe.bind(file);
+      this.add(path.parse(file).name, pipeElt);
+      return pipeElt;
+    }
+    else {
+      return null;
+    }
   }
 
   add() {
@@ -60,27 +92,26 @@ class Registry {
     }
   }
 
-  crawl(dir, ignore, delay) {
+  crawl(dir, opts) {
     debug(`crawling "${dir}"`);
     var files = fs.readdirSync(dir);
     _.forEach(files,  (file) => {
-      if (_.includes(ignore, file)) {
+      if (_.includes(_.get(opts, 'ignore'), file)) {
         return;
       }
-      let path = dir + '/' + file;
-      let stat = fs.statSync(path);
-      if (stat.isFile() && file.endsWith('.js')) {
-        try {
-          let pipeElt = require(dir + '/' + file);
-          if (pipeElt.prototype instanceof PipeElement) {
-            debug(`registering "${pipeElt.name}"`);
-            this.add(pipeElt.name, pipeElt);
-          }
-        } catch(e) {
-          debug(`failed to register "${file}": ${e}`);
+      file = dir + '/' + file;
+      let stat = fs.statSync(file);
+      let fileParse = path.parse(file);
+
+      if (stat.isFile() && _.includes([ '.json', '.js' ], fileParse.ext)) {
+        if (_.get(opts, 'preload', true)) {
+          this.load(file);
         }
-      } else if (stat.isDirectory()) {
-        this.crawl(path, ignore, delay);
+        else {
+          this.pipes[fileParse.name] = file;
+        }
+      } else if (stat.isDirectory() && _.get(opts, 'recurse', true)) {
+        this.crawl(file, opts);
       }
     });
   }
@@ -93,4 +124,8 @@ class Registry {
 const registry = new Registry();
 module.exports = registry;
 
-registry.load();
+const
+  FilePipe = require('./FilePipe'),
+  PipeElement = require('./PipeElement');
+
+registry.findAll();

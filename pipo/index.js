@@ -25,14 +25,30 @@
 
 const
   _ = require('lodash'),
+  debug = require('debug')('pipo:index'),
   Registry = require('./Registry');
 
 
-module.exports = {
-  Registry: Registry,
-  get: function(elt) { return Registry.get(elt); },
+module.exports = new Proxy(
+  {
+    Registry: Registry,
+    get: function(elt) { return Registry.get(elt); },
 
-  PipeElement: require('./PipeElement')
-};
+    PipeElement: require('./PipeElement')
+  },
+  {
+    get: function(target, property) {
+      if (_.has(target, property)) {
+        return Reflect.get(target, property);
+      }
+      else {
+        return target.Registry.get(property);
+      }
+    },
 
-_.assign(module.exports, Registry.pipes);
+    has: function(target, property) {
+      return Reflect.has(target, property) ||
+        _.has(target.Registry.pipes, property);
+    }
+  }
+);

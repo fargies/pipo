@@ -48,11 +48,11 @@ class SubPipe extends PipeElement {
 
       for (var i in elts) {
         let info = _.split(elts[i], '#');
-        if (!(info[0] in Registry.pipes)) {
+        let Elt = Registry.get(info[0]);
+        if (_.isNil(Elt)) {
           this.error(`Failed to parse element: ${elts[i]}`);
           return;
         }
-        let Elt = Registry.pipes[info[0]];
         let elt = new Elt();
         _.invoke(_.last(pipe), 'next', elt);
         pipe.push(elt);
