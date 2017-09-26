@@ -33,6 +33,7 @@ class Null extends PipeElement {
 
   onItem(item) {
     super.onItem(item);
+
     if (this.errorOnly && ('errorString' in item)) {
       this.emit('item', item);
     }

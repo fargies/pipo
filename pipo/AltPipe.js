@@ -24,14 +24,22 @@
 
 const
   _ = require('lodash'),
+  debug = require('debug')('pipo:alt'),
+  PipeElement = require('./PipeElement'),
+  Item = require('./Item'),
   SubPipe = require('./SubPipe');
 
 class AltPipe extends SubPipe {
   onItem(item) {
-    super.onItem(item);
-    if (!_.isEmpty(this.pipe) && !_.isEmpty(item)) {
-      this.emit('item', item);
+    PipeElement.prototype.onItem.call(this, item);
+    if (_.has(item, 'pipe')) {
+      this.setPipe(Item.take(item, 'pipe'));
     }
+
+    if (!_.isEmpty(this.pipe) && !_.isEmpty(item)) {
+      this.emit('item', _.cloneDeep(item));
+    }
+    super.onItem(item);
   }
 }
 

@@ -43,6 +43,7 @@ class HTMLFetcher extends PipeElement {
 
   onItem(item) {
     super.onItem(item);
+
     if ('url' in item) {
       let outFile = _.defaultTo(item.outFile, this.outFile);
       let defer = q.defer();

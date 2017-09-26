@@ -38,10 +38,6 @@ class MathEval extends PipeElement {
 
   onItem(item) {
     super.onItem(item);
-    var config = this.takeConfig(item);
-    if (config) {
-      this.emit('item', config);
-    }
 
     if (_.has(item, 'expr')) {
       try {

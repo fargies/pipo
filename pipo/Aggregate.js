@@ -38,10 +38,7 @@ class Aggregate extends PipeElement {
 
   onItem(item) {
     super.onItem(item);
-    var config = this.takeConfig(item);
-    if (config) {
-      this.emit('item', config);
-    }
+
     if (!_.isEmpty(item)) {
       if (_.isNil(this.property)) {
         this._items.push(item);

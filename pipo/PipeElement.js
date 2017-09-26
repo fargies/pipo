@@ -59,6 +59,15 @@ class PipeElement extends EventEmitter {
         this.setConfig(config);
       }
     }
+    if (!_.get(this._opts, 'noSeparateConfig', false)) {
+      this.emitItem(this.takeConfig(item));
+    }
+  }
+
+  emitItem(item) {
+    if (!_.isEmpty(item)) {
+      this.emit('item', item);
+    }
   }
 
   takeConfig(item) {

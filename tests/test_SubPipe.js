@@ -43,6 +43,23 @@ describe('SubPipe', function() {
     pipe.end(0);
   });
 
+  it('sends config to the subPipe', function(done) {
+    var pipe = new pipo.SubPipe();
+
+    pipe.on('item', function(item) {
+      assert.equal(_.get(item, 'new'), 42);
+      done();
+    });
+    pipe.onItem({
+      'pipe': 'Rename',
+      'RenameConfig': {
+        'property': 'item',
+        'newName': 'new'
+      },
+      'item': 42
+    });
+  });
+
   it('fails on unknown pipe element', function(done) {
     var pipe = new pipo.SubPipe();
 

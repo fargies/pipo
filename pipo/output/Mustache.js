@@ -42,10 +42,6 @@ class Mustache extends PipeElement {
 
   onItem(item) {
     super.onItem(item);
-    var config = this.takeConfig(item);
-    if (config) {
-      this.emit('item', config);
-    }
     if (_.isEmpty(item)) {
       return;
     }
@@ -61,7 +57,6 @@ class Mustache extends PipeElement {
       });
     }
     delete item.mustacheVars;
-    debug(item);
 
     let mstchFile = _.defaultTo(item['mustacheFile'], this.mustacheFile);
     let mstchTpl = _.defaultTo(item['mustacheTemplate'], this.mustacheTemplate);

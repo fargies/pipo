@@ -35,6 +35,7 @@ class SubPipe extends PipeElement {
     super();
     this.oneShot = false;
     this.pipe = null;
+    this._opts = { noSeparateConfig: true };
     if (!_.isNil(pipe)) {
       this.setPipe(pipe);
     }
@@ -81,7 +82,7 @@ class SubPipe extends PipeElement {
       .on('item', (item) => { this.emit('item', item); })
       .on('end', (status) => { super.end(status); });
 
-      pipe.onItem(subPipe);
+      pipe.onItem(_.cloneDeep(subPipe));
       return [ pipe ];
     }
     else {
@@ -117,7 +118,10 @@ class SubPipe extends PipeElement {
       return;
     }
     else if (_.isArray(pipe[0])) {
-      _.forEach(pipe, (p) => { this.pipeInvoke(p, method, ...args); });
+      _.forEach(pipe, (p) => {
+        let a = _.cloneDeep(args);
+        this.pipeInvoke(p, method, ...a);
+      });
     }
     else {
       _.invoke(pipe[0], method, ...args);
@@ -125,10 +129,12 @@ class SubPipe extends PipeElement {
   }
 
   setPipe(subPipe) {
-    this.pipe = subPipe;
+    if (subPipe !== this.pipe) {
+      this.pipe = subPipe;
 
-    this.deletePipe(this._pipe);
-    this._pipe = null;
+      this.deletePipe(this._pipe);
+      this._pipe = null;
+    }
   }
 
   onItem(item) {

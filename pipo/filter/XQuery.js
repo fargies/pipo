@@ -40,6 +40,7 @@ class XQuery extends PipeElement {
 
   onItem(item) {
     super.onItem(item);
+
     if ('xml' in item) {
       let query = _.defaultTo(item.query, this.query);
       let subQueries = _.clone(_.defaultTo(item.subQueries, this.subQueries));
