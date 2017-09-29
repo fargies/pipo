@@ -39,6 +39,7 @@ class YahooFinance extends PipeElement {
 
   onItem(item) {
     super.onItem(item);
+
     if (_.has(item, 'from') && _.has(item, 'to')) {
       let symbol = Item.take(item, 'symbol', this.symbol);
       if (_.isNil(symbol)) {

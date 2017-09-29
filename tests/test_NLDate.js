@@ -17,7 +17,7 @@ m.describe('NLDate', function() {
       { in: 'now', format: null, out: moment() },
       { in: '1 month ago', format: "YYYY-MM-DD",
         out: moment().subtract(1, "month").hours(0).minutes(0).seconds(0) },
-      { in: 'yesterday', out: moment().subtract(1, "day") },
+      { in: 'a day ago', out: moment().subtract(1, "day") },
       { in: 'in 2 days', out: moment().add(2, "days") },
       { in: '2017-09-02', out: moment("2017-09-02") }
     ],

@@ -25,7 +25,7 @@
 
 const
   _ = require('lodash'),
-  date = require('date.js'),
+  sugar = require('sugar-date'),
   moment = require('moment'),
   PipeElement = require('../PipeElement');
 
@@ -41,7 +41,7 @@ class NLDate extends PipeElement {
     super.onItem(item);
 
     if (!_.isNil(this.property) && _.has(item, this.property)) {
-      item[this.property] = moment(date(item[this.property]))
+      item[this.property] = moment(sugar.Date.create(item[this.property]))
         .format(this.format);
     }
     if (!_.isEmpty(item)) {

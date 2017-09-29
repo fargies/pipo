@@ -22,7 +22,6 @@
   },
   "dependencies": {
     "dashdash": "^1.14.1",
-    "date.js": "^0.3.1",
     "htmltidy": "0.0.6",
     "lodash": "^4.17.4",
     "mathjs": "^3.16.3",
@@ -33,6 +32,7 @@
     "pouchdb-find": "^6.3.4",
     "q": "^1.4.1",
     "request": "^2.79.0",
+    "sugar-date": "^2.0.4",
     "tunnel-agent": "git+https://github.com/fargies/tunnel-agent.git",
     "xmldom": "^0.1.27",
     "xpath": "0.0.23",
