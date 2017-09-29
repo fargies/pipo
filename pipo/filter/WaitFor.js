@@ -18,37 +18,57 @@
 **    misrepresented as being the original software.
 ** 3. This notice may not be removed or altered from any source distribution.
 **
-** Created on: 2017-01-29T23:43:44+01:00
+** Created on: 2017-02-04T09:40:45+01:00
 **     Author: Fargier Sylvain <fargie_s> <fargier.sylvain@free.fr>
 */
 
+
 const
   _ = require('lodash'),
-  PipeElement = require('./PipeElement'),
-  debug = require('debug')('pipo:rename');
+  utils = require('../utils'),
+  debug = require('debug')('pipo:filter:waitfor'),
+  PipeElement = require('../PipeElement');
 
-class Rename extends PipeElement {
+class WaitFor extends PipeElement {
   constructor() {
     super();
     this.property = null;
-    this.newName = null;
+    this.pattern = null;
+    this._found = false;
+
+    /* we may be waiting for config, so don't remove it */
+    this._opts = { noSeparateConfig: true };
   }
 
   onItem(item) {
     super.onItem(item);
 
-    if (!_.isNil(this.property) && !_.isNil(this.newName)) {
-      if (_.has(item, this.property)) {
-        debug('renaming "%s" as "%s"', this.property, this.newName);
-        _.set(item, this.newName, _.get(item, this.property));
-        _.unset(item, this.property);
+    if (_.isNil(this.property) || this._found || _.isEmpty(item)) {
+      this.emitItem(item);
+    }
+    else if (_.has(item, this.property) &&
+      (_.isNil(this.pattern) ||
+       _.toString(item[this.property]).match(this.pattern))) {
+      debug('unlocking');
+      this._found = true;
+      this.emitItem(item);
+      this.emit('found');
+    }
+    else {
+      this.emitItem(this.takeConfig(item));
+      if (!_.isEmpty(item)) {
+        this.on('found', () => { this.emitItem(item); });
       }
     }
+  }
 
-    if (!_.isEmpty(item)) {
-      this.emit('item', item);
+  setPattern(pattern) {
+    try {
+      this.pattern = utils.getPattern(pattern);
+    } catch(e) {
+      this.error(e);
     }
   }
 }
 
-module.exports = Rename;
+module.exports = WaitFor;

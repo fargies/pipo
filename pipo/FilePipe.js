@@ -35,7 +35,9 @@ class FilePipe extends PipeElement {
   constructor(file) {
     super();
     this.file = null;
+    this.wait = true;
     this._pipe = null;
+    this._opts = { noSeparateConfig: true };
 
     if (!_.isNil(file)) {
       this.setFile(file);
@@ -51,9 +53,10 @@ class FilePipe extends PipeElement {
     this.ref();
     this.file = file;
     this._pipe = [ new StdIn(fs.createReadStream(file)), new SubPipe() ];
+    this._pipe[0].wait = this.wait;
     this._pipe[0].next(this._pipe[1]);
     this._pipe[1].on('end', this.end.bind(this));
-    this._pipe[1].on('item', this.emit.bind(this, 'item'));
+    this._pipe[1].on('item', this.emitItem.bind(this));
   }
 
   onItem(item) {
@@ -66,7 +69,7 @@ class FilePipe extends PipeElement {
       this._pipe[0].onItem(item);
     }
     else {
-      this.emit('item', item);
+      this.emitItem(item);
     }
   }
 }

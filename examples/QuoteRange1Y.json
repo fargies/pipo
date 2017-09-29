@@ -1,0 +1,57 @@
+{
+  "pipe": "SubPipe#from|Add|NLDate#to",
+
+  "SubPipeConfig#from": {
+    "pipe": "WaitFor|Replace|Rename|PouchDBIn|MathEval#nextDay|NLDate#from|Aggregate|MathEval#min|Date#from"
+  },
+
+  "WaitForConfig": {
+    "property": "symbol"
+  },
+  "ReplaceConfig": {
+    "property": "symbol",
+    "pattern": "^",
+    "newSubstr": "/var/db/quotes/"
+  },
+  "RenameConfig": {
+    "property": "symbol",
+    "newName": "PouchDBInConfig.database"
+  },
+
+  "MathEvalConfig#nextDay": {
+    "expr": "date + (24*60*60)",
+    "property": "from"
+  },
+  "NLDateConfig#from": {
+    "property": "from",
+    "format": "X"
+  },
+  "AggregateConfig": {
+    "property": "from"
+  },
+  "MathEvalConfig#min": {
+    "expr": "min(from)",
+    "property": "from"
+  },
+  "DateConfig#from": {
+    "property": "from",
+    "inFormat": "X",
+    "outFormat": "YYYY-MM-DD"
+  },
+
+
+  "AddConfig": {
+    "property": "to",
+    "value": "now"
+  },
+  "NLDateConfig#to": {
+    "property": "to",
+    "format": "YYYY-MM-DD"
+  },
+
+  "selector": {},
+  "createIndex": { "fields": [ "date" ], "name": "dateIndex" },
+  "sort": [ { "date": "desc" } ],
+  "limit": 1,
+  "from": "one year ago"
+}

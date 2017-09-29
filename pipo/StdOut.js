@@ -32,12 +32,19 @@ class StdOut extends PipeElement {
     super();
     this.fd = _.defaultTo(fd, process.stdout);
     this.indent = _.defaultTo(indent, 2);
+    this.eol = true;
   }
 
   onItem(item) {
     super.onItem(item);
-    this.fd.write(JSON.stringify(item, null, this.indent));
-    this.emit('item', item);
+
+    if (!_.isEmpty(item)) {
+      this.fd.write(JSON.stringify(item, null, this.indent));
+      if (this.eol) {
+        this.fd.write("\n");
+      }
+      this.emit('item', item);
+    }
   }
 }
 

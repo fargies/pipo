@@ -31,6 +31,8 @@ const
 class StdIn extends DataIn {
   constructor(fd) {
     super();
+    this.wait = false;
+    this._opts = { noSeparateConfig: true };
     this.fd = _.defaultTo(fd, process.stdin);
     this.ref(); /* own ref */
 
@@ -43,7 +45,17 @@ class StdIn extends DataIn {
 
   onItem(item) {
     super.onItem(item);
-    this.emit('item', item);
+
+    if (_.isEmpty(item)) {
+      return;
+    }
+    else if (this.wait && !_.isNil(this.fd)) {
+      this.ref();
+      this.fd.on('end', () => { this.emitItem(item); this.unref(); });
+    }
+    else {
+      this.emitItem(item);
+    }
   }
 }
 

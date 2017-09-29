@@ -1,5 +1,5 @@
 {
-  "pipe": "HTMLFetcher|HTMLToXML|AltPipe#others|XQuery#symbols|Replace#ext|SubPipe#debug",
+  "pipe": "HTMLFetcher|HTMLToXML|AltPipe#others|XQuery#symbols|Replace#ext",
 
   "url": "http://www.eoddata.com/stocklist/PAR/A.htm",
   "AltPipeConfig#others": {
@@ -38,5 +38,8 @@
         "property": "symbol"
       }
     }
+  },
+  "StdOutConfig": {
+    "indent": 0
   }
 }
