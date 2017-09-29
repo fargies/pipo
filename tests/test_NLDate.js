@@ -2,7 +2,7 @@
 
 const
   assert = require('assert'),
-  m = require('mocha'),
+  {it, describe} = require('mocha'),
   moment = require('moment'),
   _ = require('lodash');
 
@@ -10,8 +10,7 @@ const
   pipo = require('../pipo');
 
 
-m.describe('NLDate', function() {
-  var pipe = new pipo.NLDate();
+describe('NLDate', function() {
 
   _.forEach([
       { in: 'now', format: null, out: moment() },
@@ -22,16 +21,31 @@ m.describe('NLDate', function() {
       { in: '2017-09-02', out: moment("2017-09-02") }
     ],
     function(sample) {
-      m.it(`parses "${sample.in}"`, function(done) {
-      pipe.once('item', (item) => {
-        assert.ok(!_.isEmpty(item.date));
-        assert.ok(sample.out.diff(moment(item.date), 'seconds') < 10);
-        done();
+      it(`parses "${sample.in}"`, function(done) {
+        var pipe = new pipo.NLDate();
+        pipe.once('item', (item) => {
+          assert.ok(!_.isEmpty(item.date));
+          assert.ok(sample.out.diff(moment(item.date), 'seconds') < 10);
+          done();
+        });
+        pipe.onItem({
+          NLDateConfig: { property: "date", format: sample.format },
+          date: sample.in
+        });
       });
-      pipe.onItem({
-        NLDateConfig: { property: "date", format: sample.format },
-        date: sample.in
-      });
+    }
+  );
+
+  it('can parse a sub-property', function(done) {
+    var pipe = new pipo.NLDate();
+    pipe.once('item', (item) => {
+      assert.ok(!_.isEmpty(_.get(item, [ 'date', 'sub' ])));
+      assert.ok(moment().diff(moment(item.date.sub), 'seconds') < 10);
+      done();
+    });
+    pipe.onItem({
+      NLDateConfig: { property: "date.sub" },
+      date: { sub: "now" }
     });
   });
 });

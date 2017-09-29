@@ -41,8 +41,9 @@ class NLDate extends PipeElement {
     super.onItem(item);
 
     if (!_.isNil(this.property) && _.has(item, this.property)) {
-      item[this.property] = moment(sugar.Date.create(item[this.property]))
-        .format(this.format);
+      _.set(item, this.property,
+        moment(sugar.Date.create(_.get(item, this.property)))
+        .format(this.format));
     }
     if (!_.isEmpty(item)) {
       this.emit('item', item);
