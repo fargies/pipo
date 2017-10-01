@@ -1,31 +1,46 @@
 {
-  "pipe": "SubPipe#from|Add|NLDate#to",
+  "pipe": "SubPipe#from|StdOut|Aggregate|MathEval#min|Date#from|Add#to|Add#symbol|NLDate#to",
 
   "SubPipeConfig#from": {
-    "pipe": "WaitFor|Replace|Rename|PouchDBIn|MathEval#nextDay|NLDate#from|Aggregate|MathEval#min|Date#from"
+    "pipe": [
+      {
+        "pipe": "WaitFor|Duplicate|Rename|Replace|PouchDBIn|MathEval#nextDay",
+        "WaitForConfig": {
+          "property": "symbol"
+        },
+        "DuplicateConfig": {
+          "property": "symbol",
+          "newName": "PouchDBInConfig.database"
+        },
+        "RenameConfig": {
+          "property": "symbol",
+          "newName": "AddConfig#symbol.value"
+        },
+        "ReplaceConfig": {
+          "property": "PouchDBInConfig.database",
+          "pattern": "^",
+          "newSubstr": "/var/db/quotes/"
+        },
+        "MathEvalConfig#nextDay": {
+          "expr": "date + (24*60*60)",
+          "property": "from"
+        },
+        "selector": {},
+        "createIndex": { "fields": [ "date" ], "name": "dateIndex" },
+        "sort": [ { "date": "desc" } ],
+        "limit": 1
+      },
+      {
+        "pipe": "NLDate#from",
+        "NLDateConfig#from": {
+          "property": "from",
+          "format": "X"
+        },
+        "from": "one year ago"
+      }
+    ]
   },
 
-  "WaitForConfig": {
-    "property": "symbol"
-  },
-  "ReplaceConfig": {
-    "property": "symbol",
-    "pattern": "^",
-    "newSubstr": "/var/db/quotes/"
-  },
-  "RenameConfig": {
-    "property": "symbol",
-    "newName": "PouchDBInConfig.database"
-  },
-
-  "MathEvalConfig#nextDay": {
-    "expr": "date + (24*60*60)",
-    "property": "from"
-  },
-  "NLDateConfig#from": {
-    "property": "from",
-    "format": "X"
-  },
   "AggregateConfig": {
     "property": "from"
   },
@@ -40,18 +55,15 @@
   },
 
 
-  "AddConfig": {
+  "AddConfig#to": {
     "property": "to",
     "value": "now"
+  },
+  "AddConfig#symbol": {
+    "property": "symbol"
   },
   "NLDateConfig#to": {
     "property": "to",
     "format": "YYYY-MM-DD"
-  },
-
-  "selector": {},
-  "createIndex": { "fields": [ "date" ], "name": "dateIndex" },
-  "sort": [ { "date": "desc" } ],
-  "limit": 1,
-  "from": "one year ago"
+  }
 }

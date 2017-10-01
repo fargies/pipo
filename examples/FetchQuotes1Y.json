@@ -1,53 +1,19 @@
 {
-  "pipe": "Add#from|Add#to|NLDate#from|NLDate#to|YahooFinance|Aggregate|Rename|SubPipe#maths",
+  "pipe": "WaitFor|QuoteRange1Y|Duplicate|Replace|YahooFinance|PouchDBOut",
 
-  "SubPipeConfig#maths": {
-    "pipe": "MathEval#max|MathEval#first|MathEval#last|MathEval#growth|MathEval#std"
+  "WaitForConfig": {
+    "property": "symbol"
   },
-
-  "NLDateConfig#from": {
-    "format": "YYYY-MM-DD",
-    "property": "from"
+  "DuplicateConfig": {
+    "property": "symbol",
+    "newName": "PouchDBOutConfig.database"
   },
-
-  "NLDateConfig#to": {
-    "format": "YYYY-MM-DD",
-    "property": "to"
+  "ReplaceConfig": {
+    "property": "PouchDBOutConfig.database",
+    "pattern": "^",
+    "newSubstr": "/var/db/quotes/"
   },
-
-  "AggregateConfig": {
-    "property": "close"
-  },
-  "RenameConfig": {
-    "property": "close",
-    "newName": "values"
-  },
-
-  "MathEvalConfig#max": {
-    "expr": "max(values)",
-    "property": "max"
-  },
-  "MathEvalConfig#first": {
-    "expr": "values[1]",
-    "property": "first"
-  },
-  "MathEvalConfig#last": {
-    "expr": "values[size(values)]",
-    "property": "last"
-  },
-  "MathEvalConfig#growth": {
-    "expr": "(last-first)*100/first",
-    "property": "growth"
-  },
-
-
-  "AddConfig#to": {
-    "property": "to",
-    "value": "now"
-  },
-  "AddConfig#from": {
-    "property": "from",
-    "value": "1 year ago"
-  },
-  "comment": "must provide a symbol"
+  "PouchDBOutConfig": {
+    "itemId": "date"
+  }
 }

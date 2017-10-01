@@ -31,6 +31,7 @@ class Remove extends PipeElement {
   constructor() {
     super();
     this.property = null;
+    this._opts = { noSeparateConfig: true }; /* can remove config */
   }
 
   onItem(item) {

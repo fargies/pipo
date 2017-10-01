@@ -25,6 +25,7 @@
 const
   _ = require('lodash'),
   utils = require('../utils'),
+  debug = require('debug')('pipo:replace'),
   PipeElement = require('../PipeElement');
 
 // FIXME: rename as StrReplace/StrSubstr ?
@@ -34,6 +35,7 @@ class Replace extends PipeElement {
     this.property = null;
     this.pattern = null;
     this.newSubstr = null;
+    this._opts = { noSeparateConfig: true }; /* can replace in config */
   }
 
   onItem(item) {
@@ -42,8 +44,9 @@ class Replace extends PipeElement {
     if (!_.isNil(this.property) && !_.isNil(this.pattern) &&
         !_.isNil(this.newSubstr)) {
       if (_.has(item, this.property)) {
-        item[this.property] = _.replace(item[this.property], this.pattern,
-          this.newSubstr);
+        debug('replacing "%s" by "%s"', this.pattern, this.newSubstr);
+        _.set(item, this.property,
+          _.replace(_.get(item, this.property), this.pattern, this.newSubstr));
       }
     }
 

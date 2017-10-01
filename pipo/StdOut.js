@@ -33,6 +33,12 @@ class StdOut extends PipeElement {
     this.fd = _.defaultTo(fd, process.stdout);
     this.indent = _.defaultTo(indent, 2);
     this.eol = true;
+    this.noConfig = true;
+  }
+
+  setNoConfig(state) {
+    this.noConfig = state;
+    this._opts = { noSeparateConfig: !state };
   }
 
   onItem(item) {

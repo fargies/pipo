@@ -37,11 +37,20 @@ class FilePipe extends PipeElement {
     this.file = null;
     this.wait = true;
     this._pipe = null;
-    this._opts = { noSeparateConfig: true };
 
     if (!_.isNil(file)) {
+      this.noConfig = true; /* filter out incoming config elements */
       this.setFile(file);
     }
+    else {
+      this.noConfig = false;
+    }
+    this._opts = { noSeparateConfig: !this.noConfig };
+  }
+
+  setNoConfig(state) {
+    this.noConfig = state;
+    this._opts = { noSeparateConfig: !state };
   }
 
   setFile(file) {

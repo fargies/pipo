@@ -74,7 +74,22 @@ class PouchDBOut extends PipeElement {
     if (_.has(item, itemId)) {
       prom = (prom || this._checkDB())
       .then((db) => {
-        return db.put(_.assign({ _id: _.toString(item[itemId]) }, item))
+        var id = _.toString(item[itemId]);
+        return db.get(id)
+        .then(
+          (old) => { return { _rev: old._rev, _id: id }; },
+          (err) => {
+            if (err.status === 404) {
+              return { _id: id };
+            }
+            else {
+              throw err;
+            }
+          }
+        )
+        .then(
+          (r) => { return db.put(_.assign(r, item)); }
+        )
         .then(function() { debug('inserted', item[itemId]); });
       });
     }

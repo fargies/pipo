@@ -32,6 +32,7 @@ class Rename extends PipeElement {
     super();
     this.property = null;
     this.newName = null;
+    this._opts = { noSeparateConfig: true }; /* can rename config */
   }
 
   onItem(item) {

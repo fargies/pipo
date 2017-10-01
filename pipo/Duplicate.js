@@ -32,6 +32,7 @@ class Duplicate extends PipeElement {
     super();
     this.property = null;
     this.newName = null;
+    this._opts = { noSeparateConfig: true }; /* can Duplicate config */
   }
 
   onItem(item) {
@@ -40,7 +41,7 @@ class Duplicate extends PipeElement {
     if (!_.isNil(this.property) && !_.isNil(this.newName)) {
       if (_.has(item, this.property)) {
         debug(`duplicating "${this.property}" as "${this.newName}"`);
-        item[this.newName] = _.cloneDeep(item[this.property]);
+        _.set(item, this.newName, _.cloneDeep(_.get(item, this.property)));
       }
     }
 
