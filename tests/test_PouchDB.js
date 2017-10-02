@@ -44,15 +44,14 @@ describe('PouchDB', function() {
       inPipe.end(0);
     });
 
-
     pipe.onItem({ 'PouchDBOutConfig': { 'database': dir.name, 'itemId': 'id' } });
     pipe.onItem({ 'id': 42, 'value': '1234' });
-    pipe.end(0);
   });
 
   it('search an item in PouchDB', function(done) {
     var outPipe = new pipo.PouchDBOut();
     var pipe = new pipo.SubPipe('PouchDBIn|Aggregate');
+    pipe.ref();
 
     pipe.on('item', Helpers.defer((item) => {
       assert.equal(_.size(item.items), 3);
@@ -84,6 +83,5 @@ describe('PouchDB', function() {
       { 'id': 5, 'date': 1238 },
       { 'id': 6, 'date': 1239 }
     ], (elt) => { outPipe.onItem(elt); });
-    outPipe.end(0);
   });
 });

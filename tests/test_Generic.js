@@ -41,7 +41,6 @@ describe('Generic', function() {
           done();
         });
         pipe.onItem({}); /* send an empty item */
-        pipe.end(0);
       });
     }
 

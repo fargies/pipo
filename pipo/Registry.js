@@ -138,7 +138,7 @@ const registry = new Registry();
 module.exports = registry;
 
 const
-  FilePipe = require('./FilePipe'),
+  FilePipe = require('./pipe/FilePipe'),
   PipeElement = require('./PipeElement');
 
 registry.findAll();

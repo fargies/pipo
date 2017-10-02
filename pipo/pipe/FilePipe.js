@@ -25,10 +25,10 @@
 
 const
   _ = require('lodash'),
-  debug = require('debug')('pipo:file'),
-  PipeElement = require('./PipeElement'),
-  StdIn = require('./StdIn'),
-  SubPipe = require('./SubPipe'),
+  PipeElement = require('../PipeElement'),
+  debug = require('debug')('pipo:filepipe'),
+  StdIn = require('../StdIn'),
+  SubPipe = require('../SubPipe'),
   fs = require('fs');
 
 class FilePipe extends PipeElement {
@@ -56,16 +56,27 @@ class FilePipe extends PipeElement {
   setFile(file) {
     if (_.isArray(this._pipe)) {
       _.forEach(this._pipe, (p) => { p.removeAllListeners(); });
-      this.unref();
+    }
+    else {
+      this.ref();
     }
 
-    this.ref();
+    debug('loading', file);
     this.file = file;
     this._pipe = [ new StdIn(fs.createReadStream(file)), new SubPipe() ];
     this._pipe[0].wait = this.wait;
+    this._pipe[0].ref();
     this._pipe[0].next(this._pipe[1]);
-    this._pipe[1].on('end', this.end.bind(this));
+    this._pipe[1].once('end', (status) => {
+      this.deletePipe();
+      this.end(status);
+    });
     this._pipe[1].on('item', this.emitItem.bind(this));
+  }
+
+  deletePipe() {
+    _.forEach(this._pipe, (p) => { p.removeAllListeners(); });
+    this._pipe = null;
   }
 
   onItem(item) {
@@ -79,6 +90,14 @@ class FilePipe extends PipeElement {
     }
     else {
       this.emitItem(item);
+    }
+  }
+
+  end(status) {
+    super.end(status);
+
+    if (!_.isEmpty(this._pipe) && this._ref <= 1) {
+      this._pipe[0].end(status);
     }
   }
 }

@@ -24,10 +24,9 @@
 
 const
   _ = require('lodash'),
-  debug = require('debug')('pipo:alt'),
-  PipeElement = require('./PipeElement'),
-  Item = require('./Item'),
-  SubPipe = require('./SubPipe');
+  PipeElement = require('../PipeElement'),
+  Item = require('../Item'),
+  SubPipe = require('../SubPipe');
 
 class AltPipe extends SubPipe {
   onItem(item) {

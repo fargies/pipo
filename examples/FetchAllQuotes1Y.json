@@ -1,0 +1,9 @@
+{
+  "pipe": "SerialPipe|Null",
+  "SerialPipeConfig": {
+    "pipe": [
+      "FetchQuote1Y",
+      "StdOut"
+    ]
+  }
+}

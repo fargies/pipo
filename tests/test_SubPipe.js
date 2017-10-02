@@ -74,6 +74,7 @@ describe('SubPipe', function() {
     var pipe = new pipo.SubPipe();
     var count = 0;
 
+    pipe.ref();
     pipe.on('item', function(item) {
       assert.ok(_.has(item, 'items'));
       assert.equal(_.size(item.items), 1);

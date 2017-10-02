@@ -56,6 +56,5 @@ describe('FilePipe', function() {
         'file': tmpfile.name,
       }
     });
-    pipe.end(0);
   });
 });

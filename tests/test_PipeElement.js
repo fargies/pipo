@@ -9,9 +9,8 @@ const
   PipeElement = require('../pipo/PipeElement');
 
 describe('PipeElement', function() {
-  var pipe = new PipeElement();
-
   it('itemOut', function(done) {
+    var pipe = new PipeElement();
     pipe.once("item", (item) => {
       assert.equal(item.data, 42);
       done();
@@ -20,6 +19,7 @@ describe('PipeElement', function() {
   });
 
   it('next func', function(done) {
+    var pipe = new PipeElement();
     pipe.next((item) => {
       assert.equal(item.data, 42);
       pipe.removeAllListeners();
@@ -29,6 +29,7 @@ describe('PipeElement', function() {
   });
 
   it('next pipeElement', function(done) {
+    var pipe = new PipeElement();
     let item = new PipeElement();
     item.onItem = function(item) {
         assert.equal(item.data, 42);
@@ -40,6 +41,8 @@ describe('PipeElement', function() {
   });
 
   it('next chain', function(done) {
+    var pipe = new PipeElement();
+
     let item = new PipeElement();
     item.onItem = function(item) {
       this.emit('item', { "data" : item.data + 1 });
@@ -57,6 +60,7 @@ describe('PipeElement', function() {
       assert.equal(item.data, 2);
       pipe.end(item.data);
     });
+    pipe.start();
     pipe.emit('item', { "data" : 0 });
   });
 });

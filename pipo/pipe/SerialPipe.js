@@ -18,54 +18,62 @@
 **    misrepresented as being the original software.
 ** 3. This notice may not be removed or altered from any source distribution.
 **
-** Created on: 2017-09-06T09:47:57+02:00
+** Created on: 2017-10-01T10:25:09+02:00
 **     Author: Sylvain Fargier <fargie_s> <fargier.sylvain@free.fr>
 **
 */
 
 const
-  math = require('mathjs'),
   _ = require('lodash'),
-  debug = require('debug')('pipo:math'),
-  PipeElement = require('../PipeElement');
+  Item = require('../Item'),
+  debug = require('debug')('pipo:serial'),
+  PipeElement = require('../PipeElement'),
+  SubPipe = require('../SubPipe');
 
-math.import({
-  count: function(val) { return _.size(val); }
-});
-
-class MathEval extends PipeElement {
+class SerialPipe extends SubPipe {
   constructor() {
     super();
-    this.expr = null;
-    this.property = "result";
+    delete this.oneShot;
+    this._queue = [];
   }
 
   onItem(item) {
-    super.onItem(item);
-
-    if (_.has(item, 'expr')) {
-      try {
-        item[this.property] = math.eval(item.expr, item);
-        delete item['expr'];
-      }
-      catch (err) {
-        this.error(err);
-      }
-    }
-    else if (!_.isNil(this.expr) && !_.isEmpty(item)) {
-      try {
-        item[this.property] = math.eval(this.expr, item);
-      }
-      catch (err) {
-        /* silently discarding, not all packets are worth it */
-        debug(err);
-      }
+    if (this._subRef !== 0) {
+      this._queue.push(item);
+      this.ref();
+      debug('item queued');
+      return;
     }
 
-    if (!_.isEmpty(item)) {
-      this.emit('item', item);
+    PipeElement.prototype.onItem.call(this, item);
+    if (_.has(item, 'pipe')) {
+      this.setPipe(Item.take(item, 'pipe'));
+    }
+
+    if (_.isEmpty(item)) {
+      return;
+    }
+    else if (_.isEmpty(this.pipe)) {
+      this.emitItem(item);
+    }
+    else {
+      var pipe = this.createPipe(this.pipe);
+      this.pipeInvoke(pipe, 'onItem', item);
+      this.pipeInvoke(pipe, 'end', 0);
+    }
+  }
+
+  subEnd(status) {
+    super.subEnd(status);
+    if (this._subRef === 0) {
+      debug('starting next pipe');
+      this.onItem(this._queue.shift());
+      this.unref();
     }
   }
 }
 
-module.exports = MathEval;
+module.exports = SubPipe;
+
+
+module.exports = SerialPipe;

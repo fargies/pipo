@@ -91,7 +91,7 @@ class PouchDBIn extends PipeElement {
       .then((db) => {
         return db.find(_.pick(item, opts))
         .then((ret) => {
-          debug('found: ', ret);
+          debug('found:', ret);
           _.forEach(ret.docs, (doc) => { this.emit('item', doc); });
           item = _.omit(item, opts);
           return db;

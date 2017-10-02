@@ -37,17 +37,13 @@ class PipeElement extends EventEmitter {
 
   onItem(item) {
     if (!this._started) {
-      if (this._ref === 0) {
-        /* direct use, not connected with 'next' -> let's get a ref */
-        this.ref();
-      }
       this.start();
     }
 
     debug(`${this.constructor.name}.onItem`);
     var configName = this.constructor.name + 'Config';
-    var config = item[configName];
-    delete item[configName];
+    var config = _.get(item, configName);
+    _.unset(item, configName);
     if (config) {
       this.setConfig(config);
     }
@@ -108,7 +104,7 @@ class PipeElement extends EventEmitter {
    * @details may emit the 'end' signal.
    */
   unref() {
-    if (--this._ref <= 0) {
+    if (--this._ref === 0) {
       debug(`${this.constructor.name}.end(${this._status})`);
       this.emit('end', this._status);
     }
@@ -137,9 +133,11 @@ class PipeElement extends EventEmitter {
   start() {
     if (!this._started) {
       this._started = true;
-      if (this._ref === 0) {
-        this.emit('end', 0);
-      }
+      this.ref(); /* leave it some time, but the die */
+      _.defer(() => {
+        debug('automatic decref');
+        this.end(this._status);
+      });
     }
   }
 
@@ -156,7 +154,7 @@ class CbPipeElement extends PipeElement
   }
   onItem(item) {
     item = this.cb(item);
-    if (item) {
+    if (!_.isEmpty(item)) {
       this.emit('item', item);
     }
   }

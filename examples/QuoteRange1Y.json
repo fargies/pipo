@@ -1,5 +1,5 @@
 {
-  "pipe": "SubPipe#from|StdOut|Aggregate|MathEval#min|Date#from|Add#to|Add#symbol|NLDate#to",
+  "pipe": "SubPipe#from|Aggregate|MathEval#max|Date#from|Add#to|Add#symbol|NLDate#to",
 
   "SubPipeConfig#from": {
     "pipe": [
@@ -31,10 +31,13 @@
         "limit": 1
       },
       {
-        "pipe": "NLDate#from",
+        "pipe": "NLDate#from|WaitFor",
         "NLDateConfig#from": {
           "property": "from",
           "format": "X"
+        },
+        "WaitForConfig": {
+          "property": "AggregateConfig"
         },
         "from": "one year ago"
       }
@@ -44,8 +47,8 @@
   "AggregateConfig": {
     "property": "from"
   },
-  "MathEvalConfig#min": {
-    "expr": "min(from)",
+  "MathEvalConfig#max": {
+    "expr": "max(from)",
     "property": "from"
   },
   "DateConfig#from": {

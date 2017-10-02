@@ -49,11 +49,11 @@ class Aggregate extends PipeElement {
   }
 
   end(status) {
-    if (this._items.length !== 0) {
+    if ((this._ref === 1) && (this._items.length !== 0)) {
       if (_.isNil(this.property)) {
-        this.emit('item', { "items" : this._items });
+        this.emit('item', { items: this._items });
       } else {
-        this.emit('item', { [this.property] : this._items });
+        this.emit('item', { [this.property]: this._items });
       }
     }
     super.end(status);

@@ -30,7 +30,6 @@ describe('ListDir', function() {
     });
 
     pipe.onItem({ "dir" : tmpdir.name });
-    pipe.end(0);
   });
 
   it('filters contents', function(done) {
@@ -55,6 +54,5 @@ describe('ListDir', function() {
 
     pipe.setPattern('^test');
     pipe.onItem({ "dir" : tmpdir.name });
-    pipe.end(0);
   });
 });

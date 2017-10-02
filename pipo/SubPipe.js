@@ -35,6 +35,7 @@ class SubPipe extends PipeElement {
     super();
     this.oneShot = false;
     this.pipe = null;
+    this._subRef = 0;
     this._opts = { noSeparateConfig: true };
     if (!_.isNil(pipe)) {
       this.setPipe(pipe);
@@ -65,10 +66,14 @@ class SubPipe extends PipeElement {
         this.error(`No pipe expression`);
         return;
       }
-      this.ref();
+      _.first(pipe).ref(); /* add a ref since we don't use .next() */
+      this.subRef();
       _.last(pipe)
-      .on('item', (item) => { this.emit('item', item); })
-      .on('end', (status) => { super.end(status); });
+      .on('item', this.emitItem.bind(this))
+      .once('end', (status) => {
+        this.subEnd(status);
+        this.deletePipe(pipe);
+      });
 
       if (debug.enabled) {
         debug('subPipe created: ' + _.map(pipe, 'constructor.name').join('|'));
@@ -77,10 +82,14 @@ class SubPipe extends PipeElement {
     }
     else if (_.isObject(subPipe)) {
       pipe = new SubPipe();
-      this.ref();
+      pipe.ref();
+      this.subRef();
       pipe
-      .on('item', (item) => { this.emit('item', item); })
-      .on('end', (status) => { super.end(status); });
+      .on('item', this.emitItem.bind(this))
+      .once('end', (status) => {
+        this.subEnd(status);
+        this.deletePipe(pipe);
+      });
 
       pipe.onItem(_.cloneDeep(subPipe));
       return [ pipe ];
@@ -90,26 +99,44 @@ class SubPipe extends PipeElement {
     }
   }
 
+  subRef() {
+    return ++this._subRef;
+  }
+
+  subEnd(status) {
+    if (--this._subRef <= 0) {
+      this.end(status);
+    }
+  }
+
   createPipe(subPipe) {
+    var ret;
     if (_.isArray(subPipe)) {
       /* only one level allowed */
-      return _.compact(_.map(subPipe, this.createSimplePipe.bind(this)));
+      ret = _.compact(_.map(subPipe, this.createSimplePipe.bind(this)));
     }
     else {
-      return this.createSimplePipe(subPipe);
+      ret = this.createSimplePipe(subPipe);
     }
+    if (!_.isNil(ret)) {
+      this.ref();
+    }
+    return ret;
   }
 
   deletePipe(pipe) {
     if (!_.isArray(pipe)) {
       return;
+    } else if (pipe === this._pipe) {
+      this._pipe = null;
     }
-    else if (_.isArray(pipe[0])) {
+
+
+    if (_.isArray(pipe[0])) {
       _.forEach(pipe, this.deletePipe.bind(this));
     }
     else {
       _.forEach(pipe, function(p) { p.removeAllListeners(); });
-      this.unref();
     }
   }
 
@@ -132,8 +159,11 @@ class SubPipe extends PipeElement {
     if (subPipe !== this.pipe) {
       this.pipe = subPipe;
 
-      this.deletePipe(this._pipe);
-      this._pipe = null;
+      if (!_.isNil(this._pipe)) {
+        this.deletePipe(this._pipe);
+        this.unref();
+        this._subRef = 0;
+      }
     }
   }
 
@@ -151,16 +181,6 @@ class SubPipe extends PipeElement {
     }
     else if (this.oneShot) {
       var pipe = this.createPipe(this.pipe);
-      if (_.isArray(pipe)) {
-        if (_.isArray(pipe[0])) {
-          _.forEach(pipe, (p) => {
-            _.last(p).on('end', () => { this.deletePipe(p); });
-          });
-        }
-        else {
-          _.last(pipe).on('end', () => { this.deletePipe(pipe); });
-        }
-      }
       this.pipeInvoke(pipe, 'onItem', item);
       this.pipeInvoke(pipe, 'end', 0);
     }
@@ -173,10 +193,10 @@ class SubPipe extends PipeElement {
   }
 
   end(status) {
-    if (!_.isEmpty(this._pipe)) {
+    super.end(status);
+    if (!_.isEmpty(this._pipe) && (this._ref === 1)) {
       this.pipeInvoke(this._pipe, 'end', status);
     }
-    super.end(status);
   }
 }
 

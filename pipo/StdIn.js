@@ -37,10 +37,13 @@ class StdIn extends DataIn {
     this.ref(); /* own ref */
 
     this.fd.on('data', (chunk) => {
-      debug(`chunk: ${chunk.length} bytes`);
+      debug('chunk: %i bytes', chunk.length);
       this.add(chunk);
     });
-    this.fd.on('end', () => { this.end(0); });
+    this.fd.on('end', () => {
+      debug('file ended');
+      this.end(0);
+    });
   }
 
   onItem(item) {
