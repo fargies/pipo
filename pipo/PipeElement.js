@@ -124,6 +124,7 @@ class PipeElement extends EventEmitter {
       this.on('item', function(item) { cb.onItem(item); });
       this.once('end', function(status) { cb.end(status); });
       cb.ref(); /* increments refcount */
+      _.set(cb, '_opts.first', false);
       return cb;
     } else {
       return this.next(new CbPipeElement(cb));
@@ -133,11 +134,13 @@ class PipeElement extends EventEmitter {
   start() {
     if (!this._started) {
       this._started = true;
-      this.ref(); /* leave it some time, but the die */
-      _.defer(() => {
-        debug('automatic decref');
-        this.end(this._status);
-      });
+      if (_.get(this, '_opts.first', true)) {
+        this.ref(); /* leave it some time, but the die */
+        _.defer(() => {
+          debug('automatic decref');
+          this.end(this._status);
+        });
+      }
     }
   }
 

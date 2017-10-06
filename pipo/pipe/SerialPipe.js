@@ -65,7 +65,7 @@ class SerialPipe extends SubPipe {
 
   subEnd(status) {
     super.subEnd(status);
-    if (this._subRef === 0) {
+    if ((this._subRef === 0) && (!_.isEmpty(this._queue))) {
       debug('starting next pipe');
       this.onItem(this._queue.shift());
       this.unref();
