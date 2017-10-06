@@ -25,12 +25,27 @@
 
 const
   math = require('mathjs'),
+  regression = require('regression'),
   _ = require('lodash'),
   debug = require('debug')('pipo:math'),
   PipeElement = require('../PipeElement');
 
+function toJson(data) {
+  if (_.hasIn(data, 'valueOf')) {
+    data = data.valueOf();
+  }
+  if (_.isArray(data)) {
+    data = _.map(data, toJson);
+  }
+  return data;
+}
+
 math.import({
-  count: function(val) { return _.size(val); }
+  count: function(val) { return _.size(val); },
+  linReg: function(data) {
+    data = toJson(data);
+    return regression.linear(data, { order: 4, precision: 4 }).equation;
+  }
 });
 
 class MathEval extends PipeElement {
@@ -54,7 +69,8 @@ class MathEval extends PipeElement {
     }
     else if (!_.isNil(this.expr) && !_.isEmpty(item)) {
       try {
-        item[this.property] = math.eval(this.expr, item);
+        var ret = toJson(math.eval(this.expr, item));
+        _.set(item, this.property, ret);
       }
       catch (err) {
         /* silently discarding, not all packets are worth it */

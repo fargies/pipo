@@ -42,6 +42,8 @@ class StdIn extends DataIn {
     });
     this.fd.on('end', () => {
       debug('file ended');
+      _.forEach(this._waiting, this.emitItem.bind(this));
+      delete this._waiting;
       this.end(0);
     });
   }
@@ -53,8 +55,7 @@ class StdIn extends DataIn {
       return;
     }
     else if (this.wait && !_.isNil(this.fd)) {
-      this.ref();
-      this.fd.on('end', () => { this.emitItem(item); this.unref(); });
+      (this._waiting || (this._waiting = [])).push(item);
     }
     else {
       this.emitItem(item);

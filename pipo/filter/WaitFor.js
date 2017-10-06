@@ -52,12 +52,13 @@ class WaitFor extends PipeElement {
       debug('unlocking');
       this._found = true;
       this.emitItem(item);
-      this.emit('found');
+      _.forEach(this._waiting, this.emitItem.bind(this));
+      delete this._waiting;
     }
     else {
       this.emitItem(this.takeConfig(item));
       if (!_.isEmpty(item)) {
-        this.on('found', () => { this.emitItem(item); });
+        (this._waiting || (this._waiting = [])).push(item);
       }
     }
   }

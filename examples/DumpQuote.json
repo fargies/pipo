@@ -1,0 +1,20 @@
+{
+  "pipe": "WaitFor|Rename|Replace|PouchDBIn",
+
+  "WaitForConfig": {
+    "property": "symbol"
+  },
+  "RenameConfig": {
+    "property": "symbol",
+    "newName": "PouchDBInConfig.database"
+  },
+  "ReplaceConfig": {
+    "property": "PouchDBInConfig.database",
+    "pattern": "^",
+    "newSubstr": "/var/db/quotes/"
+  },
+
+  "selector": {},
+  "createIndex": { "fields": [ "date" ], "name": "dateIndex" },
+  "sort": [ { "date": "asc" } ]
+}

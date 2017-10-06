@@ -1,6 +1,5 @@
 {
   "pipe": "HTMLFetcher|HTMLToXML|AltPipe#others|XQuery#symbols|Replace#ext",
-
   "url": "http://www.eoddata.com/stocklist/PAR/A.htm",
   "AltPipeConfig#others": {
     "pipe": {
@@ -18,8 +17,6 @@
       }
     }
   },
-
-
   "XQueryConfig#symbols": {
     "query": "//table[contains(@class, 'quotes')]//tr[contains(@class, 'ro')]",
     "subQueries": {
