@@ -16,15 +16,15 @@
   "license": "BSD-2-Clause",
   "devDependencies": {
     "istanbul": "^0.4.5",
-    "mocha": "^3.2.0",
+    "mocha": "^4.0.1",
     "nodemon": "^1.12.1",
-    "tmp": "0.0.31"
+    "tmp": "0.0.33"
   },
   "dependencies": {
     "dashdash": "^1.14.1",
     "htmltidy": "0.0.6",
     "lodash": "^4.17.4",
-    "mathjs": "^3.16.3",
+    "mathjs": "^3.16.4",
     "moment": "^2.18.1",
     "mustache": "^2.3.0",
     "nodemailer": "^4.1.0",
@@ -36,7 +36,7 @@
     "sugar-date": "^2.0.4",
     "tunnel-agent": "git+https://github.com/fargies/tunnel-agent.git",
     "xmldom": "^0.1.27",
-    "xpath": "0.0.23",
-    "yahoo-finance": "^0.3.2"
+    "xpath": "0.0.24",
+    "yahoo-finance": "^0.3.3"
   }
 }
