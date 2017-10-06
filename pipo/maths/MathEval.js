@@ -28,6 +28,7 @@ const
   regression = require('regression'),
   _ = require('lodash'),
   debug = require('debug')('pipo:math'),
+  Item = require('../Item'),
   PipeElement = require('../PipeElement');
 
 function toJson(data) {
@@ -58,29 +59,24 @@ class MathEval extends PipeElement {
   onItem(item) {
     super.onItem(item);
 
-    if (_.has(item, 'expr')) {
+    var hasExpr = _.has(item, 'expr');
+    var expr = Item.take(item, 'expr', this.expr);
+    if (!_.isNil(expr) && (hasExpr || !_.isEmpty(item))) {
       try {
-        item[this.property] = math.eval(item.expr, item);
-        delete item['expr'];
-      }
-      catch (err) {
-        this.error(err);
-      }
-    }
-    else if (!_.isNil(this.expr) && !_.isEmpty(item)) {
-      try {
-        var ret = toJson(math.eval(this.expr, item));
+        var ret = toJson(math.eval(expr, item));
         _.set(item, this.property, ret);
       }
       catch (err) {
-        /* silently discarding, not all packets are worth it */
         debug(err);
+        if (hasExpr) {
+          /* silently discarding if item doesn't have expr,
+              not all packets are worth it */
+          this.error(err);
+        }
       }
     }
 
-    if (!_.isEmpty(item)) {
-      this.emit('item', item);
-    }
+    this.emitItem(item);
   }
 }
 

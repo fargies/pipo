@@ -29,7 +29,7 @@ class Item
 {
   static take(item, property, defaultValue) {
     if (_.has(item, property)) {
-      let ret = item[property];
+      let ret = _.get(item, property);
       _.unset(item, property);
       return ret;
     }
