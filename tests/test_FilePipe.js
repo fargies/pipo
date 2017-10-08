@@ -3,7 +3,7 @@
 const
   assert = require('assert'),
   _ = require('lodash'),
-  {describe, it, beforeEach, afterEach} = require('mocha'),
+  {describe, it, afterEach} = require('mocha'),
   tmp = require('tmp'),
   fs = require('fs');
 
@@ -14,17 +14,30 @@ const
 describe('FilePipe', function() {
   var tmpfile;
 
-  beforeEach(function() {
-    tmpfile = tmp.fileSync();
-  });
-
   afterEach(function() {
-   tmpfile.removeCallback();
-    tmpfile = null;
+    if (!_.isNil(tmpfile)) {
+      tmpfile.removeCallback();
+      tmpfile = null;
+    }
   });
 
-  it('load json files', function(done) {
+  it('loads json files', function(done) {
+    tmpfile = tmp.fileSync({ postfix: '.json' });
     fs.writeSync(tmpfile.fd, '{ "item": 42 }');
+    var pipe = new FilePipe(tmpfile.name);
+    var accu = pipe.next(new pipo.Aggregate());
+
+    pipe.start();
+    accu.on('item', function(item) {
+      assert.equal(_.size(item.items), 1);
+      assert.equal(item.items[0].item, 42);
+      done();
+    });
+  });
+
+  it('loads cson files', function(done) {
+    tmpfile = tmp.fileSync({ postfix: '.cson' });
+    fs.writeSync(tmpfile.fd, "item: 42");
     var pipe = new FilePipe(tmpfile.name);
     var accu = pipe.next(new pipo.Aggregate());
 
@@ -39,6 +52,8 @@ describe('FilePipe', function() {
   it('can chain FilePipes', function(done) {
     var pipe = new pipo.SubPipe();
     var accu = pipe.next(new pipo.Aggregate());
+
+    tmpfile = tmp.fileSync({ postfix: '.json' });
     fs.writeSync(tmpfile.fd, '{ "item": 42 }');
 
     accu.on('item', function(item) {

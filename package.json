@@ -33,6 +33,7 @@
     "q": "^1.4.1",
     "regression": "^2.0.0",
     "request": "^2.79.0",
+    "season": "^6.0.1",
     "sugar-date": "^2.0.4",
     "tunnel-agent": "git+https://github.com/fargies/tunnel-agent.git",
     "xmldom": "^0.1.27",

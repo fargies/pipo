@@ -1,0 +1,23 @@
+pipe: "AltPipe#linReg|WaitFor|Add|MathEval#linRegVal|MathEval#var"
+
+"AltPipeConfig#linReg":
+  pipe:
+    pipe: "Aggregate|MathEval|Remove"
+    MathEvalConfig:
+      expr: "linReg(map(items, f(i) = [ i.date / 86400, i.close ]))"
+      property: "AddConfig.value"
+    RemoveConfig:
+      property: "items"
+
+WaitForConfig:
+  property: "AddConfig.value"
+AddConfig:
+  property: "linReg"
+
+"MathEvalConfig#linRegVal":
+  expr: "(date / 86400) * linReg[1] + linReg[2]"
+  property: "linRegVal"
+
+"MathEvalConfig#var":
+  expr: "(close - linRegVal) / close * 100"
+  property: "var"

@@ -4,7 +4,8 @@
 *   [ ] Implement a nicer usage
 *   [ ] Write a README
 *   [ ] Add progress messages ?
-*   [ ] Support CSON pipes
+*   [x] Support CSON pipes
+*   [ ] Unittests on registry loader
 
 Pipes to be written :
 *   [ ] UDPOut

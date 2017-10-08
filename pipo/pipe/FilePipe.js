@@ -25,11 +25,47 @@
 
 const
   _ = require('lodash'),
-  PipeElement = require('../PipeElement'),
+  fs = require('fs'),
   debug = require('debug')('pipo:filepipe'),
+  season = require('season'),
   StdIn = require('../StdIn'),
   SubPipe = require('../SubPipe'),
-  fs = require('fs');
+  PipeElement = require('../PipeElement');
+
+class CSonFileIn extends PipeElement {
+  constructor(file) {
+    super();
+    this.wait = false;
+    this._opts = { noSeparateConfig: true };
+    this.ref();
+
+    season.readFile(file, (err, item) => {
+      debug('file ended');
+      var ret;
+      if (!_.isNil(err)) {
+        this.error(err);
+        ret = -1;
+      }
+      else {
+        this.emitItem(item);
+        ret = 0;
+      }
+      _.forEach(this._waiting, this.emitItem.bind(this));
+      delete this._waiting;
+      this.end(ret);
+    });
+  }
+  onItem(item) {
+    super.onItem(item);
+
+    if (!_.isEmpty(item) && this.wait) {
+      (this._waiting || (this._waiting = [])).push(item);
+    }
+    else {
+      this.emitItem(item);
+    }
+  }
+}
 
 class FilePipe extends PipeElement {
   constructor(file) {
@@ -63,7 +99,11 @@ class FilePipe extends PipeElement {
 
     debug('loading', file);
     this.file = file;
-    this._pipe = [ new StdIn(fs.createReadStream(file)), new SubPipe() ];
+    this._pipe = [
+      file.endsWith('.cson') ?
+        new CSonFileIn(file) : new StdIn(fs.createReadStream(file)),
+      new SubPipe()
+    ];
     this._pipe[0].wait = this.wait;
     this._pipe[0].ref();
     this._pipe[0].next(this._pipe[1]);

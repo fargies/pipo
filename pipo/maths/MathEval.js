@@ -45,7 +45,7 @@ math.import({
   count: function(val) { return _.size(val); },
   linReg: function(data) {
     data = toJson(data);
-    return regression.linear(data, { order: 4, precision: 4 }).equation;
+    return regression.linear(data, { order: 10, precision: 10 }).equation;
   }
 });
 
@@ -63,7 +63,8 @@ class MathEval extends PipeElement {
     var expr = Item.take(item, 'expr', this.expr);
     if (!_.isNil(expr) && (hasExpr || !_.isEmpty(item))) {
       try {
-        var ret = toJson(math.eval(expr, item));
+        // FIXME: check why math.eval modifies item
+        var ret = toJson(math.eval(expr, _.cloneDeep(item)));
         _.set(item, this.property, ret);
       }
       catch (err) {
@@ -75,7 +76,6 @@ class MathEval extends PipeElement {
         }
       }
     }
-
     this.emitItem(item);
   }
 }

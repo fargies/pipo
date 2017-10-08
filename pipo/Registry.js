@@ -73,7 +73,7 @@ class Registry {
         debug('failed to register "%s":', file, e);
       }
     }
-    else if (file.endsWith('.json')) {
+    else if (file.endsWith('.json') || file.endsWith('.cson')) {
       let pipeElt = FilePipe.bind(null, file);
       this.add(path.parse(file).name, pipeElt);
       return pipeElt;
@@ -116,7 +116,7 @@ class Registry {
       let stat = fs.statSync(file);
       let fileParse = path.parse(file);
 
-      if (stat.isFile() && _.includes([ '.json', '.js' ], fileParse.ext)) {
+      if (stat.isFile() && _.includes([ '.json', '.js', '.cson' ], fileParse.ext)) {
         if (_.get(opts, 'preload', true)) {
           this.load(file);
         }

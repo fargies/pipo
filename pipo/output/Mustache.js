@@ -64,23 +64,22 @@ class Mustache extends PipeElement {
     delete item.mustacheTemplate;
 
     if (mstchFile) {
+      debug('mstch from file');
       fs.readFile(mstchFile, (err, data) => {
         if (err) {
           this.error(`failed to open moustache template file ${mstchFile}: ${err}`);
         } else {
           this._mstchOut(data.toString(), item);
         }
-        if (!_.isEmpty(item)) {
-          this.emit('item', item);
-        }
+        this.emitItem(item);
       });
-    } else {
+    }
+    else {
       if (mstchTpl) {
+        debug('mstch from template');
         this._mstchOut(mstchTpl, item);
       }
-      if (!_.isEmpty(item)) {
-        this.emit('item', item);
-      }
+      this.emitItem(item);
     }
   }
 

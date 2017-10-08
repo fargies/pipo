@@ -25,7 +25,7 @@
 const
   _ = require('lodash'),
   PipeElement = require('./PipeElement'),
-  debug = require('debug')('pipo:remove');
+  debug = require('debug')('pipo:add');
 
 class Add extends PipeElement {
   constructor() {
