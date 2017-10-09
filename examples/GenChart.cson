@@ -1,9 +1,12 @@
 
-pipe: 'Date|Aggregate|Mustache|Null'
+pipe: 'Date|Aggregate|Duplicate|Mustache|Null'
 DateConfig:
   property: "date"
   inFormat: "X"
   outFormat: "YYYY-MM-DD"
+DuplicateConfig:
+  property: "items[0].symbol"
+  newName: "symbol"
 MustacheConfig:
   outFile: 'chart.html'
   mustacheTemplate: '''
@@ -30,24 +33,50 @@ anychart.onDocumentReady(function() {
 
   // set the data
   table = anychart.data.table('date');
-  table.addData([
+  var data = [
     {{#items}}
-      { date: "{{date}}", close: {{close}} },
+      { date: "{{date}}", close: {{close}}, linReg: {{linRegVal}},
+        var: {{var}} },
     {{/items}}
     {}
-  ]);
-
-  // map the data
-  mapping = table.mapAs({x: 'date', value: 'close'});
+  ];
+  data.pop();
+  for (var k in data) {
+    if (data[k].var <= -10) {
+      data[k].varFill = 'green';
+    }
+    else if (data[k].var >= 10) {
+      data[k].varFill = 'red';
+    }
+  }
+  table.addData(data);
 
   // chart type
-  chart = anychart.stock();
+  chart = anychart.stock(true);
+  var plot = chart.plot(0);
+
+  plot.xGrid().enabled(true);
+  plot.yGrid().enabled(true);
+  plot.xMinorGrid().enabled(true);
+  plot.yMinorGrid().enabled(true);
+
+  var extraYScale = anychart.scales.linear();
+  var extraYAxis = plot.yAxis(1);
+  extraYAxis.orientation("right");
+  extraYAxis.scale(extraYScale);
 
   // set the series
-  var series = chart.plot(0).line(mapping);
-    series.name("Name");
+  var series = plot.line(table.mapAs({x: 'date', value: 'close'}));
+  series.name("{{symbol}}");
 
-  chart.title('GenChart');
+  series = plot.line(table.mapAs({x: 'date', value: 'linReg'}));
+  series.name("linear regression");
+
+  series = plot.column(table.mapAs({x: 'date', value: 'var', fill: 'varFill'}));
+  series.yScale(extraYScale);
+  series.name('variation');
+
+  chart.title('{{symbol}} analysis');
   chart.container('container');
 
   chart.draw();

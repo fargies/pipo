@@ -50,6 +50,7 @@ class CSonFileIn extends PipeElement {
         this.emitItem(item);
         ret = 0;
       }
+      this.wait = false;
       _.forEach(this._waiting, this.emitItem.bind(this));
       delete this._waiting;
       this.end(ret);
