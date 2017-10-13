@@ -1,0 +1,42 @@
+{
+  "pipe": "HTMLFetcher|HTMLToXML|AltPipe#others|XQuery#symbols|Replace#ext",
+  "url": "http://www.eoddata.com/stocklist/PAR/A.htm",
+  "AltPipeConfig#others": {
+    "pipe": {
+      "pipe": "XQuery|Replace|HTMLFetcher|HTMLToXML",
+      "XQueryConfig": {
+        "query": "//table[contains(@class, 'lett')]//td[contains(@class, 'ld')]/a",
+        "subQueries": {
+          "url": "/@href"
+        }
+      },
+      "ReplaceConfig": {
+        "property": "url",
+        "pattern": "^",
+        "newSubstr": "http://www.eoddata.com"
+      }
+    }
+  },
+  "XQueryConfig#symbols": {
+    "query": "//table[contains(@class, 'quotes')]//tr[contains(@class, 'ro')]",
+    "subQueries": {
+      "symbol": "/td[1]/a/text()"
+    }
+  },
+  "ReplaceConfig#ext": {
+    "property": "symbol",
+    "pattern": "$",
+    "newSubstr": ".PA"
+  },
+  "SubPipeConfig#debug": {
+    "pipe": {
+      "pipe": "Aggregate|StdOut",
+      "AggregateConfig": {
+        "property": "symbol"
+      }
+    }
+  },
+  "StdOutConfig": {
+    "indent": 0
+  }
+}

@@ -1,0 +1,19 @@
+
+# once symbol has been sent, do send a selector
+pipe: "WaitFor|Rename|Replace|Add#index|PouchDBIn|ReFilter"
+WaitForConfig:
+  property: "symbol"
+RenameConfig:
+  property: "symbol"
+  newName: "PouchDBInConfig.database"
+ReplaceConfig:
+  property: "PouchDBInConfig.database"
+  pattern: "^"
+  newSubstr: "/var/db/quotes/"
+"AddConfig#index":
+  property: "createIndex.fields[0]"
+  value: "date"
+ReFilterConfig:
+  # Initial value doesn't have a symbol anymore, let's filter it out
+  property: "symbol"
+  pattern: ".*"
