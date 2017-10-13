@@ -107,6 +107,8 @@ class PipeElement extends EventEmitter {
     if (--this._ref === 0) {
       debug(`${this.constructor.name}.end(${this._status})`);
       this.emit('end', this._status);
+      this.removeAllListeners('item');
+      this.removeAllListeners('end');
     }
   }
 

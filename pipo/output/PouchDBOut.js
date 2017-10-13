@@ -47,7 +47,10 @@ class PouchDBOut extends PipeElement {
     }
     this.database = database;
     if (this._db) {
-      this._db.close();
+      PouchDBIn._closeDB(this._db);
+    }
+    else {
+      this.ref();
     }
     this._db = new PouchDB(database);
   }
@@ -104,11 +107,22 @@ class PouchDBOut extends PipeElement {
           if (!_.isEmpty(item)) { this.emit('item', item); }
           this.unref();
         },
-        (e) => { this.error(_.toString(e)); this.unref(); }
+        (e) => {
+          this.error(_.toString(e));
+          this.unref();
+        }
       );
     }
     else if (!_.isEmpty(item)) {
       this.emit('item', item);
+    }
+  }
+
+  unref() {
+    super.unref();
+    if ((this._ref === 1) && !_.isNil(this._db)) {
+      PouchDBIn._closeDB(this._db)
+      .then(this.unref.bind(this));
     }
   }
 }

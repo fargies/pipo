@@ -1,14 +1,20 @@
 
-pipe: 'Date|Aggregate|Duplicate|Mustache|Null'
+pipe: 'Date|Aggregate|Duplicate#sym|Duplicate#file|Replace#file|Mustache|Null'
 DateConfig:
   property: "date"
   inFormat: "X"
   outFormat: "YYYY-MM-DD"
-DuplicateConfig:
+"DuplicateConfig#sym":
   property: "items[0].symbol"
   newName: "symbol"
+"DuplicateConfig#file":
+  property: "symbol"
+  newName: "MustacheConfig.outFile"
+"ReplaceConfig#file":
+  property: "MustacheConfig.outFile"
+  pattern: "$"
+  newSubstr: ".html"
 MustacheConfig:
-  outFile: 'chart.html'
   mustacheTemplate: '''
 <!doctype html>
 <html>

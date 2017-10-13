@@ -51,6 +51,19 @@ class PouchDBIn extends PipeElement {
     }
   }
 
+  static _closeDB(db) {
+    debug('closing');
+    return db.close()
+    .then(function() {
+      return q.allSettled(
+        _.map(db._cachedViews, function(cache) {
+          return cache.then(function(view) { return view.db.close(); });
+        })
+      )
+      .thenResolve(db);
+    });
+  }
+
   static _indexCreate(item, db) {
     if (!_.has(item, 'createIndex')) {
       return db;
@@ -81,14 +94,17 @@ class PouchDBIn extends PipeElement {
   onItem(item) {
     super.onItem(item);
     var prom;
+    var dbHdlr;
 
     if (_.has(item, 'createIndex')) {
       prom = this._openDB(this.database)
+      .then(function(db) { dbHdlr = db; return db; })
       .then(PouchDBIn._indexCreate.bind(null, item));
     }
     if (_.has(item, 'selector')) {
       prom = (prom || this._openDB(this.database))
       .then((db) => {
+        dbHdlr = db;
         return db.find(_.pick(item, opts))
         .then((ret) => {
           debug('found:', ret);
@@ -100,17 +116,24 @@ class PouchDBIn extends PipeElement {
     }
     if (_.has(item, 'deleteIndex')) {
       prom = (prom || this._openDB(this.database))
+      .then(function(db) { dbHdlr = db; return db; })
       .then(PouchDBIn._indexDelete.bind(null, item));
     }
     if (!_.isNil(prom)) {
       prom = prom
       .then(
-        () => {
-          if (!_.isEmpty(item)) { this.emit('item', item); }
+        () => { this.emitItem(item); },
+        (e) => { this.error(_.toString(e)); }
+      )
+      .then(() => {
+        if (dbHdlr) {
+          PouchDBIn._closeDB(dbHdlr)
+          .then(this.unref.bind(this));
+        }
+        else {
           this.unref();
-        },
-        (e) => { this.error(_.toString(e)); this.unref(); }
-      );
+        }
+      });
     }
     else if (!_.isEmpty(item)) {
       this.emit('item', item);

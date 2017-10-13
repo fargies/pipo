@@ -40,7 +40,6 @@ describe('SubPipe', function() {
     });
     pipe.onItem({ "item" : 1 });
     pipe.onItem({ "item" : 2 });
-    pipe.end(0);
   });
 
   it('sends config to the subPipe', function(done) {

@@ -40,10 +40,11 @@ class StdIn extends DataIn {
       debug('chunk: %i bytes', chunk.length);
       this.add(chunk);
     });
-    this.fd.on('end', () => {
+    this.fd.once('end', () => {
       debug('file ended');
       _.forEach(this._waiting, this.emitItem.bind(this));
       delete this._waiting;
+      this.fd.removeAllListeners('data');
       this.end(0);
     });
   }

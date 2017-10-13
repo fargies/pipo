@@ -5,6 +5,7 @@ const
   debug = require('debug')('pipo:tests'),
   assert = require('assert'),
   tmp = require('tmp'),
+  fs = require('fs'),
   Helpers = require('./Helpers'),
   { it, describe, beforeEach, afterEach } = require('mocha');
 
@@ -22,6 +23,7 @@ describe('PouchDB', function() {
   });
 
   afterEach(function() {
+    this.timeout(15000); /* leak test creates a lot of files */
     dir.removeCallback();
     dir = null;
   });
@@ -41,7 +43,6 @@ describe('PouchDB', function() {
 
       inPipe.onItem({ 'PouchDBInConfig': { 'database' : dir.name } });
       inPipe.onItem({ 'selector': {} });
-      inPipe.end(0);
     });
 
     pipe.onItem({ 'PouchDBOutConfig': { 'database': dir.name, 'itemId': 'id' } });
@@ -83,5 +84,36 @@ describe('PouchDB', function() {
       { 'id': 5, 'date': 1238 },
       { 'id': 6, 'date': 1239 }
     ], (elt) => { outPipe.onItem(elt); });
+  });
+
+  // indexs used to leak files, ending in too many files open
+  it('does not leak when using views', function(done) {
+    this.timeout(50000);
+
+    var count = 0;
+    var pipe = new pipo.SerialPipe();
+    pipe.ref();
+    pipe.onItem({
+      SerialPipeConfig: {
+        pipe: "PouchDBIn"
+      }
+    });
+    for (var i = 0; i < 5000; ++i) {
+      fs.mkdirSync(dir.name + '/' + i);
+      pipe.onItem({
+        PouchDBInConfig: {
+          database: dir.name + '/' + i
+        },
+        selector: {},
+        createIndex: { fields: [ "date" ], name: "dateIndex" }
+      });
+    }
+    pipe.on('item', () => { count = count + 1; });
+    pipe.once('end', () => {
+      assert.equal(count, 0);
+      done();
+    });
+    pipe.end(0);
+
   });
 });

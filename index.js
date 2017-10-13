@@ -108,7 +108,7 @@ if (opts.help) {
     return q.all(proms);
   })
   .then(() => {
-    if (_.isEmpty(pipeLine) || _.each(pipeLine, function(elt) { return elt instanceof pipo.StdIn; })) {
+    if (_.isEmpty(pipeLine) || _.every(pipeLine, function(elt) { return elt instanceof pipo.StdIn; })) {
       addPipe(pipeLine, new pipo.SubPipe());
     }
     if (!opts.no_std) {
@@ -127,14 +127,14 @@ if (opts.help) {
   })
   .then(() => {
     /* wait for pipe to finish */
-    var timer = timers.setInterval(() => {}, 500);
-    _.last(pipeLine).on('end', () => {
+    var timer = timers.setInterval(function() {}, 500);
+    _.last(pipeLine).once('end', () => {
       timers.clearInterval(timer);
     });
   })
   .then(() => {
     _.invoke(_.first(pipeLine), 'start');
+    pipeLine = null;
   })
   .done();
-
 }

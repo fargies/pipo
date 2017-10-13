@@ -24,7 +24,7 @@
 
 const
   _ = require('lodash'),
-  moment = require('moment'),
+  moment = require('moment-timezone'),
   PipeElement = require('../PipeElement');
 
 /* Native language parsing dates */
@@ -34,14 +34,16 @@ class Date extends PipeElement {
     this.property = null;
     this.outFormat = null;
     this.inFormat = null;
+    this.inTZ = 'UTC';
+    this.outTZ = 'UTC';
   }
 
   onItem(item) {
     super.onItem(item);
 
     if (!_.isNil(this.property) && _.has(item, this.property)) {
-      item[this.property] = moment(item[this.property], this.inFormat)
-        .format(this.outFormat);
+      item[this.property] = moment.tz(item[this.property], this.inFormat, this.inTZ)
+        .tz(this.outTZ).format(this.outFormat);
     }
     if (!_.isEmpty(item)) {
       this.emit('item', item);

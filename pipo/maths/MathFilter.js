@@ -18,32 +18,22 @@
 **    misrepresented as being the original software.
 ** 3. This notice may not be removed or altered from any source distribution.
 **
-** Created on: 2017-09-06T09:47:57+02:00
+** Created on: 2017-10-09T14:13:27+02:00
 **     Author: Sylvain Fargier <fargie_s> <fargier.sylvain@free.fr>
 **
 */
 
 const
   math = require('mathjs'),
-  regression = require('regression'),
   _ = require('lodash'),
   debug = require('debug')('pipo:math'),
   Item = require('../Item'),
   PipeElement = require('../PipeElement');
 
-math.import({
-  count: function(val) { return _.size(val); },
-  linReg: function(data) {
-    data = MathEval.toJson(data);
-    return regression.linear(data, { order: 10, precision: 10 }).equation;
-  }
-});
-
-class MathEval extends PipeElement {
+class MathFilter extends PipeElement {
   constructor() {
     super();
     this.expr = null;
-    this.property = "result";
   }
 
   onItem(item) {
@@ -54,8 +44,10 @@ class MathEval extends PipeElement {
     if (!_.isNil(expr) && (hasExpr || !_.isEmpty(item))) {
       try {
         // FIXME: check why math.eval modifies item
-        var ret = MathEval.toJson(math.eval(expr, _.cloneDeep(item)));
-        _.set(item, this.property, ret);
+        if (math.eval(expr, _.cloneDeep(item))) {
+          debug('item matches %s', expr);
+          this.emitItem(item);
+        }
       }
       catch (err) {
         debug(err);
@@ -66,18 +58,10 @@ class MathEval extends PipeElement {
         }
       }
     }
-    this.emitItem(item);
-  }
-
-  static toJson(data) {
-    if (_.hasIn(data, 'valueOf')) {
-      data = data.valueOf();
+    else {
+      this.emitItem(item);
     }
-    if (_.isArray(data)) {
-      data = _.map(data, MathEval.toJson);
-    }
-    return data;
   }
 }
 
-module.exports = MathEval;
+module.exports = MathFilter;
