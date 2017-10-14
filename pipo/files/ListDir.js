@@ -23,6 +23,7 @@
 */
 
 const
+  path = require('path'),
   _ = require('lodash'),
   fs = require('fs'),
   PipeElement = require('../PipeElement'),
@@ -51,7 +52,7 @@ class ListDir extends PipeElement {
               return;
             }
             if (this.fullPath) {
-              file = dir + '/' + file;
+              file = dir + path.sep + file;
             }
             this.emit('item', { file: file });
           });
