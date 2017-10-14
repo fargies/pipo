@@ -35,6 +35,9 @@ PouchDB.plugin(require('pouchdb-find'));
 
 const opts = [ 'selector', 'fields', 'sort', 'limit', 'skip', 'use_index' ];
 
+// Used to serialize open/close
+var prom = q();
+
 class PouchDBIn extends PipeElement {
   constructor() {
     super();
@@ -47,21 +50,26 @@ class PouchDBIn extends PipeElement {
       return q.reject('Database not set');
     }
     else {
-      return q(new PouchDB(database));
+      return (prom = prom.catch(_.noop)
+      .then(function() { return new PouchDB(database); }));
     }
   }
 
   static _closeDB(db) {
     debug('closing');
-    return db.close()
+    prom = prom.catch(_.noop)
+    .then(_.ary(db.close.bind(db), 0))
     .then(function() {
+      var views = db._cachedViews;
+      delete db._cachedViews;
       return q.allSettled(
-        _.map(db._cachedViews, function(cache) {
+        _.map(views, function(cache) {
           return cache.then(function(view) { return view.db.close(); });
         })
       )
       .thenResolve(db);
     });
+    return prom;
   }
 
   static _indexCreate(item, db) {

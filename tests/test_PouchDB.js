@@ -4,7 +4,9 @@ const
   _ = require('lodash'),
   debug = require('debug')('pipo:tests'),
   assert = require('assert'),
+  lsof = require('lsof'),
   tmp = require('tmp'),
+  q = require('q'),
   fs = require('fs'),
   Helpers = require('./Helpers'),
   { it, describe, beforeEach, afterEach } = require('mocha');
@@ -86,34 +88,41 @@ describe('PouchDB', function() {
     ], (elt) => { outPipe.onItem(elt); });
   });
 
+  function lsofPromise() {
+    var def = q.defer();
+    lsof.counters(function(data) { def.resolve(data); });
+    return def.promise;
+  }
+
   // indexs used to leak files, ending in too many files open
   it('does not leak when using views', function(done) {
-    this.timeout(50000);
+    var def = q.defer();
+    fs.mkdirSync(dir.name + '/1');
+    var temp = new pipo.PouchDBIn();
+    temp.onItem({
+      PouchDBInConfig: { database: dir.name + '/1' },
+      selector: {},
+      createIndex: { fields: [ "date" ], name: "dateIndex" }
+    }); /* not really useful, but we will load plugins in PouchDB */
+    temp.once('end', def.resolve.bind(def));
 
-    var count = 0;
-    var pipe = new pipo.SerialPipe();
-    pipe.ref();
-    pipe.onItem({
-      SerialPipeConfig: {
-        pipe: "PouchDBIn"
-      }
-    });
-    for (var i = 0; i < 5000; ++i) {
-      fs.mkdirSync(dir.name + '/' + i);
+    def.promise
+    .then(lsofPromise)
+    .then(function(refLsof) {
+      var pipe = new pipo.PouchDBIn();
+      pipe.once('end', function() {
+        lsofPromise()
+        .then(function(lsof) {
+          assert.equal(refLsof.open, lsof.open);
+          done();
+        })
+        .done();
+      });
       pipe.onItem({
-        PouchDBInConfig: {
-          database: dir.name + '/' + i
-        },
+        PouchDBInConfig: { database: dir.name },
         selector: {},
         createIndex: { fields: [ "date" ], name: "dateIndex" }
       });
-    }
-    pipe.on('item', () => { count = count + 1; });
-    pipe.once('end', () => {
-      assert.equal(count, 0);
-      done();
     });
-    pipe.end(0);
-
   });
 });

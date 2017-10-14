@@ -105,7 +105,7 @@ class PipeElement extends EventEmitter {
    */
   unref() {
     if (--this._ref === 0) {
-      debug(`${this.constructor.name}.end(${this._status})`);
+      debug('%s.end(%i)', this.constructor.name, this._status);
       this.emit('end', this._status);
       this.removeAllListeners('item');
       this.removeAllListeners('end');
@@ -139,7 +139,7 @@ class PipeElement extends EventEmitter {
       if (_.get(this, '_opts.first', true)) {
         this.ref(); /* leave it some time, but the die */
         _.defer(() => {
-          debug('automatic decref');
+          debug('%s.autoUnref()', this.constructor.name);
           this.end(this._status);
         });
       }
