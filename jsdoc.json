@@ -12,9 +12,17 @@
         "dictionaries": ["jsdoc","closure"]
     },
     "templates": {
+        "logoFile": "logo-white.svg",
+        "systemName": "PIPO",
         "theme": "sandstone",
         "linenums": true,
-        "syntaxTheme": "dark"
+        "syntaxTheme": "dark",
+        "navType": "inline",
+        "default": {
+            "staticFiles": {
+                "include": [ "./data/logo.svg", "./data/logo-white.svg" ]
+            }
+        }
     },
     "opts": {
         "template": "node_modules/ink-docstrap/template",

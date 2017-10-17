@@ -1,5 +1,4 @@
-
-# Pipo the  pipe builder
+# <img src="logo.svg" width="48px"></img> Pipo the  pipe builder
 
 [![build status](https://gitlab.com/fargie_s/pipo/badges/node/build.svg)](https://gitlab.com/fargie_s/pipo/commits/node)
 [![coverage report](https://gitlab.com/fargie_s/pipo/badges/node/coverage.svg)](https://gitlab.com/fargie_s/pipo/commits/node)
