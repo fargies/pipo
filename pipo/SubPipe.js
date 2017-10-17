@@ -30,6 +30,97 @@ const
   Registry = require('./Registry'),
   debug = require('debug')('pipo:sub');
 
+/**
+ * @module SubPipe
+ * @description Create a new SubPipe
+ *
+ * ### Configuration
+ * | Name       | Type                    | Default | Description         |
+ * | :--------- | :---------------------- | :------ | :------------------ |
+ * | `pipe`     | string, array or object | null    | The sub-pipe to create |
+ * | `oneShot`  | boolean                 | false   | Run the pipe once per incoming item |
+ *
+ * ### Items
+ * | Name       | Type                    | Description         |
+ * | :--------- | :---------------------- | :------------------ |
+ * | `pipe`     | string, array or object | Set pipe in configuration |
+ *
+ * ### Details
+ *
+ * *Pipe* is a '|' separated list of pipe-elements, each pipe can be named using '#<name>'.
+ *
+ * If *pipe* is not set incoming items are forwarded.
+ *
+ * If *pipe* is an array, than one sub-pipe will be created per array element,
+ * each array element must be either a string or an object, arrays can't be
+ * recursed.
+ * Incoming items will be sent (duplicated) in each sub-pipe.
+ *
+ * If *pipe* is an object, then it must have a *pipe* string property,
+ * additional properties will be sent to the newly created sub-pipe.
+ *
+ * @example
+ * {
+ *   "pipe": "SubPipe#test",
+ *   "SubPipeConfig#test": {
+ *     "pipe": "Rename"
+ *   }
+ * }
+ * {
+ *   "RenameConfig": {
+ *     "property": "test",
+ *     "newName": "titi"
+ *   },
+ *   "test": 42
+ * }
+ * ===
+ * { "titi": 42 }
+ *
+ * @example
+ * // Using an object pipe with embedded configuration
+ * {
+ *   "pipe": "SubPipe#test",
+ *   "SubPipeConfig#test": {
+ *     "pipe": {
+ *       "pipe": "Rename",
+ *       "RenameConfig": {
+ *         "property": "test",
+ *         "newName": "titi"
+ *       }
+ *     }
+ *   },
+ *   "test": 42
+ * }
+ * ===
+ * { "titi": 42 }
+ *
+ * @example
+ * // Using several oneShot sub-pipes
+ * {
+ *   "pipe": "SubPipe#test",
+ *   "SubPipeConfig#test": {
+ *     "oneShot": true,
+ *     "pipe": [
+ *       {
+ *         "pipe": "Rename",
+ *         "RenameConfig": {
+ *           "property": "test",
+ *           "newName": "titi"
+ *         }
+ *       },
+ *       { "pipe": "Aggregate" }
+ *     ]
+ *   }
+ * }
+ * { "test": 42 }
+ * { "toto": 42 }
+ * ===
+ * { "titi": 42 }
+ * // When oneShot option is set, the sub-pipe is terminated once message is sent, thus aggregate is freed
+ * { "items": [ { "test": 42 } ] }
+ * { "toto": 42 }
+ * { "items": [ { "toto": 42 } ] }
+ */
 class SubPipe extends PipeElement {
   constructor(pipe) {
     super();

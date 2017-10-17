@@ -40,7 +40,7 @@ class PipeElement extends EventEmitter {
       this.start();
     }
 
-    debug(`${this.constructor.name}.onItem`);
+    debug('%s.onItem', this.constructor.name);
     var configName = this.constructor.name + 'Config';
     var config = _.get(item, configName);
     _.unset(item, configName);
