@@ -8,7 +8,7 @@ stages:
 build:
   stage: build
   script:
-    - apk update && apk add make g++
+    - apk update && apk add make g++ python
     - npm install --build-from-source
   artifacts:
     paths:
