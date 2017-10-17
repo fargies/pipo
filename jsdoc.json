@@ -12,7 +12,7 @@
         "dictionaries": ["jsdoc","closure"]
     },
     "templates": {
-        "theme": "Sandstone",
+        "theme": "sandstone",
         "linenums": true,
         "syntaxTheme": "dark"
     },
