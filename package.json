@@ -40,7 +40,6 @@
     "request": "^2.79.0",
     "season": "^6.0.1",
     "sugar-date": "^2.0.4",
-    "tunnel-agent": "git+https://github.com/fargies/tunnel-agent.git",
     "xmldom": "^0.1.27",
     "xpath": "0.0.24",
     "yahoo-finance": "^0.3.3"
