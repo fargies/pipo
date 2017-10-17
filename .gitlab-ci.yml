@@ -21,7 +21,7 @@ test:
     - build
 
 pages:
-  statge: pages
+  stage: pages
   script:
     - npm run jsdoc
     - mv docs public
