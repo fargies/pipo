@@ -31,6 +31,7 @@ describe('Mustache', function() {
 
   it('generates a file', function(done) {
     let mstch = new Mustache();
+    mstch.ref();
 
     let item = {
       value: "42",
@@ -50,7 +51,8 @@ describe('Mustache', function() {
         assert(item.mustacheOut.includes("Here is an element: 1\n"));
         assert(item.mustacheOut.includes("Here is an element: 2\n"));
         assert(!('mustacheFile' in item));
-        done();
+        mstch.once("end", function() { done(); });
+        mstch.unref();
       });
       mstch.onItem(item);
     });
