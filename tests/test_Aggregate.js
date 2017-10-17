@@ -41,4 +41,17 @@ describe('Aggregate', function() {
     pipe.onItem({ "val" : 2 });
     pipe.end(0);
   });
+
+  it('aggregates sub properties', function(done) {
+    var pipe = new pipo.Aggregate();
+
+    pipe.on('item', (item) => {
+      assert.deepEqual(item, { "value": [ 1, 2 ] });
+      done();
+    });
+    pipe.onItem({ "AggregateConfig" : { "property" : 'val.value' } });
+    pipe.onItem({ "val" : { "value": 1 } });
+    pipe.onItem({ "val" : { "value": 2 } });
+    pipe.end(0);
+  });
 });

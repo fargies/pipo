@@ -90,7 +90,7 @@ class Aggregate extends PipeElement {
       if (_.isNil(this.property)) {
         this._items.push(item);
       } else if (_.has(item, this.property)) {
-        this._items.push(item[this.property]);
+        this._items.push(_.get(item, this.property));
       }
     }
   }
@@ -100,7 +100,7 @@ class Aggregate extends PipeElement {
       if (_.isNil(this.property)) {
         this.emit('item', { items: this._items });
       } else {
-        this.emit('item', { [this.property]: this._items });
+        this.emit('item', { [_.last(_.toPath(this.property))]: this._items });
       }
     }
     super.end(status);

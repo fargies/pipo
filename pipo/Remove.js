@@ -63,7 +63,7 @@ class Remove extends PipeElement {
 
     if (!_.isNil(this.property) && _.has(item, this.property)) {
       debug('removing "%s"', this.property);
-      delete item[this.property];
+      _.unset(item, this.property);
     }
 
     if (!_.isEmpty(item)) {
