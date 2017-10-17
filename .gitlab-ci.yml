@@ -8,8 +8,12 @@ stages:
 build:
   stage: build
   script:
-    - apk update && apk add make g++ python
+    - apk update
+    # Rebuild leveldown
+    - apk add make g++ python lsof
     - npm install --build-from-source
+    # Workarround htmltidy issue
+    - apk add tidyhtml && cp $(which tidy) node_modules/htmltidy/bin/linux
   artifacts:
     paths:
       - node_modules/
