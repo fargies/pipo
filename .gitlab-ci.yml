@@ -21,7 +21,7 @@ build:
 test:
   stage: test
   script:
-    - apk add lsof
+    - apk update && apk add lsof
     - npm run test
   dependencies:
     - build
