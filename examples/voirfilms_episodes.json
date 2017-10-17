@@ -1,12 +1,12 @@
 {
-  "pipe": "HTMLFetcher|HTMLToXML|XQuery|Mustache",
-  "url": "http://www.voirfilms.co/sleepy-hollow-saison-3-episode-4-76275.htm",
-  "query": "//div[@id='episodeliste']//div[contains(@class, 'description')]//a",
+  "pipe": "HTMLFetcher|HTMLToXML|XQuery|Mustache|Null",
+  "url": "http://www.voirfilms.info/sleepy-hollow-saison-3-episode-4-76275.htm",
+  "query": "//div[@class='link_list']//li[contains(@class, 'seme')]/a",
   "subQueries": {
       "href": "/@href",
       "title": "/@title"
   },
   "MustacheConfig": {
-    "mustacheTemplate": "http://www.voirfilms.co/{{href}}"
+    "mustacheTemplate": "{{{href}}}\n"
   }
 }

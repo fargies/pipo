@@ -2,6 +2,7 @@
 stages:
   - build
   - test
+  - pages
 
 build:
   stage: build
@@ -14,7 +15,17 @@ build:
 test:
   stage: test
   script:
-    - node_modules/.bin/istanbul cover node_modules/.bin/_mocha tests
+    - npm run test
   dependencies:
     - build
 
+pages:
+  statge: pages
+  script:
+    - npm run jsdoc
+    - mv docs public
+  artifacts:
+    paths:
+      - public
+  only:
+    - master

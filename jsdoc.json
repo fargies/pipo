@@ -1,0 +1,26 @@
+{
+    "plugins": [ "plugins/markdown" ],
+    "recurseDepth": 10,
+    "source": {
+        "include": [ "pipo", "README.md" ],
+        "includePattern": ".+\\.js(doc|x)?$",
+        "excludePattern": "(^|\\/|\\\\)_"
+    },
+    "sourceType": "module",
+    "tags": {
+        "allowUnknownTags": true,
+        "dictionaries": ["jsdoc","closure"]
+    },
+    "templates": {
+        "theme": "Sandstone",
+        "linenums": true,
+        "syntaxTheme": "dark"
+    },
+    "opts": {
+        "template": "node_modules/ink-docstrap/template",
+        "encoding": "utf8",
+        "destination": "docs/",
+        "recurse": true,
+        "verbose": true
+    }
+}

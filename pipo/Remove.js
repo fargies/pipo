@@ -27,6 +27,30 @@ const
   PipeElement = require('./PipeElement'),
   debug = require('debug')('pipo:remove');
 
+/**
+ * @module Remove
+ * @description Removes a property on incoming items
+ *
+ * ### Configuration
+ * | Name       | Type           | Default | Description            |
+ * | :-------   | :------------- | :------ | :--------------------- |
+ * | `property` | string or path | null    | The property to remove |
+ *
+ * ### Items
+ * See [Lodash](https://lodash.com/docs/4.17.4#get) for details about *path*.
+ *
+ * @example
+ * {
+ *   "pipe": "Remove",
+ *   "RemoveConfig": { "property": "test" }
+ * }
+ * {
+ *   "test": 42,
+ *   "titi": 44
+ * }
+ * ===
+ * { "titi" : 44 }
+ */
 class Remove extends PipeElement {
   constructor() {
     super();

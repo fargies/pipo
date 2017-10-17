@@ -8,7 +8,7 @@ SerialPipeConfig:
     limit: 1
     "MathFilterConfig#coef":
       # 10% growth for the year
-      expr: "linReg[1]*365 > 10"
+      expr: "(linReg[1]/close*100)*365 > 10"
     "MathFilterConfig#var":
       # less than 10% under linear regression value
       expr: "var < -10"

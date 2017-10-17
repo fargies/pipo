@@ -1,4 +1,6 @@
+
 # Pipo the  pipe builder
+
 [![build status](https://gitlab.com/fargie_s/pipo/badges/node/build.svg)](https://gitlab.com/fargie_s/pipo/commits/node)
 [![coverage report](https://gitlab.com/fargie_s/pipo/badges/node/coverage.svg)](https://gitlab.com/fargie_s/pipo/commits/node)
 
@@ -39,7 +41,7 @@ A configuration item contains configuration element for one or several pipe-elem
 
 Each pipe-element can be configured with an element in the Json object named
 according to the pipe-element name using "_Config_" as a suffix, ex:
-```json
+```javascript
 {
   "RenameConfig" : {
       "property": "var",

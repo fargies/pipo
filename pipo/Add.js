@@ -27,6 +27,34 @@ const
   PipeElement = require('./PipeElement'),
   debug = require('debug')('pipo:add');
 
+/**
+ * @module Add
+ * @description Adds a property on incoming items
+ *
+ * ### Configuration
+ * | Name       | Type           | Default | Description         |
+ * | :-------   | :------------- | :------ | :------------------ |
+ * | `property` | string or path | null    | The property to add |
+ * | `value`    | *              | null    | The value to set    |
+ *
+ * ### Items
+ * Any incoming non-empty item will have *property* set with *value*, if the two
+ * parameters are non-null.
+ *
+ * See [Lodash](https://lodash.com/docs/4.17.4#get) for details about *path*.
+ *
+ * @example
+ * {
+ *   "pipe": "Add",
+ *   "AddConfig": { "property": "test", "value": 42 }
+ * }
+ * { "titi" : 44 }
+ * ===
+ * {
+ *   "test": 42,
+ *   "titi": 44
+ * }
+ */
 class Add extends PipeElement {
   constructor() {
     super();

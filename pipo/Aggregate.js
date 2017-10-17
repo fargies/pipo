@@ -29,6 +29,53 @@ const
 const
   PipeElement = require('./PipeElement');
 
+/**
+ * @module Aggregate
+ * @description Aggregates items or properties
+ *
+ * ### Configuration
+ *
+ * | Name     | Type       | Default | Description                 |
+ * | :------- | :--------- | :------ | :-------------------------- |
+ * | [`property`] | string | null    | The properties to aggregate |
+ *
+ * ### Items
+ * Whenever *property* is set this property will be aggregated from incoming
+ * items, incoming items (even those which don't have the propety)
+ * are not passing through, an item with *property* containing all aggregated
+ * items is sent when pipe is ended.
+ *
+ * If *property* is null incoming items are aggregated, and an item with
+ * *items* property containing all aggregated items is sent when pipe is ended.
+ *
+ * @example
+ * // Aggregating items
+ * {
+ *   "pipe": "Aggregate"
+ * }
+ * { "test": 42 }{ "titi" : 44 }
+ * ===
+ * {
+ *   "items": [
+ *       { "test": 42 },
+ *       { "titi": 44 }
+ *   ]
+ * }
+ *
+ * @example
+ * // Aggregating properties
+ * {
+ *   "pipe": "Aggregate"
+ *   "AggregateConfig": { "property": "test" }
+ * }
+ * { "test": 42 }
+ * { "toto": 44 }
+ * { "test": 45 }
+ * ===
+ * {
+ *   "test": [ 42, 45 ]
+ * }
+ */
 class Aggregate extends PipeElement {
   constructor() {
     super();

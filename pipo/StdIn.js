@@ -28,6 +28,17 @@ const
   DataIn = require('./DataIn'),
   debug = require('debug')('pipo:in');
 
+/**
+ * @module StdIn
+ *
+ * @description StdIn pipe element
+ * @example
+ * > {
+ * >  "pipe": "StdIn"
+ * > }
+ * > { "test": 42 }
+ * < { "test": 42 }
+ */
 class StdIn extends DataIn {
   constructor(fd) {
     super();
