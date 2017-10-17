@@ -11,7 +11,7 @@
     "test": "mocha tests",
     "test:coverage": "istanbul cover ./node_modules/.bin/_mocha -- tests",
     "docker:test": "docker run --rm -it -v \"$PWD\":/usr/src/myapp -w /usr/src/myapp node:alpine sh -c 'npm install && npm run test'",
-    "jsdoc": "rm -rf docs && jsdoc -t jsdoc.json"
+    "jsdoc": "rm -rf docs && jsdoc -c jsdoc.json"
   },
   "author": "Sylvain Fargier",
   "license": "BSD-2-Clause",
