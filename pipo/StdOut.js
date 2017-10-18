@@ -27,6 +27,33 @@ const
   _ = require('lodash'),
   PipeElement = require('./PipeElement');
 
+/**
+ * @module StdOut
+ * @description prints items on the console
+ *
+ * ### Configuration
+ * | Name         | Type    | Default | Description            |
+ * | :----------- | :------ | :------ | :--------------------- |
+ * | [`indent`]   | integer | 2       | The indentation |
+ * | [`eol`]      | boolean | true    | Add \n after each item |
+ * | [`noConfig`] | boolean | true    | Do not print config properties |
+ *
+ * ### Items
+ * See [Lodash](https://lodash.com/docs/4.17.4#get) for details about *path*.
+ *
+ * @example
+ * // StdOut is part of the default pipe (Stdin|SubPipe|StdOut), so we don't
+ * // need to define it.
+ * {
+ *   "StdOutConfig": { "indent": 0 }
+ * }
+ * {
+ *   "test": 42,
+ *   "titi": 44
+ * }
+ * ===
+ * {"test":42,"titi":44}
+ */
 class StdOut extends PipeElement {
   constructor(fd, indent) {
     super();

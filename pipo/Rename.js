@@ -27,6 +27,48 @@ const
   PipeElement = require('./PipeElement'),
   debug = require('debug')('pipo:rename');
 
+/**
+ * @module Rename
+ * @description Rename a property on incoming items
+ *
+ * ### Configuration
+ * | Name       | Type           | Default | Description            |
+ * | :-------   | :------------- | :------ | :--------------------- |
+ * | `property` | string or path | null    | The property to rename |
+ * | `newName`  | string or path | null    | The new property name |
+ *
+ * See [Lodash](https://lodash.com/docs/4.17.4#get) for details about *path*.
+ *
+ * @example
+ * {
+ *   "pipe": "Rename",
+ *   "RenameConfig": { "property": "test", "newName": "toto" }
+ * }
+ * {
+ *   "test": 42,
+ *   "titi": 44
+ * }
+ * ===
+ * {
+ *   "titi": 44,
+ *   "toto": 42
+ * }
+ *
+ * @example
+ * // Using paths
+ * {
+ *   "pipe": "Rename",
+ *   "RenameConfig": { "property": "test.name", "newName": "toto[0]" }
+ * }
+ * {
+ *   "test": { "name": 42 }
+ * }
+ * ===
+ * {
+ *   "test": {},
+ *   "toto": [ 42 ]
+ * }
+ */
 class Rename extends PipeElement {
   constructor() {
     super();

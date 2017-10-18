@@ -27,6 +27,49 @@ const
   PipeElement = require('./PipeElement'),
   debug = require('debug')('pipo:base');
 
+/**
+ * @module Duplicate
+ * @description Duplicate a property on incoming items
+ *
+ * ### Configuration
+ * | Name       | Type           | Default | Description            |
+ * | :-------   | :------------- | :------ | :--------------------- |
+ * | `property` | string or path | null    | The property to rename |
+ * | `newName`  | string or path | null    | The new property name |
+ *
+ * See [Lodash](https://lodash.com/docs/4.17.4#get) for details about *path*.
+ *
+ * @example
+ * {
+ *   "pipe": "Duplicate",
+ *   "DuplicateConfig": { "property": "test", "newName": "toto" }
+ * }
+ * {
+ *   "test": 42,
+ *   "titi": 44
+ * }
+ * ===
+ * {
+ *   "test": 42,
+ *   "titi": 44,
+ *   "toto": 42
+ * }
+ *
+ * @example
+ * // Using paths
+ * {
+ *   "pipe": "Duplicate",
+ *   "DuplicateConfig": { "property": "test.name", "newName": "toto[0]" }
+ * }
+ * {
+ *   "test": { "name": 42 }
+ * }
+ * ===
+ * {
+ *   "test": { "name": 42 },
+ *   "toto": [ 42 ]
+ * }
+ */
 class Duplicate extends PipeElement {
   constructor() {
     super();

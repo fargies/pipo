@@ -32,12 +32,8 @@ const
  * @module StdIn
  *
  * @description StdIn pipe element
- * @example
- * > {
- * >  "pipe": "StdIn"
- * > }
- * > { "test": 42 }
- * < { "test": 42 }
+ *
+ * Nothing much to say, reads bytes from stdin an forwards JSon objects.
  */
 class StdIn extends DataIn {
   constructor(fd) {

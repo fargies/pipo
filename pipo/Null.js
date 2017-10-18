@@ -25,6 +25,15 @@
 const
   PipeElement = require('./PipeElement');
 
+/**
+ * @module Null
+ * @description Filters out incoming items
+ *
+ * ### Configuration
+ * | Name        | Type    | Default | Description            |
+ * | :---------- | :------ | :------ | :--------------------- |
+ * | `errorOnly` | boolean | true    | Do not filter error items |
+ */
 class Null extends PipeElement {
   constructor() {
     super();
