@@ -7,6 +7,6 @@
       "title": "/@title"
   },
   "MustacheConfig": {
-    "mustacheTemplate": "{{{href}}}\n"
+    "template": "{{{href}}}\n"
   }
 }

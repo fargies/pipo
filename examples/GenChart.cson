@@ -15,7 +15,7 @@ DateConfig:
   pattern: "$"
   newSubstr: ".html"
 MustacheConfig:
-  mustacheTemplate: '''
+  template: '''
 <!doctype html>
 <html>
   <head>

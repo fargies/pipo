@@ -29,7 +29,7 @@
   },
   "MustacheConfig#season": {
     "comment": "handle this with multi-pipe ?",
-    "mustacheTemplate": "http://www.voirfilms.co/{{{href}}}"
+    "template": "http://www.voirfilms.co/{{{href}}}"
   },
   "RenameConfig#season": {
     "property": "mustacheOut",
@@ -46,7 +46,7 @@
     }
   },
   "MustacheConfig#episodes": {
-    "mustacheTemplate": "{{#items}}{{{href}}}\n{{/items}}",
+    "template": "{{#items}}{{{href}}}\n{{/items}}",
     "outFile": "stdout"
   }
 }

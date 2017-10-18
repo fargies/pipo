@@ -8,29 +8,38 @@ const
   fs = require('fs');
 
 const
-  Mustache = require('../pipo/output/Mustache');
+  pipo = require('../pipo');
 
 describe('Mustache', function() {
 
-  it('generates from templates', function(done) {
-    let mstch = new Mustache();
+  it('renders a simple template', function(done) {
+    let mstch = new pipo.Mustache();
 
     mstch.once("item", (item) => {
-      assert.equal(item.var1, "42");
-      assert.equal(item.var2, "42 42");
-      assert(!('mustacheVars' in item));
+      assert.deepEqual(item, { val: 42, out: "42" });
       done();
     });
     mstch.onItem({
-      var1: "{{value}}",
-      var2: "{{value}} {{value}}",
-      value: "42",
-      mustacheVars: [ "var1", "var2" ]
+      val: 42,
+      template: "{{val}}"
     });
   });
 
-  it('generates a file', function(done) {
-    let mstch = new Mustache();
+  it('renders an object', function(done) {
+    let mstch = new pipo.Mustache();
+
+    mstch.once("item", (item) => {
+      assert.deepEqual(item, { val: "42", a: "4", z: "4" });
+      done();
+    });
+    mstch.onItem({
+      val: 4,
+      template: { val: "{{val}}2", a: "{{val}}", z: "{{val}}" }
+    });
+  });
+
+  it('renders from a file', function(done) {
+    let mstch = new pipo.Mustache();
     mstch.ref();
 
     let item = {
@@ -39,18 +48,18 @@ describe('Mustache', function() {
     };
 
     tmp.file(function(err, path, fd, cleanup) {
-      assert(!err);
+      assert.ok(!err);
       fs.writeSync(fd, "This is value: {{value}}\n");
       fs.writeSync(fd, "{{#table}}Here is an element: {{.}}\n{{/table}}");
-      item.mustacheFile = path;
+      item.template = path;
 
       mstch.once("item", (item) => {
         cleanup();
-        assert(item.mustacheOut);
-        assert(item.mustacheOut.includes("This is value: 42\n"));
-        assert(item.mustacheOut.includes("Here is an element: 1\n"));
-        assert(item.mustacheOut.includes("Here is an element: 2\n"));
-        assert(!('mustacheFile' in item));
+        assert.ok(item.out);
+        assert.ok(item.out.includes("This is value: 42\n"));
+        assert.ok(item.out.includes("Here is an element: 1\n"));
+        assert.ok(item.out.includes("Here is an element: 2\n"));
+        assert.ok(!('template' in item));
         mstch.once("end", function() { done(); });
         mstch.unref();
       });
@@ -58,5 +67,25 @@ describe('Mustache', function() {
     });
   });
 
-  //FIXME: last
+  it('renders to a file', function(done) {
+    let mstch = new pipo.Mustache();
+    mstch.ref();
+
+    tmp.dir({ unsafeCleanup: true }, function(err, path, cleanup) {
+      assert.ok(!err);
+      mstch.once("item", () => {
+        fs.readFile(path + '/test.txt', function(err, data) {
+          assert.ok(!err);
+          assert.equal(data.toString(), "42");
+          mstch.once("end", function() { cleanup(); done(); });
+          mstch.unref();
+        });
+      });
+      mstch.onItem({
+        outFile: path + '/test.txt',
+        template: "{{var}}2",
+        var: 4
+      });
+    });
+  });
 });
