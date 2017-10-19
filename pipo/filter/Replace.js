@@ -56,12 +56,7 @@ class Replace extends PipeElement {
   }
 
   setPattern(pattern) {
-    try {
-      this.pattern = utils.getPattern(pattern);
-    }
-    catch(e) {
-      this.error(e);
-    }
+    utils.setPipePattern(this, 'pattern', pattern);
   }
 }
 

@@ -23,9 +23,10 @@
 **
 */
 
-const debug = require('debug')('pipo:in');
-
-const PipeElement = require('./PipeElement');
+const
+  debug = require('debug')('pipo:in'),
+  _ = require('lodash'),
+  PipeElement = require('./PipeElement');
 
 module.exports = class DataIn extends PipeElement {
   constructor(bufSize) {
@@ -47,19 +48,15 @@ module.exports = class DataIn extends PipeElement {
     var ret = false;
     for (var i = 0; i < buffer.length; ++i) {
       var c = buffer[i];
-      /*                      ' '           '\t'        '\n' */
-      if (!inString && (c === 0x20 || c === 0x09 || c === 0x0A)) {
+      /*                            ' '  '\t'  '\n' */
+      if (!inString && _.includes([ 0x20, 0x09, 0x0A ], c)) {
         continue;
       }
       ret = true;
-      if (this.sz >= this.buffer.length) {
-        this._resize();
-      }
+      this._resize();
       this.buffer[this.sz++] = c;
       if (c === 0x5C /* '\\' */) {
-        if (this.sz >= this.buffer.length) {
-          this._resize();
-        }
+        this._resize();
         this.buffer[this.sz++] = buffer[++i];
       } else if (c === 0x22 /* '"' */) {
         inString = !inString;
@@ -68,51 +65,60 @@ module.exports = class DataIn extends PipeElement {
     return ret;
   }
   _resize() {
-    var old = this.buffer;
-    this.buffer = Buffer.alloc(this.buffer.length * 2);
-    old.copy(this.buffer, 0, 0, this.sz);
+    if (this.sz >= this.buffer.length) {
+      var old = this.buffer;
+      this.buffer = Buffer.alloc(this.buffer.length * 2);
+      old.copy(this.buffer, 0, 0, this.sz);
+    }
   }
+
+  _findBlock(ctx) {
+    while (!ctx.blockStart) {
+      if (ctx.pos >= this.sz) {
+        return false;
+      }
+      let c = String.fromCharCode(this.buffer[ctx.pos++]);
+      if (c === '{') {
+        ctx.blockStart = '{';
+        ctx.blockEnd = '}';
+      }  else if (c === '[') {
+        ctx.blockStart = '[';
+        ctx.blockEnd = ']';
+      }
+    }
+    ctx.start = ctx.pos - 1;
+    return true;
+  }
+  _findItem(ctx) {
+    var depth;
+    var inString = false;
+    for (depth = 1; depth > 0 && ctx.pos <= this.sz; ) {
+      let c = String.fromCharCode(this.buffer[ctx.pos++]);
+      if (c === '\\') {
+        ++ctx.pos;
+      } else if (c === '"') {
+        inString = !inString;
+      } else if (!inString && (c === ctx.blockStart)) {
+          ++depth;
+      } else if (!inString && (c === ctx.blockEnd)) {
+          --depth;
+      }
+    }
+    return depth === 0;
+  }
+
   _parse() {
-    var pos = 0;
+    var ctx = { pos: 0, start: 0 };
+    var rem = true;
 
-    while (true)
+    while (rem && (this.sz !== 0))
     {
-      var blockStart = null;
-      var blockEnd = null;
-      while (!blockStart) {
-        if (pos >= this.sz) {
-          this.sz = 0;
-          return;
-        }
-        let c = String.fromCharCode(this.buffer[pos++]);
-        if (c === '{') {
-          blockStart = '{';
-          blockEnd = '}';
-        }  else if (c === '[') {
-          blockStart = '[';
-          blockEnd = ']';
-        }
+      ctx.blockStart = ctx.blockEnd = null;
+      if (!this._findBlock(ctx)) {
+        this.sz = 0;
       }
-      var start = pos - 1;
-
-      var depth;
-      var inString = false;
-      for (depth = 1; depth > 0 && pos <= this.sz; ) {
-        let c = String.fromCharCode(this.buffer[pos++]);
-        if (c === '\\') {
-          ++pos;
-        } else if (c === '"') {
-          inString = !inString;
-        } else if (!inString) {
-          if (c === blockStart) {
-            ++depth;
-          } else if (c === blockEnd) {
-            --depth;
-          }
-        }
-      }
-      if (depth === 0) {
-        var ret = this.buffer.slice(start, pos);
+      else if (this._findItem(ctx)) {
+        var ret = this.buffer.slice(ctx.start, ctx.pos);
         try {
           ret = JSON.parse(ret.toString());
           debug('new item: ' + JSON.stringify(ret));
@@ -120,14 +126,15 @@ module.exports = class DataIn extends PipeElement {
         }
         catch (err)
         {
-
+          this.error(err);
         }
-      } else {
-        if (start !== 0) {
-          this.buffer.copy(this.buffer, 0, start, this.sz - start);
-          this.sz -= start;
+      }
+      else {
+        if (ctx.start !== 0) {
+          this.buffer.copy(this.buffer, 0, ctx.start, this.sz - ctx.start);
+          this.sz -= ctx.start;
         }
-        return;
+        rem = false;
       }
     }
   }

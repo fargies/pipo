@@ -24,8 +24,9 @@
 
 const _ = require('lodash');
 
-module.exports = {
-  getPattern: function(pattern) {
+class Utils
+{
+  static getPattern(pattern) {
     if (_.isNil(pattern)) {
       return null;
     } else if (_.isArray(pattern)) {
@@ -34,4 +35,15 @@ module.exports = {
       return new RegExp(pattern);
     }
   }
-};
+
+  static setPipePattern(pipe, property, pattern) {
+    try {
+      _.set(pipe, property, module.exports.getPattern(pattern));
+    }
+    catch (e) {
+      pipe.error(e);
+    }
+  }
+}
+
+module.exports = Utils;

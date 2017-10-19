@@ -26,6 +26,7 @@ const
   path = require('path'),
   _ = require('lodash'),
   fs = require('fs'),
+  utils = require('../utils'),
   PipeElement = require('../PipeElement'),
   debug = require('debug')('pipo:files');
 
@@ -67,17 +68,8 @@ class ListDir extends PipeElement {
     }
   }
 
-  setPattern(pattern, options) {
-    if (_.isEmpty(pattern)) {
-      this.pattern = null;
-    } else {
-      try {
-        this.pattern = new RegExp(pattern, options);
-      }
-      catch(e) {
-        this.error(e);
-      }
-    }
+  setPattern(pattern) {
+    utils.setPipePattern(this, 'pattern', pattern);
   }
 }
 

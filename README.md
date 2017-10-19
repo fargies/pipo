@@ -7,6 +7,8 @@ Pipo project is meant to create advanced unix-like pipes.
 
 Unlike unix pipes, pipo exchanges JSon objects through the pipe.
 
+Read the [docs](http://fargie_s.gitlab.io/pipo/index.html) !
+
 ## Specification
 
 A pipe is a chain of pipe-elements processing pipe-items.

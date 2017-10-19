@@ -28,7 +28,8 @@ const
   xpath = require('xpath'),
   _ = require('lodash'),
   debug = require('debug')('pipo:filter'),
-  PipeElement = require('../PipeElement');
+  PipeElement = require('../PipeElement'),
+  Item = require('../Item');
 
 class XQuery extends PipeElement {
   constructor() {
@@ -42,13 +43,9 @@ class XQuery extends PipeElement {
     super.onItem(item);
 
     if ('xml' in item) {
-      let query = _.defaultTo(item.query, this.query);
-      let subQueries = _.clone(_.defaultTo(item.subQueries, this.subQueries));
-      let xml = item.xml;
-
-      delete item.xml;
-      delete item.query;
-      delete item.subQueries;
+      let query = Item.take(item, 'query', this.query);
+      let subQueries = _.clone(Item.take(item, 'subQueries', this.subQueries));
+      let xml = Item.take(item, 'xml');
 
       try {
         _.forOwn(subQueries, function(value, key) {
@@ -58,36 +55,26 @@ class XQuery extends PipeElement {
             subQueries[key] = xpath.parse(value);
           }
         });
-      } catch (e) {
-        this.error(e.toString());
-        return;
-      }
 
-      if (!query || !subQueries) {
-        this.error("\"query\" and \"subQueries\" are required in XQuery elements");
-        return;
-      }
-      let doc;
-      let nodes;
-      try {
-        doc = new xmldom.DOMParser().parseFromString(xml);
-        nodes = xpath.select(query, doc);
-      } catch (e) {
-        this.error(e.toString());
-        return;
-      }
+        if (!query || !subQueries) {
+          throw "\"query\" and \"subQueries\" are required in XQuery elements";
+        }
+        let doc = new xmldom.DOMParser().parseFromString(xml);
+        let nodes = xpath.select(query, doc);
 
-      if (debug.enabled) {
-        debug(`${nodes.length} nodes selected ${nodes}`);
-      }
-      _.forIn(nodes, (node) => {
-        let out = _.cloneDeep(item);
-        _.forOwn(subQueries, (value, key) => {
-          let ret = value.evaluateString({ node: node });
-          out[key] = (this.trim) ? _.trim(ret) : ret;
+        debug('%i nodes selected %o', nodes.length, nodes);
+        _.forIn(nodes, (node) => {
+          let out = _.cloneDeep(item);
+          _.forOwn(subQueries, (value, key) => {
+            let ret = value.evaluateString({ node: node });
+            out[key] = (this.trim) ? _.trim(ret) : ret;
+          });
+          this.emit('item', out); // FIXME: seems to be directly connected to callback
         });
-        this.emit('item', out); // FIXME: seems to be directly connected to callback
-      });
+      } catch (e) {
+        this.error(e.toString());
+        return;
+      }
     } else if (!_.isEmpty(item)) {
       this.emit('item', item);
     }
