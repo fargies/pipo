@@ -30,7 +30,66 @@ const
   PipeElement = require('../PipeElement'),
   Item = require('../Item');
 
-
+/**
+ * @module YFQuote
+ * @description YahooFinance quote information fetcher
+ *
+ * ### Configuration
+ * | Name         | Type         | Default     | Description          |
+ * | :----------- | :-----       | :-----      | :------------------- |
+ * | [`modules`]  | string array | [ "price" ] | information to fetch |
+ *
+ * ### Items
+ * | Name        | Type         | Description         |
+ * | :---------- | :-----       | :------------------ |
+ * | `symbol`    | string       | symbol to fetch     |
+ * | [`modules`] | string array | information to fetch |
+ *
+ * ### Details
+ *
+ * *modules* can contain: "recommendationTrend", "summaryDetail", "earnings",
+ * "calendarEvents", "upgradeDowngradeHistory", "price", "defaultKeyStatistics",
+ * "summaryProfile", "financialData".
+ *
+ * For more information see: [node-yahoo-finance](https://github.com/pilwon/node-yahoo-finance/blob/master/docs/quote.md)
+ *
+ * @example
+ * {
+ *   "pipe": "YFQuote",
+ *   "modules": [ "price" ],
+ *   "symbol": "CLA.PA"
+ * }
+ * ===
+ * {
+ *   "price": {
+ *     "maxAge": 1,
+ *    "regularMarketChangePercent": 0.004255328,
+ *    "regularMarketChange": 0.002000004,
+ *    "regularMarketTime": "2017-10-20T15:35:13.000Z",
+ *    "priceHint": 3,
+ *    "regularMarketPrice": 0.472,
+ *    "regularMarketDayHigh": 0.474,
+ *    "regularMarketDayLow": 0.466,
+ *    "regularMarketVolume": 1762433,
+ *    "regularMarketPreviousClose": 0.47,
+ *    "regularMarketSource": "DELAYED",
+ *    "regularMarketOpen": 0.467,
+ *    "exchange": "PAR",
+ *    "exchangeName": "Paris",
+ *    "marketState": "POSTPOST",
+ *    "quoteType": "EQUITY",
+ *    "symbol": "CLA.PA",
+ *    "underlyingSymbol": null,
+ *    "shortName": "CLARANOVA",
+ *    "longName": "Claranova S.A.",
+ *    "currency": "EUR",
+ *    "currencySymbol": "€",
+ *    "fromCurrency": null,
+ *    "lastMarket": null,
+ *     "marketCap": 177084496
+ *   }
+ * }
+ */
 class YFQuote extends PipeElement {
   constructor() {
     super();

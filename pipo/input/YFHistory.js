@@ -30,7 +30,45 @@ const
   PipeElement = require('../PipeElement'),
   Item = require('../Item');
 
-
+/**
+ * @module YFHistory
+ * @description YahooFinance historical data fetcher
+ *
+ * ### Configuration
+ * | Name         | Type   | Default | Description         |
+ * | :----------- | :----- | :-----  | :------------------ |
+ * | [`symbol`]   | string | null    | symbol to fetch     |
+ *
+ * ### Items
+ * | Name        | Type   | Description         |
+ * | :---------- | :----- | :------------------ |
+ * | [`symbol`]  | string | symbol to fetch     |
+ * | `from`      | string | start date          |
+ * | `to`        | string | end date          |
+ *
+ * ### Details
+ *
+ * *from* and *to* must be dates formated like "YYYY-MM-DD".
+ *
+ * @example
+ * {
+ *   "pipe": "YFHistory",
+ *   "from": "2017-10-10",
+ *   "to": "2017-10-10",
+ *   "symbol": "CLA.PA"
+ * }
+ * ===
+ * {
+ *  "date": 1507608000,
+ *  "open": 0.491,
+ *  "high": 0.497,
+ *  "low": 0.485,
+ *  "close": 0.485,
+ *  "adjClose": 0.485,
+ *  "volume": 2872911,
+ *  "symbol": "CLA.PA"
+ * }
+ */
 class YFHistory extends PipeElement {
   constructor() {
     super();
