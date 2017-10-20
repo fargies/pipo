@@ -37,33 +37,68 @@ module.exports = class DataIn extends PipeElement {
     super();
     this.buffer = Buffer.allocUnsafe(2048);
     this.sz = 0;
+    this.ctx = { inString: false, escape: false, sz: 0, block: null, depth: 0 };
   }
   add(buffer) {
-    if (this._append(buffer)) {
-      this._parse();
+    for (var i = 0; i < buffer.length; ++i) {
+      if (this._preParse(buffer[i])) {
+        this._parse();
+      }
     }
   }
-  _append(buffer) {
-    var inString = false;
-    var ret = false;
-    for (var i = 0; i < buffer.length; ++i) {
-      var c = buffer[i];
-      /*                            ' '  '\t'  '\n' */
-      if (!inString && _.includes([ 0x20, 0x09, 0x0A ], c)) {
-        continue;
-      }
-      ret = true;
-      this._resize();
-      this.buffer[this.sz++] = c;
-      if (c === 0x5C /* '\\' */) {
-        this._resize();
-        this.buffer[this.sz++] = buffer[++i];
-      } else if (c === 0x22 /* '"' */) {
-        inString = !inString;
-      }
+  _preParseString(c, ctx) {
+    if (ctx.escape) {
+      ctx.escape = false;
     }
+    else if (c === 0x5C /* \\ */) {
+      ctx.escape = true;
+    }
+    else if (c === 0x22 /* '"' */) {
+      ctx.inString = false;
+    }
+  }
+  _preParseBlkStart(c, ctx) {
+    if (c === 0x7b /* '{' */) {
+      ctx.block = { start: 0x7b, end: 0x7d };
+      ctx.depth = 1;
+    }
+    else if (c === 0x5b /* '[' */) {
+      ctx.block = { start: 0x5b, end: 0x5d };
+      ctx.depth = 1;
+    }
+  }
+  _preParseBlk(c, ctx) {
+    if (c === ctx.block.start) {
+      ctx.depth += 1;
+    }
+    else if (c === ctx.block.end) {
+      ctx.depth -= 1;
+    }
+    return ctx.depth === 0;
+  }
+  _preParse(c) {
+    var ret = false;
+    if (this.ctx.inString) {
+      this._preParseString(c, this.ctx);
+    }
+    else if (_.includes([ 0x20, 0x09, 0x0A ], c)) {
+      /* filtered out */
+      return ret;
+    }
+    else {
+      if (this.ctx.depth === 0) {
+        this._preParseBlkStart(c, this.ctx);
+      }
+      else {
+        ret = this._preParseBlk(c, this.ctx);
+      }
+      this.ctx.inString = (c === 0x22 /* '"' */);
+    }
+    this._resize();
+    this.buffer[this.ctx.sz++] = c;
     return ret;
   }
+
   _resize() {
     if (this.sz >= this.buffer.length) {
       var old = this.buffer;
@@ -72,70 +107,15 @@ module.exports = class DataIn extends PipeElement {
     }
   }
 
-  _findBlock(ctx) {
-    while (!ctx.blockStart) {
-      if (ctx.pos >= this.sz) {
-        return false;
-      }
-      let c = String.fromCharCode(this.buffer[ctx.pos++]);
-      if (c === '{') {
-        ctx.blockStart = '{';
-        ctx.blockEnd = '}';
-      }  else if (c === '[') {
-        ctx.blockStart = '[';
-        ctx.blockEnd = ']';
-      }
-    }
-    ctx.start = ctx.pos - 1;
-    return true;
-  }
-  _findItem(ctx) {
-    var depth;
-    var inString = false;
-    for (depth = 1; depth > 0 && ctx.pos <= this.sz; ) {
-      let c = String.fromCharCode(this.buffer[ctx.pos++]);
-      if (c === '\\') {
-        ++ctx.pos;
-      } else if (c === '"') {
-        inString = !inString;
-      } else if (!inString && (c === ctx.blockStart)) {
-          ++depth;
-      } else if (!inString && (c === ctx.blockEnd)) {
-          --depth;
-      }
-    }
-    return depth === 0;
-  }
-
   _parse() {
-    var ctx = { pos: 0, start: 0 };
-    var rem = true;
-
-    while (rem && (this.sz !== 0))
-    {
-      ctx.blockStart = ctx.blockEnd = null;
-      if (!this._findBlock(ctx)) {
-        this.sz = 0;
-      }
-      else if (this._findItem(ctx)) {
-        var ret = this.buffer.slice(ctx.start, ctx.pos);
-        try {
-          ret = JSON.parse(ret.toString());
-          debug('new item: ' + JSON.stringify(ret));
-          this.emit('item', ret);
-        }
-        catch (err)
-        {
-          this.error(err);
-        }
-      }
-      else {
-        if (ctx.start !== 0) {
-          this.buffer.copy(this.buffer, 0, ctx.start, this.sz - ctx.start);
-          this.sz -= ctx.start;
-        }
-        rem = false;
-      }
+    try {
+      var ret = JSON.parse(this.buffer.slice(0, this.ctx.sz));
+      debug('new item: ' + JSON.stringify(ret));
+      this.emit('item', ret);
     }
+    catch (err) {
+      this.error(err);
+    }
+    this.ctx = { inString: false, escape: false, sz: 0, block: null, depth: 0 };
   }
 };

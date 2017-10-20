@@ -3,8 +3,7 @@
 const
   assert = require('assert'),
   _ = require('lodash'),
-  {describe, before, after} = require('mocha'),
-  it = require('mocha').it,
+  {describe, before, after, it} = require('mocha'),
   stream = require('stream');
 
 const
