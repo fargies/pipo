@@ -31,7 +31,7 @@ const
   Item = require('../Item');
 
 
-class YahooFinance extends PipeElement {
+class YFHistory extends PipeElement {
   constructor() {
     super();
     this.symbol = null;
@@ -77,10 +77,8 @@ class YahooFinance extends PipeElement {
         }
       }
     }
-    if (!_.isEmpty(item)) {
-      this.emit('item', item);
-    }
+    this.emitItem(item);
   }
 }
 
-module.exports = YahooFinance;
+module.exports = YFHistory;

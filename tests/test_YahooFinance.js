@@ -9,9 +9,9 @@ const
   pipo = require('../pipo');
 
 
-m.describe('YahooFinance', function() {
+m.describe('YFHistory', function() {
   m.it('fetches a quote', function(done) {
-    var pipe = new pipo.YahooFinance();
+    var pipe = new pipo.YFHistory();
 
     pipe.on('item', (item) => {
       assert.ok(_.has(item, 'open'));
@@ -21,7 +21,7 @@ m.describe('YahooFinance', function() {
   }).timeout(30000);
 
   m.it('fails on non existing quote', function(done) {
-    var pipe = new pipo.YahooFinance();
+    var pipe = new pipo.YFHistory();
 
     pipe.on('item', (item) => {
       assert.ok(!_.has(item, 'open'));
@@ -32,7 +32,7 @@ m.describe('YahooFinance', function() {
   }).timeout(4000);
 
   m.it('fails with invalid date', function(done) {
-    var pipe = new pipo.YahooFinance();
+    var pipe = new pipo.YFHistory();
 
     pipe.on('item', (item) => {
       assert.ok(!_.has(item, 'open'));

@@ -1,5 +1,5 @@
 {
-  "pipe": "WaitFor|QuoteRange1Y|Duplicate|Replace|YahooFinance|PouchDBOut",
+  "pipe": "WaitFor|QuoteRange1Y|Duplicate|Replace|YFHistory|PouchDBOut",
 
   "WaitForConfig": {
     "property": "symbol"
