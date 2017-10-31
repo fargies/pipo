@@ -37,9 +37,9 @@ describe('PouchDB', function() {
       var inPipe = new pipo.SubPipe('PouchDBIn|Aggregate');
       inPipe.on('item', (item) => {
         assert.equal(_.size(item.items), 1);
-        assert.equal(item.items[0].value, '1234');
-        assert.equal(item.items[0]._id, '42');
-        assert.equal(item.items[0].id, 42);
+        assert.equal(_.get(item, 'items[0].value'), '1234');
+        assert.equal(_.get(item, 'items[0]._id'), '42');
+        assert.equal(_.get(item, 'items[0].id.name'), 42);
         done();
       });
 
@@ -47,8 +47,8 @@ describe('PouchDB', function() {
       inPipe.onItem({ 'selector': {} });
     });
 
-    pipe.onItem({ 'PouchDBOutConfig': { 'database': dir.name, 'itemId': 'id' } });
-    pipe.onItem({ 'id': 42, 'value': '1234' });
+    pipe.onItem({ 'PouchDBOutConfig': { 'database': dir.name, 'itemId': 'id.name' } });
+    pipe.onItem({ 'id': { 'name': 42 }, 'value': '1234' });
   });
 
   it('search an item in PouchDB', function(done) {

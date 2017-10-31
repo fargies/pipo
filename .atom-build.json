@@ -16,7 +16,8 @@
         "(?<file>[\\/0-9a-zA-Z\\._]+):(?<line>\\d+):(?<col>\\d+):\\s+warning:\\s+(?<message>.+)",
         "\\s+\\d+\\. (?<file>[\\/0-9a-zA-Z\\._]+):(?<line>\\d+)\\s+-\\s(?<message>.+)"
       ],
-      "atomCommandName": "build:mocha"
+      "keymap": "ctrl-b",
+      "atomCommandName": "build:test"
     },
     "jsdoc": {
       "cmd": "npm",
@@ -25,7 +26,6 @@
       "sh": false,
       "cwd": "{PROJECT_PATH}",
       "env": {},
-      "keymap": "ctrl-b",
       "atomCommandName": "build:docs"
     }
   }

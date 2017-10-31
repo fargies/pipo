@@ -77,7 +77,7 @@ class PouchDBOut extends PipeElement {
     if (_.has(item, itemId)) {
       prom = (prom || this._checkDB())
       .then((db) => {
-        var id = _.toString(item[itemId]);
+        var id = _.toString(_.get(item, itemId));
         return db.get(id)
         .then(
           (old) => { return { _rev: old._rev, _id: id }; },
@@ -93,7 +93,7 @@ class PouchDBOut extends PipeElement {
         .then(
           (r) => { return db.put(_.assign(r, item)); }
         )
-        .then(function() { debug('inserted', item[itemId]); });
+        .then(function() { debug('inserted', _.get(item, itemId)); });
       });
     }
     if (_.has(item, 'deleteIndex')) {

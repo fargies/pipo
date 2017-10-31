@@ -105,7 +105,7 @@ class PipeElement extends EventEmitter {
    */
   unref() {
     if (--this._ref === 0) {
-      debug('%s.end(%i)', this.constructor.name, this._status);
+      debug('%s.end(%d)', this.constructor.name, this._status);
       this.emit('end', this._status);
       this.removeAllListeners('item');
       this.removeAllListeners('end');
