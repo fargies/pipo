@@ -33,6 +33,17 @@ class PipeElement extends EventEmitter {
     super();
     this._ref = 0; /* initialize refcount */
     this._started = false;
+
+    if (!_.isNil(PipeElement._inspect)) {
+      PipeElement._inspect.emit('new', this);
+    }
+  }
+
+  static hook() {
+    if (_.isNil(PipeElement._inspect)) {
+      PipeElement._inspect = new EventEmitter();
+    }
+    return PipeElement._inspect;
   }
 
   onItem(item) {
@@ -126,7 +137,7 @@ class PipeElement extends EventEmitter {
       this.on('item', function(item) { cb.onItem(item); });
       this.once('end', function(status) { cb.end(status); });
       cb.ref(); /* increments refcount */
-      _.set(cb, '_opts.first', false);
+      _.set(cb, '_opts.first', false); /* definitely not first elt of pipeline */
       return cb;
     } else {
       return this.next(new CbPipeElement(cb));
