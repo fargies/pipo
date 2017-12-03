@@ -14,6 +14,10 @@ var deps = _.uniq(_.concat(
   _.keys(pkg.devDependencies),
   _.keys(pkg.dependencies)));
 
+// Manual deps
+deps = _.concat(deps, [
+  "should-equal", "should-format", "should-type", "should-util" ]);
+
 debug('Reading "node_modules" content');
 var modules = fs.readdirSync('./node_modules');
 _.pullAll(modules, deps);

@@ -166,12 +166,15 @@ class Mustache extends PipeElement {
         writeFunc = fs.writeFile.bind(null, outFile);
       }
 
+      var defer = q.defer();
       debug('writing', outFile);
       writeFunc(data, null, (err) => {
         if (err) {
           this.error(`failed to open moustache out file ${outFile}: ${err}`);
         }
+        defer.resolve();
       });
+      return defer.promise;
     }
   }
 }

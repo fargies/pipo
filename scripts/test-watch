@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+export multi="mocha-notifier-reporter=- spec=-"
+cmd="npm run --silent test -- -R mocha-multi"
+for f in "$@"; do
+    cmd="$cmd '$f'"
+done
+
+nodemon -w pipo -w test -x "$cmd || true"

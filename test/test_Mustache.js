@@ -1,7 +1,7 @@
 'use strict';
 
 const
-  assert = require('assert'),
+  should = require('should'),
   describe = require('mocha').describe,
   it = require('mocha').it,
   tmp = require('tmp'),
@@ -16,7 +16,7 @@ describe('Mustache', function() {
     let mstch = new pipo.Mustache();
 
     mstch.once("item", (item) => {
-      assert.deepEqual(item, { val: 42, out: "42" });
+      should(item).be.eql({ val: 42, out: "42" });
       done();
     });
     mstch.onItem({
@@ -29,7 +29,7 @@ describe('Mustache', function() {
     let mstch = new pipo.Mustache();
 
     mstch.once("item", (item) => {
-      assert.deepEqual(item, { val: "42", a: "4", z: "4" });
+      should(item).be.eql({ val: "42", a: "4", z: "4" });
       done();
     });
     mstch.onItem({
@@ -48,18 +48,18 @@ describe('Mustache', function() {
     };
 
     tmp.file(function(err, path, fd, cleanup) {
-      assert.ok(!err);
+      should.not.exist(err);
       fs.writeSync(fd, "This is value: {{value}}\n");
       fs.writeSync(fd, "{{#table}}Here is an element: {{.}}\n{{/table}}");
       item.template = path;
 
       mstch.once("item", (item) => {
         cleanup();
-        assert.ok(item.out);
-        assert.ok(item.out.includes("This is value: 42\n"));
-        assert.ok(item.out.includes("Here is an element: 1\n"));
-        assert.ok(item.out.includes("Here is an element: 2\n"));
-        assert.ok(!('template' in item));
+        should(item).have.property('out');
+        item.out.should.containEql("This is value: 42\n");
+        item.out.should.containEql("Here is an element: 1\n");
+        item.out.should.containEql("Here is an element: 2\n");
+        should(item).not.have.property('template');
         mstch.once("end", function() { done(); });
         mstch.unref();
       });
@@ -72,11 +72,11 @@ describe('Mustache', function() {
     mstch.ref();
 
     tmp.dir({ unsafeCleanup: true }, function(err, path, cleanup) {
-      assert.ok(!err);
+      should.not.exist(err);
       mstch.once("item", () => {
         fs.readFile(path + '/test.txt', function(err, data) {
-          assert.ok(!err);
-          assert.equal(data.toString(), "42");
+          should.not.exist(err);
+          data.toString().should.equal("42");
           mstch.once("end", function() { cleanup(); done(); });
           mstch.unref();
         });

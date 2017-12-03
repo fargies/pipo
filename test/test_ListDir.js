@@ -1,7 +1,7 @@
 'use strict';
 
 const
-  assert = require('assert'),
+  should = require('should'),
   describe = require('mocha').describe,
   it = require('mocha').it,
   tmp = require('tmp');
@@ -19,11 +19,11 @@ describe('ListDir', function() {
     var count = 0;
 
     pipe.on('item', (item) => {
-      assert('file' in item);
+      should(item).have.property('file');
       ++count;
     })
     .on('end', () => {
-      assert.equal(count, 1);
+      count.should.equal(1);
       tmpfile.removeCallback();
       tmpdir.removeCallback();
       done();
@@ -41,11 +41,11 @@ describe('ListDir', function() {
     var count = 0;
 
     pipe.on('item', (item) => {
-      assert('file' in item);
+      should(item).have.property('file');
       ++count;
     })
     .on('end', () => {
-      assert.equal(count, 1);
+      count.should.be.equal(1);
       tmpfile.removeCallback();
       tmpfile2.removeCallback();
       tmpdir.removeCallback();

@@ -111,19 +111,23 @@ class YFQuote extends PipeElement {
             } else if (_.isEmpty(info)) {
               this.error(`no info found for quote ${symbol}`);
             } else {
-              this.emitItem(info);
+              _.assign(item, info);
             }
+            this.emitItem(item);
             this.unref();
           }
         );
       } catch (err) {
         debug('err:', err);
         this.error('something went wrong');
+        this.emitItem(item);
         this.unref();
       }
 
     }
-    this.emitItem(item);
+    else {
+      this.emitItem(item);
+    }
   }
 }
 

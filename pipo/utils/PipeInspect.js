@@ -100,7 +100,6 @@ class PipeInspect extends EventEmitter {
     super();
     this._cb = null;
     this.elements = {};
-    this.links = {};
     this.hook();
   }
 
