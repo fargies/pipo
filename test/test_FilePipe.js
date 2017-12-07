@@ -1,7 +1,7 @@
 'use strict';
 
 const
-  assert = require('assert'),
+  should = require('should'),
   _ = require('lodash'),
   {describe, it, afterEach} = require('mocha'),
   tmp = require('tmp'),
@@ -29,8 +29,7 @@ describe('FilePipe', function() {
 
     pipe.start();
     accu.on('item', function(item) {
-      assert.equal(_.size(item.items), 1);
-      assert.equal(item.items[0].item, 42);
+      should(item).have.property('items').eql([ { item: 42 } ]);
       done();
     });
   });
@@ -43,8 +42,7 @@ describe('FilePipe', function() {
 
     pipe.start();
     accu.on('item', function(item) {
-      assert.equal(_.size(item.items), 1);
-      assert.equal(item.items[0].item, 42);
+      should(item).have.property('items').eql([ { item: 42 } ]);
       done();
     });
   });
@@ -57,18 +55,16 @@ describe('FilePipe', function() {
     fs.writeSync(tmpfile.fd, '{ "item": 42 }');
 
     accu.on('item', function(item) {
-      assert.equal(_.size(item.items), 2);
-      assert.equal(item.items[0].item, 42);
-      assert.equal(item.items[1].item, 42);
+      should(item).have.property('items').eql([ { item: 42 }, { item: 42 } ]);
       done();
     });
     pipe.onItem({
       'pipe': 'FilePipe#1|FilePipe#2',
       'FilePipeConfig#1': {
-        'file': tmpfile.name,
+        'file': tmpfile.name
       },
       'FilePipeConfig#2': {
-        'file': tmpfile.name,
+        'file': tmpfile.name
       }
     });
   });

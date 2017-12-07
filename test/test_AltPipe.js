@@ -1,7 +1,7 @@
 'use strict';
 
 const
-  assert = require('assert'),
+  should = require('should'),
   describe = require('mocha').describe,
   it = require('mocha').it;
 
@@ -14,7 +14,7 @@ describe('AltPipe', function() {
   it('create an AltPipe', function() {
     var pipe = new pipo.AltPipe();
     pipe.onItem({ "pipe": "StdOut|StdOut", "item": 42 });
-    assert.equal(pipe._pipe.length, 2);
+    should(pipe).property('_pipe').length(2);
   });
 
   it('forwards messages', function(done) {
@@ -25,10 +25,8 @@ describe('AltPipe', function() {
     pipe.onItem({ "pipe": "StdOut" });
 
     accu.on('item', (item) => {
-      assert('items' in item);
-      assert.equal(item.items.length, 2);
-      assert.equal(item.items[0].data, 42);
-      assert.equal(item.items[1].data, 42);
+      should(item).have.property('items')
+      .eql([ { data: 42 }, { data: 42 } ]);
       done();
     });
     pipe.onItem({ "data" : 42 });

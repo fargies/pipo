@@ -1,7 +1,7 @@
 'use strict';
 
 const
-  assert = require('assert'),
+  should = require('should'),
   describe = require('mocha').describe,
   it = require('mocha').it;
 
@@ -16,12 +16,11 @@ describe('ReFilter', function() {
     var count = 0;
 
     pipe.on('item', (item) => {
-      assert('name' in item);
-      assert.equal(item.name, '1234');
+      should(item).have.property('name').oneOf(1234, '1234');
       ++count;
     })
     .on('end', () => {
-      assert.equal(count, 2);
+      should(count).eql(2);
       done();
     });
     pipe.onItem({
@@ -42,8 +41,7 @@ describe('ReFilter', function() {
     var pipe = new pipo.ReFilter();
 
     pipe.on('item', (item) => {
-      assert('name' in item);
-      assert.equal(item.name, '1234');
+      should(item).have.property('name').eql(1234);
       done();
     });
     pipe.onItem({
@@ -61,11 +59,11 @@ describe('ReFilter', function() {
     var count = 0;
 
     pipe.on('item', (item) => {
-      assert('errorString' in item);
+      should(item).have.property('errorString');
       ++count;
     })
     .on('end', () => {
-      assert.equal(count, 2);
+      should(count).eql(2);
       done();
     });
 

@@ -1,8 +1,7 @@
 'use strict';
 
 const
-  assert = require('assert'),
-  _ = require('lodash'),
+  should = require('should'),
   describe = require('mocha').describe,
   it = require('mocha').it;
 
@@ -21,9 +20,9 @@ describe('WaitFor', function() {
     });
     pipe.onItem({ WaitForConfig: { property: "prop" } });
     pipe.onItem({ value: 42 });
-    assert.equal(count, 0);
+    should(count).eql(0);
     pipe.onItem({ prop: 44 });
-    assert.equal(count, 2);
+    should(count).eql(2);
     pipe.end(0);
   });
 
@@ -36,9 +35,9 @@ describe('WaitFor', function() {
     });
     pipe.onItem({ WaitForConfig: { property: "prop", pattern: 'to.o' } });
     pipe.onItem({ prop: 42 });
-    assert.equal(count, 0);
+    should(count).eql(0);
     pipe.onItem({ prop: 'toto' });
-    assert.equal(count, 2);
+    should(count).eql(2);
     pipe.end(0);
   });
 });

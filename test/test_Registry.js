@@ -1,10 +1,9 @@
 'use strict';
 
 const
-  assert = require('assert'),
+  should = require('should'),
   describe = require('mocha').describe,
-  it = require('mocha').it,
-  _ = require('lodash');
+  it = require('mocha').it;
 
 const
   pipo = require('../pipo');
@@ -13,16 +12,15 @@ const
 describe('Registry', function() {
 
   it('contains base items', function() {
-    assert('StdIn' in pipo.Registry.pipes);
-    assert('StdOut' in pipo.Registry.pipes);
-    assert('SubPipe' in pipo.Registry.pipes);
+    should(pipo).get('Registry.pipes')
+    .properties([ 'StdIn', 'StdOut', 'SubPipe' ]);
   });
 
   it('add/remove pipelines', function() {
     pipo.Registry.add({ 'toto' : pipo.Rename });
-    assert.equal(pipo.Registry.get('toto'), pipo.Rename);
+    should(pipo.Registry.get('toto')).eql(pipo.Rename);
 
     pipo.Registry.remove('toto');
-    assert(_.isNil(pipo.Registry.get('toto')));
+    should.not.exist(pipo.Registry.get('toto'));
   });
 });

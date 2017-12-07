@@ -1,7 +1,7 @@
 'use strict';
 
 const
-  assert = require('assert'),
+  should = require('should'),
   describe = require('mocha').describe,
   it = require('mocha').it;
 
@@ -17,10 +17,10 @@ describe('Null', function() {
 
     pipe.on('item', (item) => {
       count++;
-      assert.ok('errorString' in item);
+      should(item).have.property('errorString');
     });
     pipe.on('end', () => {
-      assert.equal(count, 1);
+      should(count).eql(1);
       done();
     });
     pipe.onItem({ "item" : 1 });

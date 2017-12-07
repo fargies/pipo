@@ -1,7 +1,7 @@
 'use strict';
 
 const
-  assert = require('assert'),
+  should = require('should'),
   describe = require('mocha').describe,
   it = require('mocha').it,
   stream = require('stream');
@@ -18,7 +18,7 @@ describe('StdOut', function() {
 
   it('sends items', function(done) {
     stdin.once('item', (item) => {
-      assert.equal(item.data, 42);
+      should(item).have.property('data').eql(42);
       done();
     });
     stdout.onItem({ "data" : 42 });
@@ -26,7 +26,7 @@ describe('StdOut', function() {
 
   it('forwards items', function(done) {
     stdout.once('item', (item) => {
-      assert.equal(item.data, 42);
+      should(item).have.property('data').eql(42);
       done();
     });
     stdout.onItem({ "data" : 42 });

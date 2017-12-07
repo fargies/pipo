@@ -1,7 +1,7 @@
 'use strict';
 
 const
-  assert = require('assert'),
+  should = require('should'),
   { describe, it, beforeEach, afterEach } = require('mocha');
 
 const
@@ -23,7 +23,7 @@ describe('Inspect', function() {
     var add;
 
     inspect.once('new', function(item) {
-      assert.equal(item.elt, add);
+      should(item).have.property('elt').eql(add);
       inspect.unhook();
       done();
     });
@@ -35,10 +35,10 @@ describe('Inspect', function() {
     var out = new pipo.StdOut();
 
     var addElt = inspect.get(add);
-    assert.ok(addElt);
+    should.exist(addElt);
     addElt.once('next', function(next) {
-      assert.equal(next.elt, out);
-      assert.deepEqual(addElt.next, [ inspect.uid(out) ]);
+      should(next).have.property('elt').eql(out);
+      should(addElt).have.property('next').eql([ inspect.uid(out) ]);
       inspect.unhook();
       done();
     });
@@ -50,7 +50,7 @@ describe('Inspect', function() {
 
     var addElt = inspect.get(add);
     addElt.once('item', function(item) {
-      assert.deepEqual(item, { test: 42 });
+      should(item).eql({ test: 42 });
       done();
     });
     add.onItem({ test: 42 });
@@ -60,7 +60,7 @@ describe('Inspect', function() {
     var add = new pipo.Add();
 
     inspect.get(add).once('onItem', function(item) {
-      assert.deepEqual(item, { test: 42 });
+      should(item).eql({ test: 42 });
       done();
     });
     add.onItem({ test: 42 });
@@ -80,8 +80,8 @@ describe('Inspect', function() {
 
     var subElt = inspect.get(sub);
     subElt.once('sub', function(elt) {
-      assert.ok(elt.elt instanceof pipo.Add);
-      assert.deepEqual(subElt.sub, [ elt.id ]);
+      should(elt.elt).instanceOf(pipo.Add);
+      should(subElt.sub).eql([ elt.id ]);
       done();
     });
     sub.setPipe('Add|Rename');

@@ -1,7 +1,7 @@
 'use strict';
 
 const
-  assert = require('assert'),
+  should = require('should'),
   describe = require('mocha').describe,
   it = require('mocha').it;
 
@@ -12,8 +12,8 @@ describe('XQuery', function() {
 
   it('parse a simple document', function(done) {
     pipe.once('item', function(item) {
-      assert.equal(item['value'], 'value str');
-      assert.equal(item['param'], '42');
+      should(item).have.property('value').eql('value str');
+      should(item).have.property('param').eql('42');
       done();
     });
     pipe.onItem({
@@ -30,7 +30,7 @@ describe('XQuery', function() {
 
   it('uses configuration', function(done) {
     pipe.once('item', function(item) {
-      assert.equal(item['value'], 'value str');
+      should(item).have.property('value').eql('value str');
       done();
     });
     pipe.onItem({

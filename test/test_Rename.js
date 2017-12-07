@@ -1,7 +1,7 @@
 'use strict';
 
 const
-  assert = require('assert'),
+  should = require('should'),
   describe = require('mocha').describe,
   it = require('mocha').it;
 
@@ -15,9 +15,8 @@ describe('Rename', function() {
     var pipe = new pipo.Rename();
 
     pipe.on('item', (item) => {
-      assert('newName' in item);
-      assert(!('oldName' in item));
-      assert.equal(item.newName, "value");
+      should(item).have.property('newName').eql('value');
+      should(item).not.have.property('oldName');
       done();
     });
     pipe.onItem({ 'RenameConfig' : { 'property': 'oldName', 'newName': 'newName' } });
@@ -29,7 +28,7 @@ describe('Rename', function() {
     var pipe = new pipo.Rename();
 
     pipe.on('item', (item) => {
-      assert.deepEqual(item, { "old": {}, "new": { "toto": 42 } });
+      should(item).eql({ "old": {}, "new": { "toto": 42 } });
       done();
     });
     pipe.onItem({ 'RenameConfig' : { 'property': 'old.name', 'newName': 'new.toto' } });

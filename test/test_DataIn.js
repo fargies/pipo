@@ -2,7 +2,7 @@
 
 const
   {describe, it} = require('mocha'),
-  assert = require('assert');
+  should = require('should');
 
 const
   pipo = require('../pipo'),
@@ -15,7 +15,7 @@ describe('DataIn', function() {
     dataIn.next(accu);
 
     accu.once('item', function(item) {
-      assert.deepEqual(item, {
+      should(item).eql({
         items: [
           { sample: "{{{{\"" },
           { partial: "item" }

@@ -34,7 +34,7 @@ module.exports = new Proxy(
     Registry: Registry,
     get: function(elt) { return Registry.get(elt); },
 
-    PipeElement: require('./PipeElement')
+    PipeElement: require('./PipeElement') // eslint-disable-line global-require
   },
   {
     get: function(target, property) {

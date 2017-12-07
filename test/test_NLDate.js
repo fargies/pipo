@@ -1,7 +1,7 @@
 'use strict';
 
 const
-  assert = require('assert'),
+  should = require('should'),
   {it, describe} = require('mocha'),
   moment = require('moment'),
   _ = require('lodash');
@@ -24,8 +24,8 @@ describe('NLDate', function() {
       it(`parses "${sample.in}"`, function(done) {
         var pipe = new pipo.NLDate();
         pipe.once('item', (item) => {
-          assert.ok(!_.isEmpty(item.date));
-          assert.ok(sample.out.diff(moment(item.date), 'seconds') < 10);
+          should(item).have.property('date');
+          should.ok(sample.out.diff(moment(item.date), 'seconds') < 10);
           done();
         });
         pipe.onItem({
@@ -39,8 +39,8 @@ describe('NLDate', function() {
   it('can parse a sub-property', function(done) {
     var pipe = new pipo.NLDate();
     pipe.once('item', (item) => {
-      assert.ok(!_.isEmpty(_.get(item, [ 'date', 'sub' ])));
-      assert.ok(moment().diff(moment(item.date.sub), 'seconds') < 10);
+      should(item).have.property('date').property('sub');
+      should.ok(moment().diff(moment(item.date.sub), 'seconds') < 10);
       done();
     });
     pipe.onItem({

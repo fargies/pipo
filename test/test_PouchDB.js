@@ -3,7 +3,7 @@
 const
   _ = require('lodash'),
   debug = require('debug')('pipo:tests'),
-  assert = require('assert'),
+  should = require('should'),
   lsof = require('lsof'),
   tmp = require('tmp'),
   q = require('q'),
@@ -20,7 +20,7 @@ describe('PouchDB', function() {
 
   beforeEach(function() {
     dir = tmp.dirSync({ unsafeCleanup: true });
-    assert.ok(dir);
+    should.exist(dir);
     debug('tmpdir:', dir.name);
   });
 
@@ -36,10 +36,9 @@ describe('PouchDB', function() {
     pipe.on('end', () => {
       var inPipe = new pipo.SubPipe('PouchDBIn|Aggregate');
       inPipe.on('item', (item) => {
-        assert.equal(_.size(item.items), 1);
-        assert.equal(_.get(item, 'items[0].value'), '1234');
-        assert.equal(_.get(item, 'items[0]._id'), '42');
-        assert.equal(_.get(item, 'items[0].id.name'), 42);
+        should(item).have.property('items').length(1);
+        should(item).get('items[0]')
+        .containEql({ value: '1234', '_id': '42', id: { name: 42 } });
         done();
       });
 
@@ -57,10 +56,11 @@ describe('PouchDB', function() {
     pipe.ref();
 
     pipe.on('item', Helpers.defer((item) => {
-      assert.equal(_.size(item.items), 3);
-      assert.equal(item.items[0].date, 1239);
-      assert.equal(item.items[1].date, 1238);
-      assert.equal(item.items[2].date, 1237);
+      should(item).have.property('items');
+      should(item.items).length(3);
+      should(item.items[0]).containEql({ date: 1239 });
+      should(item.items[1]).containEql({ date: 1238 });
+      should(item.items[2]).containEql({ date: 1237 });
       done();
     }));
 
@@ -113,7 +113,7 @@ describe('PouchDB', function() {
       pipe.once('end', function() {
         lsofPromise()
         .then(function(lsof) {
-          assert.equal(refLsof.open, lsof.open);
+          should(refLsof.open).eql(lsof.open);
           done();
         })
         .done();

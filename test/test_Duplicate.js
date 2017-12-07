@@ -1,10 +1,9 @@
 'use strict';
 
 const
-  assert = require('assert'),
+  should = require('should'),
   describe = require('mocha').describe,
-  it = require('mocha').it,
-  _ = require('lodash');
+  it = require('mocha').it;
 
 const
   pipo = require('../pipo');
@@ -16,10 +15,8 @@ describe('Duplicate', function() {
     var pipe = new pipo.Duplicate();
 
     pipe.on('item', (item) => {
-      assert('newName' in item);
-      assert('oldName' in item);
-      assert.equal(item.newName, "value");
-      assert.equal(item.oldName, "value");
+      should(item).have.property('newName', 'value');
+      should(item).have.property('oldName', 'value');
       done();
     });
     pipe.onItem({ DuplicateConfig: {
@@ -34,8 +31,8 @@ describe('Duplicate', function() {
     var pipe = new pipo.Duplicate();
 
     pipe.on('item', (item) => {
-      assert.equal(_.get(item, [ "sub", "item2" ]), 42);
-      assert.equal(_.get(item, [ "sub", "item1" ]), 42);
+      should(item).have.property('sub').property('item2').eql(42);
+      should(item).have.property('sub').property('item1').eql(42);
       done();
     });
     pipe.onItem({

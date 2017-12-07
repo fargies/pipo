@@ -1,14 +1,12 @@
 'use strict';
 
 const
-  assert = require('assert'),
-  _ = require('lodash'),
+  should = require('./should-ext'),
   describe = require('mocha').describe,
   it = require('mocha').it;
 
 const
   pipo = require('../pipo');
-
 
 describe('Add', function() {
 
@@ -16,8 +14,8 @@ describe('Add', function() {
     var pipe = new pipo.Add();
 
     pipe.on('item', function(item) {
-      assert.ok(_.has(item, [ 'toto', 'titi', '0', 'tata' ]));
-      assert.equal(item.toto.titi[0].tata, 42);
+      should(item).not.have.property('toto.titi[0].tata');
+      should(item).get('toto.titi[0].tata').eql(42);
       done();
     });
     pipe.onItem({

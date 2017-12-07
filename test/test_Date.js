@@ -1,7 +1,7 @@
 'use strict';
 
 const
-  assert = require('assert'),
+  should = require('should'),
   m = require('mocha'),
   _ = require('lodash');
 
@@ -15,13 +15,12 @@ m.describe('Date', function() {
   _.forEach([
       { in: 1505939177, inFormat: 'X', outFormat: 'YYYY-MM-DD', out: '2017-09-20' },
       { in: '2017-09-20', inFormat: 'YYYY-MM-DD', outFormat: 'YYYY-MM-DD', out: '2017-09-20' },
-      { in: '2017-09-20', inFormat: 'YYYY-MM-DD', outFormat: 'X', out: '1505865600' },
+      { in: '2017-09-20', inFormat: 'YYYY-MM-DD', outFormat: 'X', out: '1505865600' }
     ],
     function(sample) {
       m.it(`format "${sample.in}"`, function(done) {
       pipe.once('item', (item) => {
-        assert.ok(!_.isEmpty(item.date));
-        assert.equal(sample.out, item.date);
+        should(item).have.property('date').eql(sample.out);
         done();
       });
       pipe.onItem({

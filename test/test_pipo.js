@@ -1,9 +1,8 @@
 'use strict';
 
 const
-  assert = require('assert'),
-  {describe, it} = require('mocha'),
-  _ = require('lodash');
+  should = require('should'),
+  {describe, it} = require('mocha');
 
 const
   pipo = require('../pipo');
@@ -12,10 +11,8 @@ const
 describe('pipo', function() {
 
   it('contains base items', function() {
-    assert.ok('StdIn' in pipo);
-    assert.ok('StdOut' in pipo);
-    assert.ok('SubPipe' in pipo);
+    should(pipo).have.properties([ 'StdIn', 'StdOut', 'SubPipe' ]);
 
-    assert.ok(pipo.StdIn.prototype instanceof pipo.PipeElement);
+    should(pipo.StdIn.prototype).instanceof(pipo.PipeElement);
   });
 });

@@ -1,7 +1,7 @@
 'use strict';
 
 const
-  assert = require('assert'),
+  should = require('should'),
   m = require('mocha');
 
 const
@@ -33,8 +33,7 @@ m.describe('HTMLFetcher', function() {
     var pipe = new pipo.HTMLFetcher();
 
     pipe.on('item', (item) => {
-      assert('html' in item);
-      assert.equal(item.html, 'ok');
+      should(item).have.property('html').eql('ok');
       done();
     });
     pipe.onItem({ "url" : `http://${addr.address}:${addr.port}` });
@@ -49,9 +48,7 @@ m.describe('HTMLFetcher', function() {
     .next(fetcher)
     .on('item', (i) => { item = i; })
     .on('end', () => {
-      assert(item);
-      assert('html' in item);
-      assert.equal(item.html, 'ok');
+      should(item).have.property('html').eql('ok');
       done();
     });
 

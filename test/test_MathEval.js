@@ -1,7 +1,7 @@
 'use strict';
 
 const
-  assert = require('assert'),
+  should = require('should'),
   m = require('mocha'),
   _ = require('lodash');
 
@@ -21,8 +21,8 @@ m.describe('MathEval', function() {
         function(done) {
           var pipe = new pipo.MathEval();
           pipe.once('item', (item) => {
-            assert.ok(_.isMatch(item, sample.out));
-            assert.ok(!_.has(item, 'expr'));
+            should(item).containEql(sample.out);
+            should(item).not.have.property('expr');
             done();
           });
           pipe.onItem(sample.in);
@@ -33,7 +33,7 @@ m.describe('MathEval', function() {
     var pipe = new pipo.MathEval();
 
     pipe.once('item', (item) => {
-      assert.ok('errorString' in item);
+      should(item).have.property('errorString');
       done();
     });
     pipe.onItem({ expr: '1+a' });
@@ -44,9 +44,8 @@ m.describe('MathEval', function() {
 
     pipe.next(new pipo.Aggregate())
     .once('item', (item) => {
-      assert.ok('items' in item);
-      assert.deepEqual(item.items[0], { b: 42 });
-      assert.deepEqual(item.items[1], { a: 2, ret: 3 });
+      should(item).have.property('items')
+      .eql([ { b: 42 }, { a: 2, ret: 3} ]);
       done();
     });
     pipe.onItem({ MathEvalConfig: { expr: '1+a', property: 'ret' } });

@@ -1,7 +1,7 @@
 'use strict';
 
 const
-  assert = require('assert'),
+  should = require('should'),
   {describe, it} = require('mocha'),
   _ = require('lodash');
 
@@ -14,7 +14,7 @@ describe('Replace', function() {
     var pipe = new pipo.Replace();
 
     pipe.on('item', (item) => {
-      assert.equal(item.name, "ee");
+      should(item).have.property('name').eql('ee');
       done();
     });
     pipe.onItem({ 'ReplaceConfig':
@@ -27,7 +27,8 @@ describe('Replace', function() {
     var pipe = new pipo.Replace();
 
     pipe.on('item', (item) => {
-      assert.equal(_.get(item, [ 'sub', 'name' ]), "ee");
+      should(item).have.property('sub')
+      .property('name').eql('ee');
       done();
     });
     pipe.onItem({

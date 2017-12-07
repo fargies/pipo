@@ -1,8 +1,7 @@
 'use strict';
 
 const
-  assert = require('assert'),
-  _ = require('lodash'),
+  should = require('should'),
   describe = require('mocha').describe,
   it = require('mocha').it;
 
@@ -28,7 +27,7 @@ describe('SerialPipe', function() {
       count = count + 1;
     });
     pipe.on('end', function() {
-      assert.equal(count, 2);
+      should(count).eql(2);
       done();
     });
     pipe.onItem({
@@ -59,6 +58,6 @@ describe('SerialPipe', function() {
     });
     pipe.onItem({ 'item': 42 });
     pipe.onItem({ 'item': 42 });
-    assert.equal(count, 0);
+    should(count).eql(0);
   });
 });

@@ -1,7 +1,7 @@
 'use strict';
 
 const
-  assert = require('assert'),
+  should = require('should'),
   describe = require('mocha').describe,
   it = require('mocha').it;
 
@@ -12,7 +12,7 @@ describe('PipeElement', function() {
   it('itemOut', function(done) {
     var pipe = new PipeElement();
     pipe.once("item", (item) => {
-      assert.equal(item.data, 42);
+      should(item).have.property('data').eql(42);
       done();
     });
     pipe.emit('item', { "data" : 42 });
@@ -21,7 +21,7 @@ describe('PipeElement', function() {
   it('next func', function(done) {
     var pipe = new PipeElement();
     pipe.next((item) => {
-      assert.equal(item.data, 42);
+      should(item).have.property('data').eql(42);
       pipe.removeAllListeners();
       done();
     });
@@ -32,7 +32,7 @@ describe('PipeElement', function() {
     var pipe = new PipeElement();
     let item = new PipeElement();
     item.onItem = function(item) {
-        assert.equal(item.data, 42);
+        should(item).have.property('data').eql(42);
         pipe.removeAllListeners();
         done();
     };
@@ -48,7 +48,7 @@ describe('PipeElement', function() {
       this.emit('item', { "data" : item.data + 1 });
     };
     item.end = function(status) {
-      assert.equal(status, 2);
+      should(status).eql(2);
       done();
     };
     pipe
@@ -57,7 +57,7 @@ describe('PipeElement', function() {
     })
     .next(item)
     .next((item) => {
-      assert.equal(item.data, 2);
+      should(item).have.property('data').eql(2);
       pipe.end(item.data);
     });
     pipe.start();

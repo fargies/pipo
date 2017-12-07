@@ -1,7 +1,7 @@
 'use strict';
 
 const
-  assert = require('assert'),
+  should = require('should'),
   _ = require('lodash'),
   {describe, before, after, it} = require('mocha'),
   stream = require('stream');
@@ -31,7 +31,7 @@ describe('StdIn', function() {
 
     it('parse simple stream', function(done) {
       stdin.once("item", (item) => {
-        assert.equal(item.data, 1);
+        should(item).have.property('data').eql(1);
         done();
       });
       pass.write('{ "data" : 1 }');
@@ -41,7 +41,7 @@ describe('StdIn', function() {
       var item = "{ \"data\" : 2 }".split('');
 
       stdin.once("item", (item) => {
-        assert.equal(item.data, 2);
+        should(item).have.property('data').eql(2);
         done();
       });
       item.forEach(function(val) {
@@ -53,7 +53,7 @@ describe('StdIn', function() {
       var item = "{ \"data\" : 3 }".split(' ');
 
       stdin.once("item", (item) => {
-        assert.equal(item.data, 3);
+        should(item).have.property('data').eql(3);
         done();
       });
       item.forEach(function(val) {
@@ -66,7 +66,7 @@ describe('StdIn', function() {
 
     it('parse several objects and finishes', function(done) {
       stdin.on('end', () => {
-        assert.equal(items.length, 5);
+        should(items).length(5);
         done();
       });
       pass.write('{ "data" : 1 }{"data": 42}');
@@ -82,8 +82,7 @@ describe('StdIn', function() {
       .next(new StdIn(pass2)).next(new pipo.Aggregate());
 
       pipe.on('item', function(item) {
-        assert.ok(_.has(item, 'items'));
-        assert.equal(_.size(item.items), 2);
+        should(item).have.property('items').length(2);
         pipe.once('end', _.ary(done, 0));
       });
       pass1.write('{ "item": 42 }');

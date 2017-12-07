@@ -1,7 +1,7 @@
 'use strict';
 
 const
-  assert = require('assert'),
+  should = require('should'),
   m = require('mocha'),
   _ = require('lodash');
 
@@ -14,7 +14,7 @@ m.describe('YFHistory', function() {
     var pipe = new pipo.YFHistory();
 
     pipe.on('item', (item) => {
-      assert.ok(_.has(item, 'open'));
+      should(item).have.property('open');
       done();
     });
     pipe.onItem({ symbol: 'SO.PA', from: '2017-06-02', to: '2017-06-02' });
@@ -24,8 +24,8 @@ m.describe('YFHistory', function() {
     var pipe = new pipo.YFHistory();
 
     pipe.on('item', (item) => {
-      assert.ok(!_.has(item, 'open'));
-      assert.ok(_.has(item, 'errorString'));
+      should(item).not.have.property('open');
+      should(item).have.property('errorString');
       done();
     });
     pipe.onItem({ symbol: 'SO.NONE', from: '2017-06-01', to: '2017-06-02' });
@@ -35,8 +35,8 @@ m.describe('YFHistory', function() {
     var pipe = new pipo.YFHistory();
 
     pipe.on('item', (item) => {
-      assert.ok(!_.has(item, 'open'));
-      assert.ok(_.has(item, 'errorString'));
+      should(item).not.have.property('open');
+      should(item).have.property('errorString');
       done();
     });
     pipe.onItem({ symbol: 'SO.PA', from: '2017-xx-xx', to: '2017-06-02' });

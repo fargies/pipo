@@ -1,7 +1,7 @@
 'use strict';
 
 const
-  assert = require('assert'),
+  should = require('should'),
   {describe, it} = require('mocha'),
   _ = require('lodash');
 
@@ -18,8 +18,8 @@ describe('Generic', function() {
 
     it(`unconnected ${elt} terminates`, function(done) {
       let Elt = pipo[elt];
-      assert.ok(!_.isNil(Elt));
-      assert.ok(Elt.prototype instanceof pipo.PipeElement);
+      should.exist(Elt);
+      should(Elt.prototype).instanceof(pipo.PipeElement);
 
       var pipe = new Elt();
       pipe.on('end', function() {
@@ -31,15 +31,15 @@ describe('Generic', function() {
     it(`${elt} drops empty items`, function(done) {
       let Elt = pipo[elt];
       let count = 0;
-      assert.ok(!_.isNil(Elt));
-      assert.ok(Elt.prototype instanceof pipo.PipeElement);
+      should.exist(Elt);
+      should(Elt.prototype).instanceof(pipo.PipeElement);
 
       var pipe = new Elt();
       pipe.on('item', function() {
         count = count + 1;
       });
       pipe.on('end', function() {
-        assert.equal(count, 0);
+        should(count).eql(0);
         done();
       });
       pipe.onItem({}); /* send an empty item */
@@ -47,12 +47,12 @@ describe('Generic', function() {
 
     it(`configuration passes through ${elt}`, function(done) {
       let Elt = pipo[elt];
-      assert.ok(!_.isNil(Elt));
-      assert.ok(Elt.prototype instanceof pipo.PipeElement);
+      should.exist(Elt);
+      should(Elt.prototype).instanceof(pipo.PipeElement);
 
       var pipe = new Elt();
       pipe.on('item', function(item) {
-        assert.ok('TestConfig' in item);
+        should(item).have.property('TestConfig');
         done();
       });
       pipe.onItem({ 'TestConfig': { 'toto': 42 } });
