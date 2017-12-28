@@ -55,7 +55,7 @@ describe('PouchDB', function() {
     var pipe = new pipo.SubPipe('PouchDBIn|Aggregate');
     pipe.ref();
 
-    pipe.on('item', Helpers.defer((item) => {
+    pipe.on('item', _.defer.bind(null, (item) => {
       should(item).have.property('items');
       should(item.items).length(3);
       should(item.items[0]).containEql({ date: 1239 });

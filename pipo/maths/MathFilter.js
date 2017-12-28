@@ -36,6 +36,13 @@ class MathFilter extends PipeElement {
     this.expr = null;
   }
 
+  _filter(expr, item) {
+    if (math.eval(expr, item)) {
+      debug('item matches %s', expr);
+      this.emitItem(item);
+    }
+  }
+
   onItem(item) {
     super.onItem(item);
 
@@ -44,10 +51,7 @@ class MathFilter extends PipeElement {
     if (!_.isNil(expr) && (hasExpr || !_.isEmpty(item))) {
       try {
         // FIXME: check why math.eval modifies item
-        if (math.eval(expr, _.cloneDeep(item))) {
-          debug('item matches %s', expr);
-          this.emitItem(item);
-        }
+        this._filter(expr, _.cloneDeep(item));
       }
       catch (err) {
         debug(err);

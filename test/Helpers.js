@@ -2,7 +2,10 @@
 const _ = require('lodash');
 
 module.exports = {
-  defer: function(fun) {
-    return function(ret) { _.defer(fun, ret); };
+  dbgStr: function(item, size) {
+    if (!_.isString(item)) {
+      item = JSON.stringify(item);
+    }
+    return _.truncate(item, { length: (size || 30) });
   }
 };
