@@ -63,13 +63,13 @@ require('colors');
 class StdOut extends PipeElement {
   constructor(fd, indent) {
     super();
-    this.fd = _.defaultTo(fd, process.stdout);
-    if (this.fd.isTTY) {
-      this.fd = new Colorify(this.fd);
+    this._fd = _.defaultTo(fd, process.stdout);
+    if (this._fd.isTTY) {
+      this._fd = new Colorify(this._fd);
     }
     else {
-      this.fd.dump = (item) => {
-        this.fd.write(JSON.stringify(item, null, this.indent));
+      this._fd.dump = (item) => {
+        this._fd.write(JSON.stringify(item, null, this.indent));
       };
     }
     this.indent = _.defaultTo(indent, 2);
@@ -86,9 +86,9 @@ class StdOut extends PipeElement {
     super.onItem(item);
 
     if (!_.isEmpty(item)) {
-      this.fd.dump(item, this.indent);
+      this._fd.dump(item, this.indent);
       if (this.eol) {
-        this.fd.write("\n");
+        this._fd.write("\n");
       }
       this.emit('item', item);
     }
@@ -97,11 +97,11 @@ class StdOut extends PipeElement {
 
 class Colorify {
   constructor(fd) {
-    this.fd = fd;
+    this._fd = fd;
   }
 
   write(arg) {
-    this.fd.write(arg);
+    this._fd.write(arg);
   }
 
   dump(item, indent) {
@@ -154,18 +154,18 @@ class Colorify {
       return;
     }
     else if (typeof obj === 'string') {
-      this.fd.write(Colorify.dblQuote);
-      this.fd.write(obj.magenta);
-      this.fd.write(Colorify.dblQuote);
+      this._fd.write(Colorify.dblQuote);
+      this._fd.write(obj.magenta);
+      this._fd.write(Colorify.dblQuote);
     }
     else if (typeof obj === 'number') {
-      this.fd.write(('' + obj).cyan);
+      this._fd.write(('' + obj).cyan);
     }
     else if (typeof obj === 'boolean') {
-      this.fd.write((obj ? Colorify.true : Colorify.false));
+      this._fd.write((obj ? Colorify.true : Colorify.false));
     }
     else if (obj === null) {
-      this.fd.write(Colorify.null);
+      this._fd.write(Colorify.null);
     }
     else if (obj.length === undefined) {
       this._objStr(obj, indent, level);
@@ -175,51 +175,51 @@ class Colorify {
   }
 
   _objStr(obj, indent, level) {
-    this.fd.write(Colorify.objStart);
+    this._fd.write(Colorify.objStart);
     if (indent !== 0) {
-      this.fd.write('\n');
+      this._fd.write('\n');
     }
     var keys = Object.keys(obj);
     keys.forEach((key, i) => {
-      this.fd.write(' '.repeat(indent + level * indent));
-      this.fd.write(Colorify.dblQuote);
-      this.fd.write(key.magenta);
-      this.fd.write(Colorify.dblQuote);
-      this.fd.write(Colorify.colon);
+      this._fd.write(' '.repeat(indent + level * indent));
+      this._fd.write(Colorify.dblQuote);
+      this._fd.write(key.magenta);
+      this._fd.write(Colorify.dblQuote);
+      this._fd.write(Colorify.colon);
       if (indent !== 0) {
-        this.fd.write(' ');
+        this._fd.write(' ');
       }
       this._stringify(obj[key], indent, level + 1);
       if (i !== keys.length - 1) {
-        this.fd.write(Colorify.separator);
+        this._fd.write(Colorify.separator);
       }
       if (indent !== 0) {
-        this.fd.write('\n');
+        this._fd.write('\n');
       }
     });
 
-    this.fd.write(' '.repeat(level * indent));
-    this.fd.write(Colorify.objEnd);
+    this._fd.write(' '.repeat(level * indent));
+    this._fd.write(Colorify.objEnd);
   }
 
   _arrayStr(obj, indent, level) {
-    this.fd.write(Colorify.arrayStart);
+    this._fd.write(Colorify.arrayStart);
     if (indent !== 0) {
-      this.fd.write('\n');
+      this._fd.write('\n');
     }
     obj.forEach((subObj, i) => {
-      this.fd.write(' '.repeat(indent + level * indent));
+      this._fd.write(' '.repeat(indent + level * indent));
       this._stringify(subObj, indent, level + 1);
       if (i !== obj.length - 1) {
-        this.fd.write(Colorify.separator);
+        this._fd.write(Colorify.separator);
       }
       if (indent !== 0) {
-        this.fd.write('\n');
+        this._fd.write('\n');
       }
     });
 
-    this.fd.write(' '.repeat(level * indent));
-    this.fd.write(Colorify.arrayEnd);
+    this._fd.write(' '.repeat(level * indent));
+    this._fd.write(Colorify.arrayEnd);
   }
 }
 _.assign(Colorify, {
