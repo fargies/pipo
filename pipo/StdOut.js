@@ -146,7 +146,7 @@ class Colorify {
 
   stringify(obj, indent) {
     indent = _.defaultTo(indent, 0);
-    this._stringify(obj, indent, 0);
+    this._stringify(obj, ' '.repeat(indent), '');
   }
 
   _stringify(obj, indent, level) { // eslint-disable-line complexity
@@ -176,49 +176,51 @@ class Colorify {
 
   _objStr(obj, indent, level) {
     this._fd.write(Colorify.objStart);
-    if (indent !== 0) {
+    if (!_.isEmpty(indent)) {
       this._fd.write('\n');
     }
+    const subLevel = level + indent;
     var keys = Object.keys(obj);
     keys.forEach((key, i) => {
-      this._fd.write(' '.repeat(indent + level * indent));
+      this._fd.write(subLevel);
       this._fd.write(Colorify.dblQuote);
       this._fd.write(key.magenta);
       this._fd.write(Colorify.dblQuote);
       this._fd.write(Colorify.colon);
-      if (indent !== 0) {
+      if (!_.isEmpty(indent)) {
         this._fd.write(' ');
       }
-      this._stringify(obj[key], indent, level + 1);
+      this._stringify(obj[key], indent, subLevel);
       if (i !== keys.length - 1) {
         this._fd.write(Colorify.separator);
       }
-      if (indent !== 0) {
+      if (!_.isEmpty(indent)) {
         this._fd.write('\n');
       }
     });
 
-    this._fd.write(' '.repeat(level * indent));
+    this._fd.write(level);
     this._fd.write(Colorify.objEnd);
   }
 
   _arrayStr(obj, indent, level) {
     this._fd.write(Colorify.arrayStart);
-    if (indent !== 0) {
+    if (!_.isEmpty(indent)) {
       this._fd.write('\n');
     }
+    const subLevel = level + indent;
     obj.forEach((subObj, i) => {
-      this._fd.write(' '.repeat(indent + level * indent));
-      this._stringify(subObj, indent, level + 1);
+      this._fd.write(subLevel);
+      this._stringify(subObj, indent, subLevel);
       if (i !== obj.length - 1) {
         this._fd.write(Colorify.separator);
       }
-      if (indent !== 0) {
+      if (!_.isEmpty(indent)) {
         this._fd.write('\n');
       }
     });
 
-    this._fd.write(' '.repeat(level * indent));
+    this._fd.write(level);
     this._fd.write(Colorify.arrayEnd);
   }
 }
